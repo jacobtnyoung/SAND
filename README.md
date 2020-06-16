@@ -15,10 +15,7 @@ For the labs, .html format and RMarkdown (.Rmd) format documents are provided. T
 
 ## Introduction to Network Analysis
 
-The introductory lecture covers the basics of network analysis: what it is, why we do it, etc. The learning goals of this lecture are to:
-
-1. understand the difference between individual vs. network approaches to research 
-2. introduce basic data elements in network analysis
+The introductory lecture covers the basics of network analysis: what it is, why we do it, etc. The learning goals of this lecture are to: 1) understand the difference between individual vs. network approaches to research and 2) introduce basic data elements in network analysis.
 
 *Files*:
 * Introduction lecture (pdf) & R script for Introduction lecture (.R)
