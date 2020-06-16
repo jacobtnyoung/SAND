@@ -1,14 +1,3 @@
----
-layout: default
-title: Statistical Analysis of Network Data (SAND)
-
----
-
-
-<br><br>
-<br><br>
-
-
 # **Statistical Analysis of Networks** ([syllabus]()) 
 
 
