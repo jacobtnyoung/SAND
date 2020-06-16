@@ -6,6 +6,7 @@ I teach a course on the statistical analysis of networks which provides a survey
 Even if you are not taking the course, feel free to browse the lecture notes and labs. As always, I welcome any feedback!
 
 *Note on file formats*
+
 For the labs, .html format and RMarkdown (.Rmd) format documents are provided. The .html files can be opened by first downloading the file and then opening it using any web browser. The .Rmd files can be opened in any web browser, but require [RStudio](https://www.rstudio.com/) to execute.
 
 
