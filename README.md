@@ -18,7 +18,7 @@ For the labs, .html format and RMarkdown (.Rmd) format documents are provided. T
 The introductory lecture covers the basics of network analysis: what it is, why we do it, etc. The learning goals of this lecture are to: 1) understand the difference between individual vs. network approaches to research and 2) introduce basic data elements in network analysis.
 
 *Files*:
-* Introduction lecture (pdf) & R script for Introduction lecture (.R)
+* Introduction lecture ([pdf](lectures/crj_605_networks_1_intro_slides.pdf)) & R script for Introduction lecture (.R)
 * Raw course survey data (Wave 1 .csv) (Wave 2 .csv) (Wave 1 & Wave 2 .csv)
 C* ourse survey data instruments (Wave 1 pdf) (Wave 2 pdf)
 * R script to clean raw course survey data (Wave 1 .R) (Wave 1 & 2 .R)
