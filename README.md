@@ -9,18 +9,6 @@ title: Statistical Analysis of Network Data (SAND)
 <br><br>
 <br><br>
 
-**COURSE CONTENT:**
-
------------------------
-
-* TOC
-{:toc}
-
------------------------
-
-<br>
-
-
 
 # Semester Overview 
 
