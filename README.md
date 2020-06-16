@@ -21,7 +21,7 @@ The introductory lecture covers the basics of network analysis: what it is, why 
 *Files*:
 * Introduction lecture ([pdf](lectures/crj_605_networks_1_intro_slides.pdf)) & R script for Introduction lecture ([.R](lecture_syntax/intro.lecture.syntax.R))
 * Raw course survey data ([Wave 1 .csv](data/crj_605_networks_spring_2019_class_survey_data_w1.csv)) ([Wave 2 .csv](data/crj_605_networks_spring_2019_class_survey_data_w2.csv)) ([Wave 1 & Wave 2 .csv](data/crj_605_networks_spring_2019_class_survey_data_w1_w2.csv))
-* Course survey data instruments (Wave 1 pdf) (Wave 2 pdf)
+* Course survey data instruments ([Wave 1 pdf](files/crj_605_networks_spring_2019_class_survey_w1.pdf)) (Wave 2 pdf)
 * R script to clean raw course survey data (Wave 1 .R) (Wave 1 & 2 .R)
 * Adjacency matrices for course survey data in .csv format:
    * Wave 1-(Spend time net) (Talk about course net) (Trust net) (TV net)
