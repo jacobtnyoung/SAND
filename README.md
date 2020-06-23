@@ -54,7 +54,23 @@ These lectures cover the basics of using matrices to represent networks. Fundame
 <hr>
 <br>
 
+## Getting Started with R and Network Visualization
+
+This section starts working in [R](http://cran.r-project.org/) and focuses on three goals: First, an introduction to [R](http://cran.r-project.org/) (Intro to R lab) to familiarize users with [R](http://cran.r-project.org/). Second, an introduction to network analysis in [R](http://cran.r-project.org/) (Intro to Networks lab) covers how network objects are created and manipulated using the [sna](https://cran.r-project.org/web/packages/sna/index.html) package. Third, basic network visualization is reviewed (Visualization lab) using the [sna](https://cran.r-project.org/web/packages/sna/index.html) package.
+
+*Files*:
+* Intro to R lab (html) (Rmd)
+* Intro to Networks lab (html) (Rmd)
+* Visualization lab (html) (Rmd)
+* Example networks used in labs (undirected network) (directed network)
+
+
+<br>
+<hr>
+<br>
+
 ***UNDER CONSTRUCTION***
+
 
 
 <br>
