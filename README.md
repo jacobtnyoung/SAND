@@ -28,6 +28,22 @@ The introductory lecture covers the basics of network analysis: what it is, why 
    * Wave 2-(Spend time net) (Talk about course net) (Trust net)
 * R data file with cleaned course survey data and network objects (Wave 1 .rdata) (Wave 1 & 2 .rdata)
 
+<br>
+<hr>
+<br>
+
+## Network Data Structures and Sources of Network Data
+
+These lectures cover the basics of using matrices to represent networks. Fundamental concepts of graph theory are also introduced. Also, various sources of network data are discussed. Special attention is given to the [Prison Inmate Network Study (PINS)](http://justicecenter.psu.edu/research/projects/%20prison-inmate-networks-study-pins) and the Boston Special Youth Project (SYP) Affiliation data.
+
+*Files*:
+Data structures lecture ([pdf](lectures/crj_605_networks_2_data_structures_slides.pdf))
+Sources of data lecture ([pdf](lectures/crj_605_networks_3_sources_of_data_slides.pdf))
+R script for Data structures lecture ([R.](lecture_syntax/crj_605_networks_2_data_structures_syntax.R)
+
+<br>
+<hr>
+<br>
 
 ***UNDER CONSTRUCTION***
 
