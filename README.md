@@ -46,9 +46,9 @@ The introductory lecture covers the basics of network analysis: what it is, why 
 These lectures cover the basics of using matrices to represent networks. Fundamental concepts of graph theory are also introduced. Also, various sources of network data are discussed. Special attention is given to the [Prison Inmate Network Study (PINS)](http://justicecenter.psu.edu/research/projects/%20prison-inmate-networks-study-pins) and the Boston Special Youth Project (SYP) Affiliation data.
 
 *Files*:
-Data structures lecture ([pdf](lectures/crj_605_networks_2_data_structures_slides.pdf))
-Sources of data lecture ([pdf](lectures/crj_605_networks_3_sources_of_data_slides.pdf))
-R script for Data structures lecture ([R.](lecture_syntax/crj_605_networks_2_data_structures_syntax.R))
+* Data structures lecture ([pdf](lectures/crj_605_networks_2_data_structures_slides.pdf))
+* Sources of data lecture ([pdf](lectures/crj_605_networks_3_sources_of_data_slides.pdf))
+* R script for Data structures lecture ([R.](lecture_syntax/crj_605_networks_2_data_structures_syntax.R))
 
 <br>
 <hr>
