@@ -1,4 +1,4 @@
-# **Statistical Analysis of Networks** ([syllabus]()) 
+# **Statistical Analysis of Networks** ([syllabus]())
 
 
 I teach a course on the statistical analysis of networks which provides a survey of the various tools for used in network analysis. The overarching goal of the course is that, upon completion, students will be capable of developing research questions from a network perspective and incorporating network-based tools in their own research. The course is designed to be primarily methodological, dedicating the majority of the time to working through the mechanics of network-based tools. Students will also gain experience with R, a commonly used software program for network data management, analysis, and visualization.
@@ -25,16 +25,16 @@ The introductory lecture covers the basics of network analysis: what it is, why 
 * R script to clean raw course survey data ([Wave 1 .R](syntax/crj_605_networks_spring_2019_class_survey_w1_cleaning_syntax.R)) ([Wave 1 & 2 .R](syntax/crj_605_networks_spring_2019_class_survey_w1_w2_cleaning_syntax.R))
 * Adjacency matrices for course survey data in .csv format:
    * Wave 1-
-   ([Spend time net](data/crj_605_networks_spring_2019_spend_time_w1_adjacency.csv)) 
-   ([Talk about course net](data/crj_605_networks_spring_2019_talk_course_w1_adjacency.csv)) 
-   ([Trust net](data/crj_605_networks_spring_2019_trust_w1_adjacency.csv)) 
+   ([Spend time net](data/crj_605_networks_spring_2019_spend_time_w1_adjacency.csv))
+   ([Talk about course net](data/crj_605_networks_spring_2019_talk_course_w1_adjacency.csv))
+   ([Trust net](data/crj_605_networks_spring_2019_trust_w1_adjacency.csv))
    ([TV net](data/crj_605_networks_spring_2019_tv_w1_adjacency.csv))
    * Wave 2-
-   ([Spend time net](data/crj_605_networks_spring_2019_spend_time_w2_adjacency.csv)) 
-   ([Talk about course net](data/crj_605_networks_spring_2019_talk_course_w2_adjacency.csv)) 
+   ([Spend time net](data/crj_605_networks_spring_2019_spend_time_w2_adjacency.csv))
+   ([Talk about course net](data/crj_605_networks_spring_2019_talk_course_w2_adjacency.csv))
    ([Trust net](data/crj_605_networks_spring_2019_trust_w2_adjacency.csv))
-* R data file with cleaned course survey data and network objects 
-([Wave 1 .rdata](data/crj_605_networks_spring_2019_class_survey_data_w1.rdata)) 
+* R data file with cleaned course survey data and network objects
+([Wave 1 .rdata](data/crj_605_networks_spring_2019_class_survey_data_w1.rdata))
 ([Wave 1 & 2 .rdata](data/crj_605_networks_spring_2019_class_survey_data_w1_w2.rdata))
 
 <br>
@@ -63,6 +63,27 @@ This section starts working in [R](http://cran.r-project.org/) and focuses on th
 * Intro to Networks lab (html) (Rmd)
 * Visualization lab (html) (Rmd)
 * Example networks used in labs (undirected network) (directed network)
+
+
+
+<br>
+<hr>
+<br>
+
+## Centrality
+This lecture provides an introduction to centrality measures for individual nodes as well as centralization measures for graphs. In particular, the following centrality measures are described: degree, closeness, and betweenness. The accompanying labs (Degree Centrality Lab, Closeness & Betweenness Centrality Lab) provide an overview of these measures using the [sna](https://cran.r-project.org/web/packages/sna/index.html) package in [R](http://cran.r-project.org/). In addition, a problem set (with solutions) is provided to work through the material covered.
+
+*Files*:
+* Degree Centrality lecture (pdf) & R script for Degree Centrality lecture (.R)
+Degree Centrality lab (html) (Rmd)
+Degree Centrality problem set (pdf) and solutions (html) (Rmd)
+Closeness & Betweenness Centrality lecture (pdf) & R script for Closeness & Betweenness Centrality lecture (.R)
+Closeness & Betweenness Centrality lab (html) (Rmd)
+Betweenness Centrality problem set (pdf, see Part A) and solutions (html) (Rmd)
+
+<br>
+<hr>
+<br>
 
 
 <br>
