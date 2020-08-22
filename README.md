@@ -75,23 +75,65 @@ This lecture provides an introduction to centrality measures for individual node
 
 *Files*:
 * Degree Centrality lecture (pdf) & R script for Degree Centrality lecture (.R)
-Degree Centrality lab (html) (Rmd)
-Degree Centrality problem set (pdf) and solutions (html) (Rmd)
-Closeness & Betweenness Centrality lecture (pdf) & R script for Closeness & Betweenness Centrality lecture (.R)
-Closeness & Betweenness Centrality lab (html) (Rmd)
-Betweenness Centrality problem set (pdf, see Part A) and solutions (html) (Rmd)
+* Degree Centrality lab (html) (Rmd)
+* Degree Centrality problem set (pdf) and solutions (html) (Rmd)
+* Closeness & Betweenness Centrality lecture (pdf) & R script for Closeness & Betweenness Centrality lecture (.R)
+* Closeness & Betweenness Centrality lab (html) (Rmd)
+* Betweenness Centrality problem set (pdf, see Part A) and solutions (html) (Rmd)
 
 <br>
 <hr>
 <br>
 
+## Cohesive Subgroups
+This lecture provides an introduction to the conceptualization of cohesion in networks. The lecture examines various operationalizations of cohesion by examining definitions of subgroups. Specifically, the lecture covers cliques, n-cliques, k-cores, and community detection algorithms. The accompanying lab (Cohesive Subgroups Lab) provide an overview of these measures using the [igraph](https://igraph.org/redirect.html) and the [sna](https://cran.r-project.org/web/packages/sna/index.html) package in [R](http://cran.r-project.org/).
+
+*Files*:
+* Identifying Subgroups lecture (pdf) & R script for Identifying Subgroups lecture (.R)
+* Cohesive Subgroups lab (html) (Rmd)
 
 <br>
 <hr>
 <br>
 
-***UNDER CONSTRUCTION***
+## Bipartite Graphs/Two-Mode Networks
+These lectures examine data that that are two-mode. That is, data in which objects in one modality (e.g. people) are connected through a second modality (e.g. clubs). The first lecture (Bipartite Graphs lecture) and the accompanying lab (Bipartite Graphs lab) provides an overview of how to create adjacency matrices from two-mode networks and how to analyze bipartite graphs. In addition, the second lecture and lab (Projection & Weighted Graphs lecture/lab) focus on projecting two-mode networks to one-mode (i.e. unipartite graphs) and the consequent weighting of edges that occurs. In addition, a problem set (with solutions) is provided to work through the material covered.
 
+*Files*:
+* Bipartite Graphs lecture (pdf)
+* Bipartite Graphs lab (html) (Rmd)
+* Two-mode edgelist (.csv) from Young & Ready (2015) used in Bipartite Graphs lecture & Bipartite Graphs lab
+* Bipartite Graphs problem set (pdf, see Part B) and solutions (html) (Rmd)
+* Projection & Weighted Graphs lecture (pdf)
+* Projection & Weighted Graphs lab (html) (Rmd)
+
+<br>
+<hr>
+<br>
+
+## Exponential Random Graph Models (ERGMs)
+These lectures examine the logic of generative models for network data. The first lecture (Introduction to ERGMs) introduces the exponential random graph model (ERGM) as a flexible tool for specifying network configurations that generate global network structures. The accompanying lab (Introduction to ERGMs lab) provides an overview of different dependence specifications of the model (e.g. dyadic independence) and working with node level attributes using the ergm package. The second lab (Simulation and Goodness of Fit) examines functions for goodness of fit and simulation in the ergm package. A comprehensive archive of materials, discussion, syntax, papers, etc. for the ergm package is available at the statnet website. In addition, a problem set (with solutions) is provided to work through the material covered.
+
+*Files*:
+* Introduction to ERGMs lecture (pdf) & R script for Introduction to ERGMs lecture (.R)
+* Introduction to ERGMs lab (html) (Rmd)
+* Simulation and Goodness of Fit lab (html) (Rmd)
+* ERGMs problem set (pdf) and solutions (html) (Rmd)
+
+<br>
+<hr>
+<br>
+
+## Stochastic Actor-Based Models (SABMs)
+These lectures examine the logic of simulation based models for network dynamics. Specifically, the stochastic actor-based model (SABM) is an approach to modeling change in network panel data. The first lecture discusses the basic logic of the model. The first lab (Introduction to SABMs) provides an overview the RSiena package by examining the evolution of an advice network among 75 MBA students (see http://www.stats.ox.ac.uk/~snijders/siena/ for details). The second lecture discusses co-evolution of networks and behavior. The second lab (Co-Evolution of Networks and Behavior) examines co-evolution using the RSiena package. A comprehensive archive of materials, discussion, syntax, papers, etc. for the RSiena package is available at the Siena website.
+
+*Files*:
+* Introduction to SABMs lecture (pdf)
+* Introduction to SABMs lab (html) (Rmd)
+     * Advice networks (W1 .csv) (W2 .csv) (W3 .csv) for lab
+     * Attribute data (rating .csv) for lab
+* Co-Evolution of Networks and Behavior lecture (pdf)
+* Co-Evolution of Networks and Behavior lab (html) (Rmd)
 
 
 <br>
