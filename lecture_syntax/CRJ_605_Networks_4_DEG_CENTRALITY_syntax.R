@@ -3,10 +3,12 @@
 # ######################################## #
 
 # ======================================== # 
-# Various syntax for Data Structures lecture.
+# Various syntax for degree centrality lecture.
 # ======================================== # 
 
 rm(list = ls())
+library(network)
+library(RColorBrewer)
 library(sna)
 
 # ####################################
@@ -22,17 +24,19 @@ u.mat <- rbind(
 rownames(u.mat) <- c("Jen","Tom","Bob","Leaf","Jim")
 colnames(u.mat) <- c("Jen","Tom","Bob","Leaf","Jim")
 u.net <- network(u.mat, matrix.type = "adjacency", directed = FALSE)
-u.c.mat <- u.mat
-u.c.mat[u.mat == 0] <- 1
-diag(u.c.mat) <- 0
+centralization(u.net,degree,mode="graph")
 
-
-#set up the coordinates.
-coords <- gplot(u.net, usearrows = FALSE, usecurve = FALSE, main="")
-
-#plot the networks.
-gplot(u.mat, gmode = "graph", displaylabels = TRUE, label.pos = 5, label.cex = 2.2, vertex.col = "lightblue", coord=coords, vertex.cex=3.2)
-gplot(u.c.mat, gmode = "graph", displaylabels = TRUE, label.pos = 5, label.cex = 2.2, vertex.col = "lightgreen", coord=coords, vertex.cex=3.2)
+# Plots to show differences in centralization.
+dum1 <- rbind(c(1,2),c(1,3),c(1,4),c(1,5))
+star_net <- network(dum1,directed=FALSE)
+dum2 <- rbind(c(1,2),c(2,3),c(3,4),c(4,5),c(5,1))
+circle_net <- network(dum2,directed=FALSE)
+par(mar=c(4,4,0.1,0.1))
+my_pal <- brewer.pal(5,"Set2")
+gplot(star_net  , usearrows=FALSE, displayisolates=FALSE, vertex.cex=2, vertex.col=my_pal[1], edge.lwd=0, edge.col="grey50",label=c("A","B","C","D","E"),label.pos=5)
+gplot(circle_net, usearrows=FALSE, displayisolates=FALSE, vertex.cex=2, vertex.col=my_pal[3], edge.lwd=0, edge.col="grey50",label=c("F","G","H","I","J"),label.pos=5)
+centralization(star_net,degree,mode="graph")
+centralization(circle_net,degree,mode="graph")
 
 
 # ##################################
@@ -48,13 +52,8 @@ d.mat <- rbind(
 rownames(d.mat) <- c("Jen","Tom","Bob","Leaf","Jim")
 colnames(d.mat) <- c("Jen","Tom","Bob","Leaf","Jim")
 d.net <- network(d.mat, matrix.type = "adjacency", directed = TRUE)
-d.c.mat <- d.mat
-d.c.mat[d.mat == 0] <- 1
-diag(d.c.mat) <- 0
-
-#plot the networks.
-gplot(d.mat, gmode = "digraph", displaylabels = TRUE, label.pos = 5, label.cex = 2.2, vertex.col = "orange", coord=coords, vertex.cex=3.2)
-gplot(d.c.mat, gmode = "digraph", displaylabels = TRUE, label.pos = 5, label.cex = 2.2, vertex.col = "yellow", coord=coords, vertex.cex=3.2)
+centralization(d.net,degree,mode="digraph",cmode="indegree")
+centralization(d.net,degree,mode="digraph",cmode="outdegree")
 
 
 # ============ # 
