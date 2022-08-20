@@ -37,17 +37,19 @@ ____
 
 [Introduction to Network Analysis](intro_SAND.html)
 
-[R, The Basics & RStudio](R_Basics.html)
+[Network Data Structures and Sources of Network Data](Network_data_SAND.html)
 
-[Working with Data](R_Working_with_Data.html)
+[Getting Started with R and Network Visualization](R_network_vis_SAND.html)
 
-[Programming: Functions, Loops, If/Else Statements](R_Programming.html)
+[Centrality](centrality_SAND.html)
 
-[Data Visualization: R Graphics](R_Data_Visualization.html)
+[Cohesive Subgroups](subgroups_SAND.html)
 
-[Example: Importing, Analyzing, and Plotting Data](R_Data_Example.html)
+[Bipartite Graphs/Two-Mode Networks](bipartite_SAND.html)
 
-[Data-Driven Documents: R Markdown](R_Markdown.html)
+[Exponential Random Graph Models (ERGMs)](ergm_SAND.html)
+
+[Stochastic Actor-Based Models (SABMs)](sabm_SAND.html)
 
 <br>
 
@@ -55,7 +57,7 @@ ____
 
 <br>
 
-#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/RWorkshop/issues) page. Thanks!
+#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
 
 <br>
 <br>

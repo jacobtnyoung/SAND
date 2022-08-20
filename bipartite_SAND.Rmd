@@ -1,0 +1,44 @@
+---
+output: 
+  html_document:
+    theme: yeti
+    toc: false
+    toc_float: false
+    collapsed: false
+    smooth_scroll: false
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<br>
+
+## Bipartite Graphs/Two-Mode Networks
+These lectures examine data that that are two-mode. That is, data in which objects in one modality (e.g. people) are connected through a second modality (e.g. clubs). The first lecture (Bipartite Graphs lecture) and the accompanying lab (Bipartite Graphs lab) provides an overview of how to create adjacency matrices from two-mode networks and how to analyze bipartite graphs. In addition, the second lecture and lab (Projection & Weighted Graphs lecture/lab) focus on projecting two-mode networks to one-mode (i.e. unipartite graphs) and the consequent weighting of edges that occurs. In addition, a problem set (with solutions) is provided to work through the material covered.
+
+*Files*:
+* Bipartite Graphs lecture (pdf)
+* Bipartite Graphs lab (html) (Rmd)
+* Two-mode edgelist (.csv) from Young & Ready (2015) used in Bipartite Graphs lecture & Bipartite Graphs lab
+* Bipartite Graphs problem set (pdf, see Part B) and solutions (html) (Rmd)
+* Projection & Weighted Graphs lecture (pdf)
+* Projection & Weighted Graphs lab (html) (Rmd)
+
+<br>
+
+____
+
+<br>
+
+#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

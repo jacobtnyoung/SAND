@@ -1,0 +1,362 @@
+---
+title: "Simulation and Goodness of Fit with Exponential Random Graph Models (ERGMs) in R Lab"
+date: "CRJ 605 Statistical Analysis of Networks"
+output: 
+  html_document:
+    df_print: paged
+    theme: cosmo
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+---
+
+```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
+library(devtools)
+library(network)
+library(sna)
+library(UserNetR)
+```
+
+
+###
+*This lab introduces simulating networks after estimating exponential random graph models using the `ergm` package. Additionally, goodness of fit using the `gof()` function is also discussed.*
+
+***
+
+##**Getting Started**  
+
+As discussed in the [Introduction to Random Graph Models](https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_8_ergm_a_slides.pdf) lecture, we are trying to build a model that accurately represents the processes that generated the observed network. Let's continue working with the `Bali` network from the `UserNetR` package. Recall that the `Bali` network shows the interactions among the Jemaah Islamiyah terrorist group that carried out the bombings in Bali in 2002. The object `Bali` is of class `network` and has 17 vertices and 126 edges. 
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# clear the workspace.
+rm(list = ls())
+
+# load the UserNetR package.
+library(UserNetR)
+
+# load the network packages so that we can work with the object.
+library(sna)
+library(network)
+```
+
+Let's take a look at a plot of the data based on the roles.
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# lets create some colors for the roles.
+library(RColorBrewer)
+my.pal <- brewer.pal(length(unique(Bali%v%"role")),"Set2")
+role.col <- my.pal[as.factor(Bali%v%"role")]
+
+# lets plot the data and look at the various roles.
+set.seed(605)
+gplot(Bali, usearrows = FALSE, vertex.col = role.col, edge.col = "grey40")
+legend("topright", legend=c("Bomb Maker", "Command", "Ops Asst", "Suicide Bomber", "Team Lima"), col = my.pal, pch = 19, pt.cex=2)
+title("Interactions among the 17 members\n of the 2002 Bali terrorist network")
+```
+
+
+##**The `simulate.ergm()` or `simulate()` and `control.ergm()` functions**  
+
+One way of examining how well our ergm model represents the underlying processes that generated the observed network is to simulate a network based on the model estimates. We can do this using the `simulate.ergm()` or `simulate()` function that is built into the `ergm` package. This function randomly samples networks from the specified model. Let's see how it works:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# load the ergm library.
+library(ergm)
+
+# take a look at the help for simulate.
+?simulate.ergm
+
+# Let's take a look a random graph/edge independence model.
+edge.indep.Bali <- ergm(Bali ~ edges)
+summary(edge.indep.Bali)
+
+# Now, simulate a network from the model.
+sim.edge.indep.Bali <- simulate.ergm(
+  edge.indep.Bali, # we are going to use the estimates from this model for our simulation.
+  nsim=1, # simulate 1 network.
+  warning=FALSE, # suppress a warning that pops up when we use this function.
+  seed = 605 # set the seed so that it reproduces the same results.
+)
+
+# The function creates an object of class network.
+class(sim.edge.indep.Bali)
+
+# Look at the simulated network.
+summary(sim.edge.indep.Bali,print.adj = FALSE)
+
+# Let's take a look at the simulated network and compare it to our observed network.
+op <- par(mfrow=c(1,2), mai = c(0,0,0.7,0))
+set.seed(605)
+gplot(sim.edge.indep.Bali, main="Simulated",vertex.col="lightgreen", gmode="graph")
+set.seed(605)
+gplot(Bali, main="Observed",vertex.col="lightblue", gmode="graph")
+par(op)
+```
+
+*How is the Bali network different from the network generated from the edge independence model? What are the structural features that the model is not capturing?*  
+
+
+##**Simulating more complex models and more graphs**  
+
+Let's try a more complex model based on the nodal attribute `role`. Specifically let's allow:  
+
+* Nodes to differ in their degree based on the role they played in the network.  
+
+* Nodes with the same role designation to be more likely to share ties than nodes that are not in the same role designation (i.e. *homophily*).
+
+Recall that we can examine each of these postulates  using the `nodefactor` (for categorical attributes [for continuous attributes use `nodecov`]) and `nodematch` (for categorical attributes [for continuous attributes use `absdiff`]) terms:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# First, estimate the model.
+role.Bali <- ergm(Bali ~ edges + nodefactor("role") + nodematch("role")) 
+summary(role.Bali)
+
+# Now, simulate a network from the model.
+sim.role.Bali <- simulate.ergm(role.Bali, nsim=1, warning=FALSE, seed = 605)
+
+# Let's take a look at the simulated network and compare it to our observed network.
+op <- par(mfrow=c(1,2), mai = c(0,0,0.7,0))
+set.seed(605)
+gplot(sim.role.Bali, main="Simulated",vertex.col="lightgreen", gmode="graph")
+set.seed(605)
+gplot(Bali, main="Observed",vertex.col="lightblue", gmode="graph")
+par(op)
+```
+
+So far we have only simulated 1 network. Let's simulate several networks and see how they differ from the observed network. We can use the `nsim` argument to request more simulated objects.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Simulate 8 networks
+sims.role.Bali <- simulate.ergm(role.Bali, nsim=8, warning=FALSE, seed = 605)
+
+# Note that the function returns these as a network.list object.
+class(sims.role.Bali)
+
+# If we want to reference a specific simulated network, we use the [[]] indexing.
+summary(sims.role.Bali[[1]],print.adj=FALSE)
+
+# Let's color the nodes based on their role.
+library(RColorBrewer)
+my.pal <- brewer.pal(length(unique(Bali%v%"role")),"Set2")
+role.col <- my.pal[as.factor(Bali%v%"role")]
+
+# Let's take a look at the simulated network and compare it to our observed network.
+op <- par(mfrow=c(3,3), mai = c(0,0,0.7,0))
+gplot(sims.role.Bali[[1]], main="Simulated 1",vertex.col=role.col, gmode="graph")
+gplot(sims.role.Bali[[2]], main="Simulated 2",vertex.col=role.col, gmode="graph")
+gplot(sims.role.Bali[[3]], main="Simulated 3",vertex.col=role.col, gmode="graph")
+gplot(sims.role.Bali[[4]], main="Simulated 4",vertex.col=role.col, gmode="graph")
+set.seed(605)
+gplot(Bali, main="Observed",vertex.col=role.col, gmode="graph")
+gplot(sims.role.Bali[[5]], main="Simulated 5",vertex.col=role.col, gmode="graph")
+gplot(sims.role.Bali[[6]], main="Simulated 6",vertex.col=role.col, gmode="graph")
+gplot(sims.role.Bali[[7]], main="Simulated 7",vertex.col=role.col, gmode="graph")
+gplot(sims.role.Bali[[8]], main="Simulated 8",vertex.col=role.col, gmode="graph")
+par(op)
+```
+
+*How is the Bali network different from the networks generated from the dyad independence model? What are the structural features that the model is not capturing? Is the model doing a good job capturing the role of the attribute **Role**?*  
+
+##**Simulating alternative models**  
+
+Suppose we wanted to simulate a model where the effect of homophily is less strong. In other words, what would *this* network look like if there was not homophily? We can do this by plugging new values into the `simulate.ergm` function.  
+
+Since a fitted `ergm` model is of class `ergm`, it has several parts that we can reference as objects:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# check the class.
+class(role.Bali)
+
+# see the pieces of the ergm object.
+names(role.Bali)
+
+# the coefficients are an object that we can take, modify, and use with the simulation.
+role.Bali$coef
+
+# Let's create a new object that is just the model coefficients.
+no.homophily.coef <- role.Bali$coef
+
+# Now, let's change the effect of nodematch for "role" to be zero.
+  # That is the sixth element in the vector, so we index accordingly.
+no.homophily.coef[6] <- 0 
+
+# Now, the effect is zero.
+no.homophily.coef
+
+# now, plug the edited coefficient into a simulation.
+no.homophily.sim <- simulate.ergm(
+  role.Bali, 
+  coef = no.homophily.coef, # tell it to use the new coefficents.
+  verbose = TRUE # tell it to show us what it is doing.
+) 
+# Now, plot the simulated network with no homophily.
+gplot(no.homophily.sim, main="No Homophily Simluation",vertex.col=role.col, gmode="graph")
+```
+
+*How does the simulated network differ from the* `Bali` *network?*
+
+
+##**Goodness-of-fit (the basic logic)**  
+
+Recall that we are fitting a model to observed data. That is, we are specifying the stochastic process that generated our observed data. We have specified local processes that generate our observed network. So, one way to determine how well the model fits the data is to see how well the model generates global network properties. That is, if the processes we have specified are operating, would we get the indegree distribution (for example) we observe?
+
+We can get a sense of how well the model is representing the observed network based on the visual comparison with the simulated networks. In addition, we could look at whether our simulated networks are reproducing particular structures in our network. We can use the `summary()` function and use the `ergm` terms to return descriptives on the networks (i.e. the observed network and the simulated networks). Let's take a look at the degree distribution as well as the number of triangles in our observed network and our simulated networks:  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# First, let's see how this works for our observed network.
+summary(Bali ~ edges + degree(0:5) + triangle)
+```  
+
+The output shows that the Bali network has:  
+
+* 63 edges  
+
+* 0 nodes with degree 0, degree 1, and degree 2  
+
+* 1 node with degree 3, 1 node with degree 4, and 5 nodes with degree 5  
+
+* 125 triangles (i.e. *i*-*j*, *j*-*k*, & *i*-*k*)  
+
+Now, let's take this info for our observed network and do the same for the simulated networks. Then, we can look at whether the simulations are reproducing the structures we observe in the Bali network.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Create a table that binds together the stats we want for each network.
+  # For each network, we ask for the edges, the degree distribution (0 through 5), and the number of triangles.
+Bali.nets.stats <- rbind(
+  summary(Bali ~ edges + degree(0:5) + triangle), # The stats for the observed network.
+  summary(sims.role.Bali[[1]] ~ edges + degree(0:5) + triangle), # The stats for the simulated networks.
+  summary(sims.role.Bali[[2]] ~ edges + degree(0:5) + triangle),
+  summary(sims.role.Bali[[3]] ~ edges + degree(0:5) + triangle), 
+  summary(sims.role.Bali[[4]] ~ edges + degree(0:5) + triangle),
+  summary(sims.role.Bali[[5]] ~ edges + degree(0:5) + triangle),
+  summary(sims.role.Bali[[6]] ~ edges + degree(0:5) + triangle),  
+  summary(sims.role.Bali[[7]] ~ edges + degree(0:5) + triangle),
+  summary(sims.role.Bali[[8]] ~ edges + degree(0:5) + triangle)
+)
+
+# Add some names and then examine the table.
+rownames(Bali.nets.stats) <- c("Bali Net", "Sim1","Sim2","Sim3","Sim4","Sim5","Sim6","Sim7","Sim8")
+Bali.nets.stats
+```
+
+Recall that the simulations are based on the following model: `ergm(Bali ~ edges + nodefactor("role") + nodematch("role"))`.  
+
+*Looking through the table, how well is the model representing the structures we have decided to examine?*
+
+
+We just decided to look at 8 simulations. Alternatively, we could run a lot of simulations and examine the distribution of a particular structural property (e.g. triangles). In the `simulate()` function, we can use the `monitor=` argument to pass any specific terms we want to simulate. Since we are focusing just on the number of triangles, we would use `monitor=~triangle`. Note the incorporation of the `~` in the `monitor=` argument. We can also use the `statsonly=` argument to just calculate stats rather than generating networks. Since we are only interested in the stats and don't want the networks, we use `statsonly=TRUE`.
+
+Let's simulate 500 networks and take a look at the results:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Run the simulation.
+Bali.large.sim<-simulate(
+  role.Bali, # use the model based on role.
+  nsim = 500, # ask for 500 simulations.
+  monitor = ~ triangle, # we want it to focus on the triangles.
+  statsonly = TRUE, # just keep the stats, not the networks.
+  seed = 605 # set the seed to reproduce the results.
+)
+
+# Now, plot the simulated stats to see the results.
+hist(Bali.large.sim[,"triangle"], # plot the triangle counts from each simulation.
+     main = "Simulations \n (X shows observed network)", # add a title.
+     xlim = c(0,200), ylim = c(0,125), # set the axis limits.
+     xlab = "Number of triangles", ylab = "Number of simulated networks" #label the axes.
+     )
+points(summary(Bali ~ triangle),4, pch="X", cex=2, col="red")
+```
+
+*In looking at the simulation of the triangles, is our model generating as much transitivity as we observe in the Bali network?*  
+
+
+##**Goodness-of-fit with the `gof()` function**  
+
+As we just saw, we can simulate lots of networks and then compare our observed network to the networks simulated from the model estimates. In `ergm`, there is a function that does this for us, `gof()`. The `gof()` function calculates *p*-values for geodesic distance, degree, and reachability summaries to diagnose the goodness-of-fit of exponential family random graph models.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Take a look at the help for the function.
+?gof
+```
+
+As shown in the help, the `gof()` function takes a fitted `ergm` object (i.e. an estimated model), and uses the `GOF=` argument to specify what summaries information we want to calculate for our **simulated** networks. Rather than simulating the networks, then calculating the stats, then creating a plot, the `gof()` function does all of this for us! (how nice).  
+
+The `GOF=` argument takes a formula object, of the form `~ <model terms>` specifying the statistics to use to diagnosis the goodness-of-fit of the model. They do not need to be terms that are in the model, and typically are not. Currently supported terms are the degree distribution (`degree` for *undirected graphs*, or `idegree` and/or `odegree` for *directed graphs*), geodesic distances (`distance`), shared partner distributions (`espartners` [1 edge-wise shared partner is *i*-*j*, *j*-*k*, and *i*-*k*] and `dspartners` [1 dyad-wise shared partner is *j*-*k* and *i*-*k*]), the triad census (`triadcensus`), and the terms of the original model (`model`). The default formula for undirected networks is `~ degree + espartners + distance + model`, and the default formula for directed networks is `~ idegree + odegree + espartners + distance + model`. 
+
+Let's go ahead and take a look at this with the `role.Bali` model we estimated above where: `ergm(Bali ~ edges + nodefactor("role") + nodematch("role"))`. We want to calculate the degree distribution (`degree`), the edge-wise shared partner distribution (`espartners`), and the geodesic distances (`distance`). 
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+role.Bali.gof <- gof(
+  role.Bali, # our estimated model.
+  GOF = ~degree # the degree distribution, 
+    + espartners # the edge-wise shared partners distribution,
+    + distance, # the geodesic distance distribution.  
+  verbose = TRUE, # we want it to tell us what it is doing while it is doing it.
+  control = control.gof.ergm(seed = 605) # set the seed to reproduce results, note the control= argument. 
+)
+
+# Now, print out the goodness of fit info.
+role.Bali.gof
+```
+
+The object `role.Bali.gof` shows the goodness-of-fit for the degree distribution, the edge-wise shared partner distribution, and the geodesic distances. Each table shows the value in the observed network (`obs`) as well as the minimum (`min`), mean (`mean`), and maximum (`max`) of that value in the **simulations**.  
+
+The *p*-value column (`p-value`) is the proportion of the simulated values of the statistic that are at least as extreme as the observed value. *Large* values indicate that the simulated networks are similar to the observed network. Values less than 0.05 demonstrate a significant difference between the observed network and the simulated networks.  
+
+
+We can reference each table using the `$pval` operator. Take a look at the names using: `names(role.Bali.gof)`. Let's take a look at the degree distribution first:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Return the gof info for just the degree distribution.
+role.Bali.gof$pval.deg
+```
+
+In looking through the *Goodness-of-fit for degree* table, none of the *p*-values are less than 0.05, suggesting that the degree distribution in the simulated data are matching well with the degree distribution for the observed data. In other words, our model (i.e. `ergm(Bali ~ edges + nodefactor("role") + nodematch("role"))`) is reproducing the degree distribution in our observed data.
+
+Now let's look at the other distributions. Take a look at the *Goodness-of-fit for edge-wise shared partner* table:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Return the gof info for just the edge-wise shared partner distribution.
+role.Bali.gof$pval.espart
+```
+
+Recall that an edge-wise shared partner of 1 or `esp1` is *i*-*j*, *j*-*k*, and *i*-*k*. An edge-wise shared partner of 2 or `esp2` is *i*-*j*, *j*-*k* and *i*-*k*, as well as *i*-*l* and *l*-*l*. And so on... 
+
+*What is the interpretation of this table?* 
+
+***Conceptually, what does the difference between the simulated networks and the observed networks, based on the edge-wise shared partner distribution tell us?***
+
+Now, take a look at the *Goodness-of-fit for minimum geodesic distance* table:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Return the gof info for just the edge-wise shared partner distribution.
+role.Bali.gof$pval.dist
+```
+
+Recall that a geodesic is the shortest path between two nodes. The distribution shows the count of these and `Inf` indicates the number of dyads that are unreachable.
+
+*What is the interpretation of this table?*
+
+Finally, we can plot the `gof()` object and examine the simulated and observed data.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+#Set up the plotting pane.
+  # Since we have 3 distributions, we need four windows.
+op <- par(mfrow=c(2,2))
+plot(role.Bali.gof)
+par(op)
+```
+
+Each plot shows boxplots for the values of the simulated networks. The **dark** line in each plot is the network statistic for the *observed network*. Situations where the dark line falls outside of the boxplots indicates that the simulation is not reproducing that particular structural aspect of the network.
+
+For example, take a look at the *degree distribution*. Nodes with degree 5 and 9 are not well represented in our model. In other words, our model has a hard time generating networks in which nodes have degree 5 or 9.
+
+As another example, take a look at the edge-wise shared partner distribution. The model is not generating enough dyads that have 7 and 8 shared partners ( that is *i* and *j* are tied and share 7 or 8 other nodes in common). This makes sense because we didn't fit a transitivity term to our network. So, basically, the simulations are telling us that the `nodefactor` and `nodematch` terms based on "role" are not the reason for the transitivity we observe in the network.
+
+***
+
+####***Questions?***####
+
+```{r,echo=FALSE,eval=FALSE}
+#END OF LAB
+```

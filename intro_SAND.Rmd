@@ -1,14 +1,21 @@
 ---
-title: "Introduction to Network Analysis"
 output: 
   html_document:
     theme: yeti
+    toc: false
+    toc_float: false
+    collapsed: false
+    smooth_scroll: false
 ---
+
+<style>
+body {
+text-align: justify}
+</style>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
 <br>
 
 ## Introduction to Network Analysis
