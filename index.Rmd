@@ -37,7 +37,7 @@ ____
 
 [Introduction to Network Analysis](intro_SAND.html)
 
-[Network Data Structures and Sources of Network Data](Network_data_SAND.html)
+[Network Data Structures and Sources of Network Data](network_data_SAND.html)
 
 [Getting Started with R and Network Visualization](R_network_vis_SAND.html)
 
