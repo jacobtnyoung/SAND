@@ -1,0 +1,83 @@
+---
+title: "Plot Example"
+output: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+```{r global, include = FALSE}
+
+library( sna )
+
+```
+
+
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+
+            sliderInput( inputId = "node",
+                         label = h3( "Number of nodes:" ) ,
+                         min = 1,
+                         max = 50,
+                         value = 15 )
+            sliderInput( inputId ="prob",
+                         label = h3( "Probability of a tie:" ) ,
+                         min = 0,
+                         max = 1,
+                         value = 0.25 )
+            selectInput( inputId = "graph.type", 
+                         label = h3( "Directionality of Graph" ), 
+                         choices = list( "Directed" = "digraph", "Undirected" = "graph" ), 
+                         selected = "digraph" )
+            selectInput( inputId = "node.color", 
+                         label = h3( "Node Color" ), 
+                         choices = list( "Red" = "red", "Blue" = "blue", "Green" = "green" ), 
+                         selected = "red" )
+            
+
+
+```
+
+
+Column
+-----------------------------------------------------------------------
+
+```{r}
+
+renderPlot({
+        
+  # Create the graph to plot.
+  set.seed( 12345 )
+  graph.for.plot <- rgraph( 
+            n = input$node, 
+            m = 1, 
+            tprob = input$prob,
+            mode = input$graph.type
+            )
+  
+       # plot the graph.
+        gplot( 
+          graph.for.plot,
+          vertex.col = input$node.color, 
+          gmode = input$graph.type 
+          )
+  })
+
+```
+
+```{r}
+
+renderPlot({
+  
+  # Plot the degree distribution.
+  hist( 
+    degree( 
+      graph.for.plot,
+      cmode = "indegree" )
+    )
+  })
+
+```
+
