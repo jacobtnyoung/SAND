@@ -8,6 +8,8 @@ runtime: shiny
 
 library( sna )
 
+set.seed( 12345 )
+
 ```
 
 
@@ -46,20 +48,30 @@ Column
 
 ```{r}
 
-renderPlot({
-        
-  # Create the graph to plot.
-  set.seed( 12345 )
-  graph.for.plot <- rgraph( 
+# Create the graph to plot
+graph.for.plot <- reactive({
+  rgraph( 
             n = input$node, 
             m = 1, 
             tprob = input$prob,
             mode = input$graph.type
             )
+})  
+
+
+renderPlot({
+  
+  #graph.for.plot <- 
+  #rgraph( 
+  #          n = input$node, 
+  #          m = 1, 
+  #          tprob = input$prob,
+  #          mode = input$graph.type
+  #          )
   
        # plot the graph.
         gplot( 
-          graph.for.plot,
+          graph.for.plot(),
           vertex.col = input$node.color, 
           gmode = input$graph.type 
           )
@@ -74,7 +86,7 @@ renderPlot({
   # Plot the degree distribution.
   hist( 
     degree( 
-      graph.for.plot,
+      graph.for.plot(),
       cmode = "indegree" )
     )
   })
