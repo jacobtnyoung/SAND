@@ -1,6 +1,10 @@
 ---
 title: "Plot Example"
-output: flexdashboard::flex_dashboard
+output: 
+  flexdashboard::flex_dashboard:
+    theme: yeti
+    source: embed
+    smart: false
 runtime: shiny
 ---
 
