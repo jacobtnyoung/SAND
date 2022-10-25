@@ -16,31 +16,92 @@ text-align: justify}
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
 <br>
 
 ## Introduction to Network Analysis
 
-The introductory lecture covers the basics of network analysis: what it is, why we do it, etc. The learning goals of this lecture are to: 1) understand the difference between individual vs. network approaches to research and 2) introduce basic data elements in network analysis.
+<br>
 
-*Files*:
-* Introduction lecture ([pdf](lectures/crj_605_networks_1_intro_slides.pdf)) & R script for Introduction lecture ([.R](lecture_syntax/intro.lecture.syntax.R))
-* Raw course survey data ([Wave 1 .csv](data/crj_605_networks_spring_2019_class_survey_data_w1.csv)) ([Wave 2 .csv](data/crj_605_networks_spring_2019_class_survey_data_w2.csv)) ([Wave 1 & Wave 2 .csv](data/crj_605_networks_spring_2019_class_survey_data_w1_w2.csv))
-* Course survey data instruments ([Wave 1 pdf](files/crj_605_networks_spring_2019_class_survey_w1.pdf)) (Wave 2 pdf)
-* R script to clean raw course survey data ([Wave 1 .R](syntax/crj_605_networks_spring_2019_class_survey_w1_cleaning_syntax.R)) ([Wave 1 & 2 .R](syntax/crj_605_networks_spring_2019_class_survey_w1_w2_cleaning_syntax.R))
-* Adjacency matrices for course survey data in .csv format:
-   * Wave 1-
-   ([Spend time net](data/crj_605_networks_spring_2019_spend_time_w1_adjacency.csv))
-   ([Talk about course net](data/crj_605_networks_spring_2019_talk_course_w1_adjacency.csv))
-   ([Trust net](data/crj_605_networks_spring_2019_trust_w1_adjacency.csv))
-   ([TV net](data/crj_605_networks_spring_2019_tv_w1_adjacency.csv))
-   * Wave 2-
-   ([Spend time net](data/crj_605_networks_spring_2019_spend_time_w2_adjacency.csv))
-   ([Talk about course net](data/crj_605_networks_spring_2019_talk_course_w2_adjacency.csv))
-   ([Trust net](data/crj_605_networks_spring_2019_trust_w2_adjacency.csv))
-* R data file with cleaned course survey data and network objects
-([Wave 1 .rdata](data/crj_605_networks_spring_2019_class_survey_data_w1.rdata))
-([Wave 1 & 2 .rdata](data/crj_605_networks_spring_2019_class_survey_data_w1_w2.rdata))
+The introductory lecture covers the basics of network analysis: what it is, why we do it, etc. 
+
+The learning goals of this lecture are to:   
+
+  1) understand the difference between individual vs. network approaches to research   
+  2) introduce basic data elements in network analysis
 
 <br>
-<hr>
+
+
+#### Lecture Materials
+
+ + [Introduction lecture](_lectures/crj_605_networks_1_intro_slides.pdf) 
+ 
+ + [R script for Introduction lecture](_lecture_syntax/intro.lecture.syntax.R)
+
 <br>
+
+#### Course Survey Materials
+
+ + Raw course survey data
+   + [Wave 1](_data/crj_605_networks_spring_2019_class_survey_data_w1.csv)
+   
+   + [Wave 2](_data/crj_605_networks_spring_2019_class_survey_data_w2.csv)
+   
+   + [Wave 1 & Wave 2](_data/crj_605_networks_spring_2019_class_survey_data_w1_w2.csv)
+ 
+ 
+  + Course survey data instruments
+    + [Wave 1 instrument](_course_survey/crj_605_networks_spring_2019_class_survey_w1.pdf) 
+    
+    + [Wave 2 instrument](_course_survey/crj_605_networks_spring_2019_class_survey_w2.pdf)
+    
+    + [R script to clean raw course survey data from Wave 1](_course_survey_syntax/crj_605_networks_spring_2019_class_survey_w1_cleaning_syntax.R)
+    
+    + [R script to clean raw course survey data from Wave 1 & Wave 2](_course_survey_syntax/crj_605_networks_spring_2019_class_survey_w1_w2_cleaning_syntax.R)
+ 
+<br>
+ 
+#### Adjacency matrices for course survey data:
+
+##### Wave 1
+
+  + [Spend time net](_data/crj_605_networks_spring_2019_spend_time_w1_adjacency.csv)
+  
+  + [Talk about course net](_data/crj_605_networks_spring_2019_talk_course_w1_adjacency.csv)
+  
+  + [Trust net](_data/crj_605_networks_spring_2019_trust_w1_adjacency.csv)
+  
+  + [TV net](_data/crj_605_networks_spring_2019_tv_w1_adjacency.csv)
+
+<br>
+
+##### Wave 2
+
+  + [Spend time net](_data/crj_605_networks_spring_2019_spend_time_w2_adjacency.csv)
+  
+  + [Talk about course net](_data/crj_605_networks_spring_2019_talk_course_w2_adjacency.csv)
+  
+  + [Trust net](_data/crj_605_networks_spring_2019_trust_w2_adjacency.csv)
+
+<br>  
+
+##### R data file with cleaned course survey data and network objects
+  
+  + [Wave 1](_data/crj_605_networks_spring_2019_class_survey_data_w1.rdata)
+  
+  + [Wave 1 & 2](_data/crj_605_networks_spring_2019_class_survey_data_w1_w2.rdata)
+
+<br>
+
+____
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

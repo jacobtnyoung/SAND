@@ -13,7 +13,7 @@
 
 <title>intro_SAND.knit</title>
 
-<script src="libs/header-attrs-2.15/header-attrs.js"></script>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -60,7 +60,6 @@ if (window.hljs) {
 
 
 
-
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -81,9 +80,6 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
-}
-details > summary > p:only-child {
-  display: inline;
 }
 pre code {
   padding: 0;
@@ -141,15 +137,11 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark the anchor link active (and if it's in a dropdown, also mark that active)
-  var dropdown = menuAnchor.closest('li.dropdown');
-  if (window.bootstrap) { // Bootstrap 4+
-    menuAnchor.addClass('active');
-    dropdown.find('> .dropdown-toggle').addClass('active');
-  } else { // Bootstrap 3
-    menuAnchor.parent().addClass('active');
-    dropdown.addClass('active');
-  }
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -246,7 +238,7 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">R Workshop</a>
+      <a class="navbar-brand" href="index.html">Statistical Analysis of Network Data (SAND)</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -270,50 +262,126 @@ text-align: justify}
 <p><br></p>
 <div id="introduction-to-network-analysis" class="section level2">
 <h2>Introduction to Network Analysis</h2>
-<p>The introductory lecture covers the basics of network analysis: what
-it is, why we do it, etc. The learning goals of this lecture are to: 1)
-understand the difference between individual vs. network approaches to
-research and 2) introduce basic data elements in network analysis.</p>
-<p><em>Files</em>: * Introduction lecture (<a
-href="lectures/crj_605_networks_1_intro_slides.pdf">pdf</a>) &amp; R
-script for Introduction lecture (<a
-href="lecture_syntax/intro.lecture.syntax.R">.R</a>) * Raw course survey
-data (<a
-href="data/crj_605_networks_spring_2019_class_survey_data_w1.csv">Wave 1
-.csv</a>) (<a
-href="data/crj_605_networks_spring_2019_class_survey_data_w2.csv">Wave 2
-.csv</a>) (<a
-href="data/crj_605_networks_spring_2019_class_survey_data_w1_w2.csv">Wave
-1 &amp; Wave 2 .csv</a>) * Course survey data instruments (<a
-href="files/crj_605_networks_spring_2019_class_survey_w1.pdf">Wave 1
-pdf</a>) (Wave 2 pdf) * R script to clean raw course survey data (<a
-href="syntax/crj_605_networks_spring_2019_class_survey_w1_cleaning_syntax.R">Wave
-1 .R</a>) (<a
-href="syntax/crj_605_networks_spring_2019_class_survey_w1_w2_cleaning_syntax.R">Wave
-1 &amp; 2 .R</a>) * Adjacency matrices for course survey data in .csv
-format: * Wave 1- (<a
-href="data/crj_605_networks_spring_2019_spend_time_w1_adjacency.csv">Spend
-time net</a>) (<a
-href="data/crj_605_networks_spring_2019_talk_course_w1_adjacency.csv">Talk
-about course net</a>) (<a
-href="data/crj_605_networks_spring_2019_trust_w1_adjacency.csv">Trust
-net</a>) (<a
-href="data/crj_605_networks_spring_2019_tv_w1_adjacency.csv">TV net</a>)
-* Wave 2- (<a
-href="data/crj_605_networks_spring_2019_spend_time_w2_adjacency.csv">Spend
-time net</a>) (<a
-href="data/crj_605_networks_spring_2019_talk_course_w2_adjacency.csv">Talk
-about course net</a>) (<a
-href="data/crj_605_networks_spring_2019_trust_w2_adjacency.csv">Trust
-net</a>) * R data file with cleaned course survey data and network
-objects (<a
-href="data/crj_605_networks_spring_2019_class_survey_data_w1.rdata">Wave
-1 .rdata</a>) (<a
-href="data/crj_605_networks_spring_2019_class_survey_data_w1_w2.rdata">Wave
-1 &amp; 2 .rdata</a>)</p>
-<br>
-<hr>
 <p><br></p>
+<p>The introductory lecture covers the basics of network analysis: what
+it is, why we do it, etc.</p>
+<p>The learning goals of this lecture are to:</p>
+<ol style="list-style-type: decimal">
+<li>understand the difference between individual vs. network approaches
+to research<br />
+</li>
+<li>introduce basic data elements in network analysis</li>
+</ol>
+<p><br></p>
+<div id="lecture-materials" class="section level4">
+<h4>Lecture Materials</h4>
+<ul>
+<li><p><a
+href="_lectures/crj_605_networks_1_intro_slides.pdf">Introduction
+lecture</a></p></li>
+<li><p><a href="_lecture_syntax/intro.lecture.syntax.R">R script for
+Introduction lecture</a></p></li>
+</ul>
+<p><br></p>
+</div>
+<div id="course-survey-materials" class="section level4">
+<h4>Course Survey Materials</h4>
+<ul>
+<li>Raw course survey data
+<ul>
+<li><p><a
+href="_data/crj_605_networks_spring_2019_class_survey_data_w1.csv">Wave
+1</a></p></li>
+<li><p><a
+href="_data/crj_605_networks_spring_2019_class_survey_data_w2.csv">Wave
+2</a></p></li>
+<li><p><a
+href="_data/crj_605_networks_spring_2019_class_survey_data_w1_w2.csv">Wave
+1 &amp; Wave 2</a></p></li>
+</ul></li>
+<li>Course survey data instruments
+<ul>
+<li><p><a
+href="_course_survey/crj_605_networks_spring_2019_class_survey_w1.pdf">Wave
+1 instrument</a></p></li>
+<li><p><a
+href="_course_survey/crj_605_networks_spring_2019_class_survey_w2.pdf">Wave
+2 instrument</a></p></li>
+<li><p><a
+href="_course_survey_syntax/crj_605_networks_spring_2019_class_survey_w1_cleaning_syntax.R">R
+script to clean raw course survey data from Wave 1</a></p></li>
+<li><p><a
+href="_course_survey_syntax/crj_605_networks_spring_2019_class_survey_w1_w2_cleaning_syntax.R">R
+script to clean raw course survey data from Wave 1 &amp; Wave
+2</a></p></li>
+</ul></li>
+</ul>
+<p><br></p>
+</div>
+<div id="adjacency-matrices-for-course-survey-data"
+class="section level4">
+<h4>Adjacency matrices for course survey data:</h4>
+<div id="wave-1" class="section level5">
+<h5>Wave 1</h5>
+<ul>
+<li><p><a
+href="_data/crj_605_networks_spring_2019_spend_time_w1_adjacency.csv">Spend
+time net</a></p></li>
+<li><p><a
+href="_data/crj_605_networks_spring_2019_talk_course_w1_adjacency.csv">Talk
+about course net</a></p></li>
+<li><p><a
+href="_data/crj_605_networks_spring_2019_trust_w1_adjacency.csv">Trust
+net</a></p></li>
+<li><p><a
+href="_data/crj_605_networks_spring_2019_tv_w1_adjacency.csv">TV
+net</a></p></li>
+</ul>
+<p><br></p>
+</div>
+<div id="wave-2" class="section level5">
+<h5>Wave 2</h5>
+<ul>
+<li><p><a
+href="_data/crj_605_networks_spring_2019_spend_time_w2_adjacency.csv">Spend
+time net</a></p></li>
+<li><p><a
+href="_data/crj_605_networks_spring_2019_talk_course_w2_adjacency.csv">Talk
+about course net</a></p></li>
+<li><p><a
+href="_data/crj_605_networks_spring_2019_trust_w2_adjacency.csv">Trust
+net</a></p></li>
+</ul>
+<p><br></p>
+</div>
+<div
+id="r-data-file-with-cleaned-course-survey-data-and-network-objects"
+class="section level5">
+<h5>R data file with cleaned course survey data and network objects</h5>
+<ul>
+<li><p><a
+href="_data/crj_605_networks_spring_2019_class_survey_data_w1.rdata">Wave
+1</a></p></li>
+<li><p><a
+href="_data/crj_605_networks_spring_2019_class_survey_data_w1_w2.rdata">Wave
+1 &amp; 2</a></p></li>
+</ul>
+<p><br></p>
+<hr />
+<p><br></p>
+</div>
+<div
+id="please-report-any-needed-corrections-to-the-issues-page.-thanks"
+class="section level5">
+<h5><strong><em>Please</em></strong> report any needed corrections to
+the <a href="https://github.com/jacobtnyoung/SAND/issues">Issues</a>
+page. Thanks!</h5>
+<p><br> <br></p>
+<div id="last-updated-25-october-2022" class="section level6">
+<h6><strong><em>Last updated 25 October, 2022</em></strong></h6>
+</div>
+</div>
+</div>
 </div>
 
 
