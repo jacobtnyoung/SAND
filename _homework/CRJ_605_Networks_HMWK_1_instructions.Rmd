@@ -1,0 +1,48 @@
+---
+title: "INSTRUCTIONS: Homework/Problem Set 1"
+author: "Statistical Analysis of Networks (CRJ) 605"
+output: 
+  html_document:
+    df_print: paged
+    theme: cosmo
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The purpose of this assignment is to familiarize yourself with how networks are created and examined in *R*.  
+
+For this assignment, you will work with two networks created from the course survey data. The two networks are: 
+
+* `talk.course.net` the Talked about the Course network  
+    (available at: https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_talk_course_w1_adjancency.csv)
+* `trust.net` the Trust with Damaging information network  
+    (available at: https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_trust_w1_adjancency.csv)  
+
+### **For *each* network (i.e. `talk.course.net` and `trust.net`) do the following**:  
+
+1. Import the network into *R* and create an object of class `network`.    
+2. Plot the network using the `gplot()` function.    
+3. Modify the plot using at least three arguments in the `gplot()` function.  
+4. Calculate the indegree and outdegree for each actor.  
+5. Calculate the standardized indegree and outdegree for each actor.  
+6. Calculate the mean indegree and outdegree.  
+7. Compare the two means.  
+8. Calcuate the graph centralization for indegree and outdegree.  
+9. Compare the two graph centralization scores.  
+
+###**Now, compare the networks**:  
+
+10. How are the indegree and outdegree different for these networks?  
+11. What do the differences in the graph centralization scores for these networks tell us?  
+
+###**BONUS Question**:  
+
+12. For the `trust.net` network, are people who trust others *more* or *less* likely to be trusted?  
+
+### This assigment is **DUE** 2/14.

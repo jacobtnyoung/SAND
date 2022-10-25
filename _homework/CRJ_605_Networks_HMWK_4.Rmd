@@ -1,0 +1,104 @@
+THIS IS THE SIENA HOMEWORK THAT YOU DIDNT END UP PUTTING TOGETHER:
+
+Statistical Analysis of Networks
+Criminology and Criminal Justice (CRJ) 605
+
+Homework Five (due 4/22)
+The goal of this is to become familiar with stochastic actor-based modeling. You will examine the co-evolution of friendship, smoking, and drug use in three waves of data. Specifically, you will use:
+hmwk_6_friend1.csv (friendship wave 1),
+hmwk_6_friend2.csv (friendship wave 2),
+hmwk_6_friend3.csv (friendship wave 3),
+hmwk_6_smoke.csv (smoking waves 1, 2, and 3), and
+hmwk_6_drugs.csv (drug use waves 1, 2, and 3) 
+
+A. Plot the network at each wave. Color the nodes based on drug use. Comment on the extent to which drug use among friends appears to be correlated. Also, discuss any notable changes over time.
+
+B. Estimate the following explanatory models in RSiena. 
+
+A good way to proceed is to first identify the dependent variable in the hypothesis (i.e. what changes?), then identify the predictors (i.e. in response to what?). 
+
+IMPORTANT: for each model, be sure to a) draw the network configuration for which you are testing, b) interpret the coefficients, and c) determine whether the hypothesis is supported.
+
+1. Drug use is a 'cry-for help': you start using drugs because you do not have many friends.
+2. Drug use is a consequence of being popular: you start using drugs because you have many friends.
+3. Drug use makes you a more attractive friend to others.
+4. Drug users, and non-drug users, want to be among similar others.
+5. Drug users are more social/active.
+6. Smoking is a gateway substance that leads to drug use.
+7. Test all these effects simultaneously.
+
+C. Now, include the following structural determinants of network formation to model 7: transitivity, 3-cycles, popularity, and activity. Do the results change when you include these terms? If so, explain your answer.
+
+
+
+
+
+
+
+
+
+
+
+---
+title: "Homework/Problem Set 3"
+author: "Statistical Analysis of Networks (CRJ) 605"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+For this assignment you will work with the *Local Health Department Communication* network:  
+
+* This network is stored as the object `lhds`, which is an object of class `network` in the `UserNetR` package. This network is undirected network and consists of 1,283 local health departments and the communication links between their leaders. Attributes of the network members include: the state they are located in (`state`), whether or not they conduct HIV screening programs (`hivscreen`) or nutrition programs (`nutrition`), how many people live in the department jurisdiction (`popmil`) in millions, and the number of years of experience the leader has (`years`). 
+
+###**For the *Local Health Department Communication* (LHDS) network, do the following**:  
+
+1. Plot the LHDS network and plot a random network with the same number of edges.
+2. Based on the plots, how does the LHDS network differ from the random network?
+3. Plot the degree distribution for the LHDS network and the random network?
+4. How do the degree distributions differ between the LHDS network and the random network?
+5. Estimate an ERGM where departments communicate at random. Interpret the coefficient.
+6. Examine and describe the relationship between degree and the attribute `years` of experience.
+7. Estimate an ERGM where department leaders with more `years` of experience differ in their degree. Interpret the coefficients.
+8. Examine the mixing matrix for `hivscreen`. What is the interpretation of this matrix?
+9. Estimate an ERGM where departments that provide an `hivscreen` have a preference for communicating with departments that also provide an `hivscreen`.
+10. What is the probability of a tie between two departments who *both* provide an `hivscreen`?
+11. What is the probability of a tie between two departments who *do not* provide an `hivscreen`?
+12. Does the interpretation of the mixing matrix for `hivscreen` lead to the same conclusion as the ERG model for `hivscreen`?
+13. Examine the mixing matrix for `nutrition`. What is the interpretation of this matrix?
+14. Estimate an ERGM where departments that provide `nutrition` programs have a preference for communicating with departments that also provide `nutrition` programs.
+15. What is the probability of a tie between two departments who *both* provide `nutrition` programs?
+16. What is the probability of a tie between two departments who *do not* provide a `nutrition` program?
+17. Does the interpretation of the mixing matrix for `nutrition` lead to the same conclusion as the ERG model for `nutrition`?
+18. Now, estimate an ERGM where: departments have a preference for communicating with other departments based on `hivscreen` **and** `nutrition`. Interpret the coefficients.
+19. Plot the LDHS network and identify the nodes based on `hivscreen` and `nutrition`.
+20. Simulate a network from the `hivscreen` **and** `nutrition` ERGM and compare it to the observed LDHS network.
+21. Evaluate the goodness of fit for the `hivscreen` **and** `nutrition` ERGM.  
+
+
+###**BONUS Question**:  
+
+22.B. Look through the `ergm.terms` page (use `?ergm.terms`). For the LHDS network, identify **two** other network configurations that could explain the observed network. Estimate and interpret the models.  
+
+
+###**Extra BONUS Questions**:  
+
+The *Talked About the Course* network, stored as the object `talk.course.net`, which is an object of class `network`, is available at:  https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_class_survey_data_w1.rdata.  
+
+Do the following:  
+
+1. Plot the *Talked About the Course* network and plot a random network with the same number of edges.
+2. Based on the plots, how does the *Talked About the Course* network differ from the random network?
+3. Plot the degree distribution for the *Talked About the Course* network and the random network?
+4. How do the degree distributions differ between the *Talked About the Course* network and the random network?
+5. Estimate an ERGM where students talked about the course at random. Interpret the coefficient.
+6. Examine and describe the relationship between degree and the attribute `Sleept1` of experience.
+7. Estimate an ERGM where students who sleep more differ in their degree. Interpret the coefficients.
+8. Estimate an ERGM where students who sleep more *send* less ties. Interpret the coefficient.
+9. Estimate an ERGM where students who sleep more *receive* fewer ties. Interpret the coefficient.
+10. Estimate an ERGM where students who sleep more *send* **and** *receive* fewer ties. Interpret the coefficients.
+
+### This assignment is **DUE** 3/28.  

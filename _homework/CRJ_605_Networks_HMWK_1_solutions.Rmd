@@ -1,0 +1,363 @@
+---
+title: "SOLUTIONS: Homework/Problem Set 1"
+author: "Statistical Analysis of Networks (CRJ) 605"
+output: 
+  html_document:
+    df_print: paged
+    theme: cosmo
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+# load libraries.
+library(sna, quietly = TRUE)
+library(network, quietly = TRUE)
+library(RColorBrewer)
+
+# clear the workspace.
+rm(list = ls())
+```
+***  
+
+# **Problems**  
+
+###**For *each* network (i.e. `talk.course.net` and `trust.net`) do the following**:  
+
+1. Import the network into *R* and create an object of class `network`.    
+2. Plot the network using the `gplot()` function.    
+3. Modify the plot using at least three arguments in the `gplot()` function.  
+4. Calculate the indegree and outdegree for each actor.  
+5. Calculate the standardized indegree and outdegree for each actor.  
+6. Calculate the mean indegree and outdegree.  
+7. Compare the two means.  
+8. Calcuate the graph centralization for indegree and outdegree.  
+9. Compare the two graph centralization scores.  
+
+***  
+
+# **Solutions**  
+
+###**Analysis of Talked about the Course network**: 
+
+1. Import the network into *R* and create an object of class `network`. 
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+# read in the data.
+talk.adj.mat <- read.csv(
+  url("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_talk_course_w1_adjancency.csv"), # pull from the website.
+  as.is=TRUE, row.names = 1, header = TRUE #set up the arguments to read it in correctly.
+)
+dim(talk.adj.mat) # check dimensions.
+talk.net <- as.network(talk.adj.mat, directed = TRUE) # create the network object.
+summary(talk.net, print.adj = FALSE) # take a look at the data.
+```
+
+
+2. Plot the network using the `gplot()` function.    
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+gplot(talk.net)
+```
+
+
+3. Modify the plot using at least three arguments in the `gplot()` function.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+# for this, let's load the data file that has the attributes.
+load(url("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_class_survey_data_w1.rdata"))
+ls() # check out the workspace objects.
+
+# Then, let's create the rescale function that we will use.
+rescale <- function(nchar,low,high){
+  min_d <- min(nchar)
+  max_d <- max(nchar)
+  rscl  <- ((high-low)*(nchar-min_d)) / (max_d-min_d)+low
+  rscl
+}
+
+# First modification: size nodes based on time studying.
+gplot(talk.net,vertex.cex=rescale(class.data.w1$"Studyt1",0.5,2.5), main="Talked about the Course network",sub="Nodes sized by Time Studying")
+  
+# Second modification: remove isolates.
+gplot(talk.net,vertex.cex=rescale(class.data.w1$"Studyt1",0.5,2.5),displayisolates = FALSE, main="Talked about the Course network",sub="Nodes sized by Time Studying")
+
+# Third modification: color nodes based on music genre.
+col.music   <- colorRampPalette(brewer.pal(5, "Dark2"))(length(unique(class.data.w1$"Musict1")))
+col.music   <- col.music[as.factor(class.data.w1$"Musict1")]
+set.seed(1)
+gplot(talk.net,vertex.cex=rescale(class.data.w1$"Studyt1",0.5,2.5),displayisolates = FALSE,vertex.col = col.music, main="Talked about the Course network",sub="Nodes sized by Time Studying")
+legend("topright",legend=as.factor(unique(class.data.w1$"Musict1")),col=col.music,pch=19,bty="n")
+```
+
+
+4. Calculate the indegree and outdegree for each actor.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+# use the degree() function in the sna package.
+library(sna)
+ideg.talk <- degree(talk.net,gmode = "digraph", cmode = "indegree")
+odeg.talk <- degree(talk.net,gmode = "digraph", cmode = "outdegree")
+
+# take a look at the distributions.
+
+!!!need to fix the limits on the histograms!!!
+
+deg.data  <- c(ideg.talk,odeg.talk)
+par(mfrow=c(2,2))
+hist(ideg.talk,col=rgb(255,0,0,alpha=100,maxColorValue = 255),xlim=c(min(deg.data)-1,max(deg.data)+1),xlab="Degree",main="Histograms for\n Degree Distributions",breaks=10)
+hist(odeg.talk,col=rgb(0,0,139,alpha=100,maxColorValue = 255),add=TRUE,breaks=10)
+hist(ideg.talk,col=rgb(255,0,0,alpha=100,maxColorValue = 255),xlim=c(min(deg.data)-1,max(deg.data)+1),xlab="Indegree",main="Histograms for\n Indegree Distribution",breaks=10)
+hist(odeg.talk,col=rgb(0,0,139,alpha=100,maxColorValue = 255),xlim=c(min(deg.data)-1,max(deg.data)+1),xlab="Outdegree",main="Histogram for\n Outdegree Distribution",breaks=10)
+plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
+text(x = 0.5, y = 0.5, paste("Plots of the\n Degree Distributions\n for Talked With Networks"),cex = 1.2, col = "black")
+par(mfrow=c(1,1))
+```
+
+
+5. Calculate the standardized indegree and outdegree for each actor.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+# standardized score is deg / g-1 where g is the number of nodes.
+s.ideg.talk <- ideg.talk / (dim(as.matrix(talk.net))[1]-1)
+s.odeg.talk <- odeg.talk / (dim(as.matrix(talk.net))[1]-1)
+```
+
+6. Calculate the mean indegree and outdegree.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+# the mean is L/g for a directed graph where L is the number of edges and g is the number of nodes.
+mean.ideg.talk <- sum(as.matrix(talk.net)) / dim(as.matrix(talk.net))[1] 
+mean.odeg.talk <- sum(as.matrix(talk.net)) / dim(as.matrix(talk.net))[1] 
+
+# Now, let's add these to our plots to help visualize the central tendency.
+par(mfrow=c(2,2))
+hist(ideg.talk,col=rgb(255,0,0,alpha=100,maxColorValue = 255),xlim=c(min(deg.data)-1,max(deg.data)+1),xlab="Degree",main="Histograms for\n Degree Distributions",breaks=10)
+hist(odeg.talk,col=rgb(0,0,139,alpha=100,maxColorValue = 255),add=TRUE,breaks=10)
+abline(v=mean.odeg.talk,col="black",lwd=4)
+hist(ideg.talk,col=rgb(255,0,0,alpha=100,maxColorValue = 255),xlim=c(min(deg.data)-1,max(deg.data)+1),xlab="Indegree",main="Histograms for\n Indegree Distribution",breaks=10)
+abline(v=mean.ideg.talk,col=rgb(255,0,0,alpha=100,maxColorValue = 255),lwd=4)
+hist(odeg.talk,col=rgb(0,0,139,alpha=100,maxColorValue = 255),xlim=c(min(deg.data)-1,max(deg.data)+1),xlab="Outdegree",main="Histogram for\n Outdegree Distribution",breaks=10)
+abline(v=mean.odeg.talk,col=rgb(0,0,139,alpha=100,maxColorValue = 255),lwd=4)
+plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
+text(x = 0.5, y = 0.5, paste("Plots of the\n Degree Distributions\n for Talked With Networks"),cex = 1.2, col = "black")
+par(mfrow=c(1,1))
+```
+
+7. Compare the two means.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+# The means are equal. The average degree is almost 4.
+mean.ideg.talk
+mean.odeg.talk
+```  
+
+The means are equal. This is becuse the number of edges does not change when examining the indegree vs. the outdegree.
+
+
+
+8. Calcuate the graph centralization for indegree and outdegree.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+icent.talk <- centralization(talk.net, degree, mode="digraph", cmode="indegree")
+ocent.talk <- centralization(talk.net, degree, mode="digraph", cmode="outdegree")
+icent.talk
+ocent.talk
+```
+
+
+9. Compare the two graph centralization scores.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+icent.talk
+ocent.talk
+```  
+
+The outdegree centralization score is greater than the indegree centralization score. This means that there is more variation in the outdegree distribution.  
+
+***  
+
+###**Analysis of Trust network**: 
+
+1. Import the network into *R* and create an object of class `network`. 
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+# read in the data.
+trust.adj.mat <- read.csv(
+  url("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_trust_w1_adjancency.csv"), # pull from the website.
+  as.is=TRUE, row.names = 1, header = TRUE #set up the arguments to read it in correctly.
+)
+dim(trust.adj.mat) # check dimensions.
+trust.net <- as.network(trust.adj.mat, directed = TRUE) # create the network object.
+summary(trust.net, print.adj = FALSE) # take a look at the data.
+```
+
+
+2. Plot the network using the `gplot()` function.    
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+gplot(trust.net)
+```
+
+
+3. Modify the plot using at least three arguments in the `gplot()` function.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+# for this, let's load the data file that has the attributes.
+load(url("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_class_survey_data_w1.rdata"))
+
+# Then, let's create the rescale function that we will use.
+rescale <- function(nchar,low,high){
+  min_d <- min(nchar)
+  max_d <- max(nchar)
+  rscl  <- ((high-low)*(nchar-min_d)) / (max_d-min_d)+low
+  rscl
+}
+
+# First modification: size nodes based on time studying.
+gplot(trust.net,vertex.cex=rescale(class.data.w1$"Studyt1",0.5,2.5), main="Trust network",sub="Nodes sized by Time Studying")
+
+# Second modification: remove isolates.
+gplot(trust.net,vertex.cex=rescale(class.data.w1$"Studyt1",0.5,2.5),displayisolates = FALSE, main="Trust network",sub="Nodes sized by Time Studying")
+
+# Third modification: color nodes based on TV Show.
+col.music   <- colorRampPalette(brewer.pal(8, "Accent"))(length(unique(class.data.w1$"TV1t1")))
+col.music   <- col.music[as.factor(class.data.w1$"TV1t1")]
+op <- par(mar = c(10,0,1,0))
+set.seed(1)
+gplot(trust.net,vertex.cex=rescale(class.data.w1$"Studyt1",0.5,2.5),displayisolates = FALSE,vertex.col = col.music, main="Trust network",sub="Nodes sized by Time Studying")
+par(op)
+legend("bottomleft",legend=as.factor(unique(class.data.w1$"TV1t1")),col=col.music,pch=19,bty="n")
+```
+
+4. Calculate the indegree and outdegree for each actor.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+ideg.trust <- degree(trust.net, gmode = "digraph", cmode = "indegree")
+odeg.trust <- degree(trust.net, gmode = "digraph", cmode = "outdegree")
+
+# take a look at the distributions.
+deg.data  <- c(ideg.trust,odeg.trust)
+par(mfrow=c(2,2))
+hist(ideg.trust,col=rgb(255,0,0,alpha=100,maxColorValue = 255),xlim=c(min(deg.data)-1,max(deg.data)+1),xlab="Degree",main="Histograms for\n Degree Distributions",breaks=10)
+hist(odeg.trust,col=rgb(0,0,139,alpha=100,maxColorValue = 255),add=TRUE,breaks=10)
+hist(ideg.trust,col=rgb(255,0,0,alpha=100,maxColorValue = 255),xlim=c(min(deg.data)-1,max(deg.data)+1),xlab="Indegree",main="Histograms for\n Indegree Distribution",breaks=10)
+hist(odeg.trust,col=rgb(0,0,139,alpha=100,maxColorValue = 255),xlim=c(min(deg.data)-1,max(deg.data)+1),xlab="Outdegree",main="Histogram for\n Outdegree Distribution",breaks=10)
+plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
+text(x = 0.5, y = 0.5, paste("Plots of the\n Degree Distributions\n for Trust Networks"),cex = 1.2, col = "black")
+par(mfrow=c(1,1))
+```
+
+
+5. Calculate the standardized indegree and outdegree for each actor.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+# standardized score is deg / g-1 where g is the number of nodes.
+s.ideg.trust <- ideg.trust / (dim(as.matrix(trust.net))[1]-1)
+s.odeg.trust <- odeg.trust / (dim(as.matrix(trust.net))[1]-1)
+s.ideg.trust
+s.odeg.trust
+```
+
+6. Calculate the mean indegree and outdegree.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+# the mean is L/g for a directed graph where L is the number of edges and g is the number of nodes.
+mean.ideg.trust <- sum(as.matrix(trust.net)) / dim(as.matrix(trust.net))[1] 
+mean.odeg.trust <- sum(as.matrix(trust.net)) / dim(as.matrix(trust.net))[1] 
+
+# Now, let's add these to our plots to help visualize the central tendency.
+par(mfrow=c(2,2))
+hist(ideg.trust,col=rgb(255,0,0,alpha=100,maxColorValue = 255),xlim=c(min(deg.data)-1,max(deg.data)+1),xlab="Degree",main="Histograms for\n Degree Distributions",breaks=10)
+hist(odeg.trust,col=rgb(0,0,139,alpha=100,maxColorValue = 255),add=TRUE,breaks=10)
+abline(v=mean.odeg.trust,col="black",lwd=4)
+hist(ideg.trust,col=rgb(255,0,0,alpha=100,maxColorValue = 255),xlim=c(min(deg.data)-1,max(deg.data)+1),xlab="Indegree",main="Histograms for\n Indegree Distribution",breaks=10)
+abline(v=mean.ideg.trust,col=rgb(255,0,0,alpha=100,maxColorValue = 255),lwd=4)
+hist(odeg.trust,col=rgb(0,0,139,alpha=100,maxColorValue = 255),xlim=c(min(deg.data)-1,max(deg.data)+1),xlab="Outdegree",main="Histogram for\n Outdegree Distribution",breaks=10)
+abline(v=mean.odeg.trust,col=rgb(0,0,139,alpha=100,maxColorValue = 255),lwd=4)
+plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
+text(x = 0.5, y = 0.5, paste("Plots of the\n Degree Distributions\n for Trust Networks"),cex = 1.2, col = "black")
+par(mfrow=c(1,1))
+```
+
+7. Compare the two means.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+# The means are equal. The average degree is almost 3.
+mean.ideg.trust
+mean.odeg.trust
+```  
+
+The means are equal. This is becuse the number of edges does not change when examining the indegree vs. the outdegree.
+
+
+8. Calcuate the graph centralization for indegree and outdegree.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+icent.trust <- centralization(trust.net, degree, mode="digraph", cmode="indegree")
+ocent.trust <- centralization(trust.net, degree, mode="digraph", cmode="outdegree")
+```
+
+
+9. Compare the two graph centralization scores.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+icent.trust
+ocent.trust
+```  
+
+The outdegree centralization score is greater than the indegree centralization score. This means that there is more variation in the outdegree distribution.  
+
+
+***  
+
+###**Comparison of the networks**:  
+
+10. How are the indegree and outdegree different for these networks?  
+
+11. What do the differences in the graph centralization scores for these networks tell us?  
+
+For most comparisons, we need to examine the *standardized* degree centrality measures. But, because the number of nodes is equal across the networks, the unstandarized measures will tell us the same information.  
+
+First, let's compare the indegree distributions. We can do this by examining the summary statistics we created. Specifically, the *mean* and the *centralization* of the networks:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+mean.ideg.talk
+mean.ideg.trust
+```
+
+We can see that the mean indegree for the talk network is *greater* than the mean degree for the trust network. This indicates that individuals, on average, are more likely to receive a **talked with** nomination relative to a **trust** nomination.  
+
+We can further examine the differences by comparing the centralization scores:
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+icent.talk
+icent.trust
+```  
+
+The differences indicate that the talk network shows greater centralization than the trust network. In other words, the nodes in the trust network have less variation in their indegree.
+
+***  
+
+###**BONUS Question**:  
+
+12. For the `trust.net` network, are people who trust others *more* or *less* likely to be trusted?  
+
+This is just the correlation between the indegree and the outdegree:  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+cor(ideg.trust,odeg.trust)
+```
+
+The correlation is 0.35, indicating that those who trust others more (i.e. send more ties), are more likely to be trusted (i.e. receive more ties).
+
+***  
+
+```{r,echo=FALSE,eval=FALSE}
+# END OF SOLUTIONS.
+```

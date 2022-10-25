@@ -14,7 +14,7 @@ output:
 ```{r,echo=FALSE,eval=TRUE,message=FALSE}
 library(sna)
 library(devtools)
-library(UserNetR)
+#library(UserNetR)
 library(network)
 ```
 

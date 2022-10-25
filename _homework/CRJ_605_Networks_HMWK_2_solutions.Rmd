@@ -1,0 +1,745 @@
+---
+title: "SOLUTIONS: Homework/Problem Set 2"
+author: "Statistical Analysis of Networks (CRJ) 605"
+output: 
+  html_document:
+    df_print: paged
+    theme: cosmo
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
+# load libraries.
+library(sna, quietly = TRUE)
+library(network, quietly = TRUE)
+
+# clear the workspace.
+rm(list = ls())
+```
+
+***
+
+# **Problems**  
+
+##**Part A**:  
+
+###**For *each* network (i.e. *Get Along With Most* and *Power/Influence*) do the following**:  
+
+1.a. Import the edgelist into *R* and create a directed graph that is an object of class `network`.  
+2.a. Calculate the indegree centrality, outdegree centrality, and betweenness centrality for each actor.   
+3.a. Calculate the standardized centrality scores (i.e. indegree, outdegree, and betweenness) for each actor.  
+4.a. What is the correlation between indegree centrality and betweenness centrality? What does the correlation tell us, conceptually?  
+5.a. Find two nodes that have the same indegree centrality, but differ with respect to their betweenness centrality. Why is there a difference? (In other words, why is there variation in betweenness centrality among these two nodes but not variation in degree centrality?)  
+6.a. Calculate the mean centrality scores (i.e. indegree, outdegree, and betweenness).   
+7.a. Interpret the value of the mean for each centrality measure *and* compare the means for each measure.  
+8.a. Calcuate the graph centralization for indegree, outdegree, and betweenness centrality.  
+9.a. Compare the three graph centralization scores.  
+
+###**Now, compare the networks**:  
+
+10.a. How do the indegree, outdegree, and betweenness centrality scores differ for the *Get Along With Most* and *Power/Influence* networks?  
+11.a. What do the differences in the graph centralization scores for these networks tell us?  
+12.a. Overall, how are the *Get Along With Most* and *Power/Influence* networks different with respect to centrality?  
+
+###**BONUS Question**:  
+
+13.a. Symmetrize each network using the `rule="weak"` argument in the `symmetrize()` function. Examine the coreness of each symmetrized network using the `kcore()` function. What is the correlation between *k*core membership for each network? Interpret the correlation.  
+
+***
+
+# **Solutions**
+
+###**Analysis of Get Along With Most network**: 
+
+1.a. Import the edgelist into *R* and create a directed graph that is an object of class `network`.    
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE, figure.align = "center", figure.height = 5, figure.width = 5}
+# First, load the libraries.
+library(sna, quietly = TRUE)
+library(network, quietly = TRUE)
+
+# Now, import the objects.
+GA.edgelist <- read.csv(url("https://justicecenter.la.psu.edu/research/projects/files/pins-get-along-with-edgelist"),header=FALSE,as.is=TRUE)
+GA.net <- as.network(GA.edgelist, directed=TRUE, matrix.type="edgelist")
+set.seed(1)
+gplot(GA.net, edge.col="grey40", vertex.col="lightgreen", main="PINS Get Along With Network",displayisolates = FALSE)
+```
+
+2.a. Calculate the indegree centrality, outdegree centrality, and betweenness centrality for each actor.   
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+GA.ideg <- degree(GA.net, gmode = "digraph", cmode="indegree")
+GA.odeg <- degree(GA.net, gmode = "digraph", cmode="outdegree")
+GA.betw <- betweenness(GA.net, gmode = "digraph")
+```
+
+3.a. Calculate the standardized centrality scores (i.e. indegree, outdegree, and betweenness) for each actor.  
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# assign the size of the network to an object for the calculations.
+GA.g <- dim(as.matrix(GA.net))[1]
+
+# now, divide by g-1.
+s.GA.ideg <- GA.ideg / (GA.g-1)
+s.GA.odeg <- GA.odeg / (GA.g-1)
+s.GA.betw <- GA.betw / (((GA.g-1)*(GA.g-2))/2) 
+```
+
+4.a. What is the correlation between indegree centrality and betweenness centrality? What does the correlation tell us, conceptually?  
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+cent.GA.mat <- data.frame(
+    GA.in      = GA.ideg,
+    GA.out     = GA.odeg,
+    GA.between = GA.betw
+)
+
+# print the correlation matrix.
+cor(cent.GA.mat)
+
+# Take a look at a plot.
+par(mfrow=c(2,2))
+plot(cent.GA.mat$"GA.in" ,cent.GA.mat$"GA.out"    , main="Scatterplot for Indegree and Outdegree\n in Get Along With Network"   , xlab="indegree" , ylab = "outdegree"  , col="red"  , pch=7)
+plot(cent.GA.mat$"GA.in" ,cent.GA.mat$"GA.between", main="Scatterplot for Indegree and Betweenness\n in Get Along With Network" , xlab="indegree" , ylab = "betweenness", col="green", pch=8)
+plot(cent.GA.mat$"GA.out",cent.GA.mat$"GA.between", main="Scatterplot for Outdegree and Betweenness\n in Get Along With Network", xlab="outdegree", ylab = "betweenness", col="blue" , pch=9)
+plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
+text(x = 0.5, y = 0.5, paste("Plots of the\n Centrality Scores\n for Get Along With Network"),cex = 1.2, col = "black")
+par(mfrow=c(1,1))
+```
+
+The correlation between indegree centrality and betweenness centrality is 0.597, indicating that individuals who have a higher indegree, are also likely to have a higher betweenness score. Conceptually, individuals who receive many ties are also in positions of betweenness.  
+
+5.a. Find two nodes that have the same indegree centrality, but differ with respect to their betweenness centrality. Why is there a difference? (In other words, why is there variation in betweenness centrality among these two nodes but not variation in degree centrality?)  
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# first create a matrix that combines the scores and an id variable, then sorts them.
+GA.ideg.betw <- cbind(GA.ideg,GA.betw,seq(1,205))
+
+# now, print it out, sorting on indegree.
+GA.ideg.betw[order(GA.ideg.betw[,1],GA.ideg.betw[,2],GA.ideg.betw[,3],decreasing=FALSE),]
+```
+
+Take a look at cases 41 and 48. Both have an indegree of 12, but their betweenness centrality scores differ. The short answer to the question above is that case 48 sits on fewer geodesics between other nodes. We can see this a bit clearer by looking at a plot:  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# look at cases 41 and 48.
+GA.ideg.betw[c(41,48),]
+
+### let's label cases 41 and 48.
+# create a new label, color, and size for these cases.
+lab <- rep("",205)
+lab[c(41,48)] <- c("41","48")
+col <- rep("white",205)
+col[c(41,48)] <- c("red","red")
+sz <- rep(0.2,205)
+sz[c(41,48)] <- 0.9
+
+# now plot it.
+set.seed(1)
+gplot(GA.net, edge.col="grey40", main="PINS Get Along With Network",displayisolates = FALSE, label =lab, label.cex = 2, label.col = "red", vertex.col = col, vertex.cex = sz)
+```
+
+6.a. Calculate the mean centrality scores (i.e. indegree, outdegree, and betweenness).   
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# for this, we can use the mean() function.
+mean.GA.ideg <- mean(GA.ideg)
+mean.GA.odeg <- mean(GA.odeg)
+mean.GA.betw <- mean(GA.betw)
+mean.s.GA.ideg <- mean(s.GA.ideg)
+mean.s.GA.odeg <- mean(s.GA.odeg)
+mean.s.GA.betw <- mean(s.GA.betw)
+```
+
+7.a. Interpret the value of the mean for each centrality measure *and* compare the means for each measure.  
+
+The mean indegree and outdegree are both equal. This is because the calculation reflects the number of edges in the graph, which is equal for both measures. The value of 3.746 indicates that the average node sends or receives nearly four *get along with* nominations. The mean betweenness score is 339, indicating that the average node *i* sits on 339 geodesics between *j* and *k*. This makes a bit more sense when we look at the standardized value which takes into account the size of the graph. The score of 0.01 shows that we are summing over a lot of rows in the geodesic matrix.  
+
+8.a. Calcuate the graph centralization for indegree, outdegree, and betweenness centrality.  
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+cent.GA.ideg <- centralization(GA.net,degree,mode="digraph",cmode="indegree")
+cent.GA.odeg <- centralization(GA.net,degree,mode="digraph",cmode="outdegree")
+cent.GA.betw <- centralization(GA.net,betweenness,mode="digraph")
+```
+
+9.a. Compare the three graph centralization scores.  
+
+First, the centralization scores for the outdegree and indegree are 0.089 and 0.050, respectively. These scores indicate that, although there is not much centralization in the graph, there is nearly twice as much for the outdegree. In other words, there is a greater variability in the outdegree scores relative to the indegree scores.  
+
+Second, the centralization score for betweenness is 0.143, suggesting that betweenness centrality is more centralized in this graph than the indegree and outdegree. Put differently, there is considerably more variation in the betweenness centrality scores.  
+
+***
+
+###**Analysis of Power/Influence network**: 
+
+1.a. Import the edgelist into *R* and create a directed graph that is an object of class `network`.    
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE, figure.align = "center", figure.height = 5, figure.width = 5}
+# First, load the libraries.
+library(sna, quietly = TRUE)
+library(network, quietly = TRUE)
+
+# Now, import the objects.
+PI.edgelist <- read.csv(url("https://justicecenter.la.psu.edu/research/projects/files/pins-data"),header=FALSE,as.is=TRUE)
+PI.net <- as.network(PI.edgelist, directed=TRUE, matrix.type="edgelist")
+set.seed(1)
+gplot(PI.net, edge.col="grey40", vertex.col="lightblue", main="PINS Power/Influence Network",displayisolates = FALSE)
+```
+
+2.a. Calculate the indegree centrality, outdegree centrality, and betweenness centrality for each actor.   
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+PI.ideg <- degree(PI.net, gmode = "digraph", cmode="indegree")
+PI.odeg <- degree(PI.net, gmode = "digraph", cmode="outdegree")
+PI.betw <- betweenness(PI.net, gmode = "digraph")
+```
+
+3.a. Calculate the standardized centrality scores (i.e. indegree, outdegree, and betweenness) for each actor.  
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# assign the size of the network to an object for the calculations.
+PI.g <- dim(as.matrix(PI.net))[1]
+
+# now, divide by g-1.
+s.PI.ideg <- PI.ideg / (PI.g-1)
+s.PI.odeg <- PI.odeg / (PI.g-1)
+s.PI.betw <- PI.betw / (((PI.g-1)*(PI.g-2))/2) 
+```
+
+4.a. What is the correlation between indegree centrality and betweenness centrality? What does the correlation tell us, conceptually?  
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+cent.PI.mat <- data.frame(
+    PI.in      = PI.ideg,
+    PI.out     = PI.odeg,
+    PI.between = PI.betw
+)
+
+# print the correlation matrix.
+cor(cent.PI.mat)
+
+# Take a look at a plot.
+par(mfrow=c(2,2))
+plot(cent.PI.mat$"PI.in" ,cent.PI.mat$"PI.out"    , main="Scatterplot for Indegree and Outdegree\n in Power/Influence Network"   , xlab="indegree" , ylab = "outdegree"  , col="red"  , pch=7)
+plot(cent.PI.mat$"PI.in" ,cent.PI.mat$"PI.between", main="Scatterplot for Indegree and Betweenness\n in Power/Influence Network" , xlab="indegree" , ylab = "betweenness", col="green", pch=8)
+plot(cent.PI.mat$"PI.out",cent.PI.mat$"PI.between", main="Scatterplot for Outdegree and Betweenness\n in Power/Influence Network", xlab="outdegree", ylab = "betweenness", col="blue" , pch=9)
+plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
+text(x = 0.5, y = 0.5, paste("Plots of the\n Centrality Scores\n for Power/Influence Network"),cex = 1.2, col = "black")
+par(mfrow=c(1,1))
+```
+
+The correlation between indegree centrality and betweenness centrality is 0.584, indicating that individuals who have a higher indegree, are also likely to have a higher betweenness score. Conceptually, individuals who receive many ties are also in positions of betweenness.  
+
+
+5.a. Find two nodes that have the same indegree centrality, but differ with respect to their betweenness centrality. Why is there a difference? (In other words, why is there variation in betweenness centrality among these two nodes but not variation in degree centrality?)  
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# first create a matrix that combines the scores and an id variable, then sorts them.
+PI.ideg.betw <- cbind(PI.ideg,PI.betw,seq(1,200))
+
+# now, print it out, sorting on indegree.
+PI.ideg.betw[order(PI.ideg.betw[,1],PI.ideg.betw[,2],PI.ideg.betw[,3],decreasing=FALSE),]
+```
+
+Take a look at cases 4 and 155 (rows 197 and 198). Both have an indegree of 13, but their betweenness centrality scores differ. The short answer to the question above is that case 197 doesn't sit on any geodesics between other nodes, hence the betweenness centrality score of 0. We can see this a bit clearer by looking at a plot:  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# look at cases 4 and 155.
+PI.ideg.betw[c(4,155),]
+
+### let's label cases 41 and 48.
+# create a new label, color, and size for these cases.
+lab <- rep("",200)
+lab[c(4,155)] <- c("4","155")
+col <- rep("white",200)
+col[c(4,155)] <- c("red","red")
+sz <- rep(0.2,200)
+sz[c(4,155)] <- 0.9
+
+# let's label cases 4 and 155
+set.seed(1)
+gplot(PI.net, edge.col="grey40", main="PINS Power/Influence Network",displayisolates = FALSE, label =lab, label.cex = 2, label.col = "red", vertex.col = col, vertex.cex = sz)
+```
+
+6.a. Calculate the mean centrality scores (i.e. indegree, outdegree, and betweenness).   
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# for this, we can use the mean() function.
+mean.PI.ideg <- mean(PI.ideg)
+mean.PI.odeg <- mean(PI.odeg)
+mean.PI.betw <- mean(PI.betw)
+mean.s.PI.ideg <- mean(s.PI.ideg)
+mean.s.PI.odeg <- mean(s.PI.odeg)
+mean.s.PI.betw <- mean(s.PI.betw)
+```
+
+7.a. Interpret the value of the mean for each centrality measure *and* compare the means for each measure.  
+
+The mean indegree and outdegree are both equal. This is because the calculation reflects the number of edges in the graph, which is equal for both measures. The value of 0.805 indicates that the average node sends or receives less than 1 *power/influence* nomination. The mean betweenness score is 1.935, indicating that the average node *i* sits on almost 2 geodesics between *j* and *k*. Taking a look at the mean standardized betweenness centrality shows just how little betweenness there is in the graph, accounting for size.  
+
+8.a. Calcuate the graph centralization for indegree, outdegree, and betweenness centrality.  
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+cent.PI.ideg <- centralization(PI.net,degree,mode="digraph",cmode="indegree")
+cent.PI.odeg <- centralization(PI.net,degree,mode="digraph",cmode="outdegree")
+cent.PI.betw <- centralization(PI.net,betweenness,mode="digraph")
+```
+
+9.a. Compare the three graph centralization scores.  
+
+First, the centralization scores for the outdegree and indegree are 0.041 and 0.066, respectively. These scores indicate that, although there is not much centralization in the graph, there is slightly more for the indegree. In other words, there is a greater variability in the indegree scores relative to the outdegree scores.   
+
+Second, the centralization score for betweenness is 0.001, suggesting that betweenness centrality is much less centralized in this graph than the indegree and outdegree distributions. Put differently, there is considerably less variation in the betweenness centrality scores.  
+
+
+###**Now, compare the networks**:  
+
+10.a. How do the indegree, outdegree, and betweenness centrality scores differ for the *Get Along With Most* and *Power/Influence* networks?  
+
+Since the networks have a different number of nodes (i.e. 205 in the Get Along With network and 200 in the Power/Influence network), we want to look at the standardized scores. The basic descriptive stats indicate important differences in the indegree, outdegree, and betweenness centrality scores across these networks:  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Indegree.
+min(s.GA.ideg)
+min(s.PI.ideg)
+max(s.GA.ideg)
+max(s.PI.ideg)
+mean(s.GA.ideg)
+mean(s.PI.ideg)
+
+# Outdegree.
+min(s.GA.odeg)
+min(s.PI.odeg)
+max(s.GA.odeg)
+max(s.PI.odeg)
+mean(s.GA.odeg)
+mean(s.PI.odeg)
+
+# Betweenness.
+min(s.GA.betw)
+min(s.PI.betw)
+max(s.GA.betw)
+max(s.PI.betw)
+mean(s.GA.betw)
+mean(s.PI.betw)
+```
+
+The mean indegree/outdegree for the Get Along With network is 0.018, whereas it is only 0.004 for the Power/Influence network. This indicates that, on average, an individual was nearly 5 times more likely to send/receive a Get Along With nomination compared to a Power/Influence nomination.    
+
+The mean betweenness for the Get Along With network is 0.016, whereas it is only 0.00009 (really small) for the Power/Influence network. This indicates that, on average, an individual was more likely to occupy a position of betweenness in the Get Along With network compared to the Power/Influence network.    
+
+11.a. What do the differences in the graph centralization scores for these networks tell us?  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Put the scores together and take a look.
+cent.GA.PI.mat <- data.frame(
+    cent.GA.in      = cent.GA.ideg,
+    cent.PI.in      = cent.PI.ideg,
+    cent.GA.out     = cent.GA.odeg,
+    cent.PI.out     = cent.PI.odeg,
+    cent.GA.between = cent.GA.betw,
+    cent.PI.between = cent.PI.betw
+)
+cent.GA.PI.mat
+```
+
+For the indegree centralization scores, we see that the Power/Influence network has more centralization, suggesting greater variability in the distribution of received ties for the Power/Influence network.    
+
+For the outdegree centralization scores, we see that the Power/Influence network has less centralization, suggesting greater variability in the distribution of sent ties for the Get Along With network.  
+
+For the betweenness centralization scores, we see that the *Power/Influence* network has much less centralization, suggesting greater variability in the distribution of betweenness scores for the *Get Along With* network.    
+
+12.a. Overall, how are the *Get Along With Most* and *Power/Influence* networks different with respect to centrality?  
+
+Overall, individuals in the Get Along With network send/receive more ties and occupy positions of betweenness, relative to individuals in the Power/Influence network.  
+
+
+###**BONUS Question**:  
+
+13.a. Symmetrize each network using the `rule="weak"` argument in the `symmetrize()` function. Examine the coreness of each symmetrized network using the `kcore()` function. How do these networks differ with respect to their *cohesiveness*?  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Create the symmetrized networks.
+GA.net.weak <- as.network(symmetrize(GA.net,rule="weak"),directed = FALSE)
+PI.net.weak <- as.network(symmetrize(PI.net,rule="weak"),directed = FALSE)
+
+# Execute the cores function.
+GA.net.weak.kcores <- kcores(GA.net.weak,mode="graph")
+PI.net.weak.kcores <- kcores(PI.net.weak,mode="graph")
+
+# Look at the cores.
+table(GA.net.weak.kcores)
+table(PI.net.weak.kcores)
+
+# Set up the plot values.
+v.cols <- rainbow(max(GA.net.weak.kcores)+1) # add 1 because there is a zero core.
+v.cols <- v.cols[(GA.net.weak.kcores+1)]
+set.vertex.attribute(GA.net.weak,"v.cols",v.cols)
+set.vertex.attribute(GA.net.weak,"core.id",GA.net.weak.kcores)
+
+# Create the subgraphs.
+GA.net.weak.0core <- get.inducedSubgraph(GA.net.weak,v=which(GA.net.weak.kcores >= 0))
+GA.net.weak.1core <- get.inducedSubgraph(GA.net.weak,v=which(GA.net.weak.kcores >= 1))
+GA.net.weak.2core <- get.inducedSubgraph(GA.net.weak,v=which(GA.net.weak.kcores >= 2))
+GA.net.weak.3core <- get.inducedSubgraph(GA.net.weak,v=which(GA.net.weak.kcores >= 3))
+GA.net.weak.4core <- get.inducedSubgraph(GA.net.weak,v=which(GA.net.weak.kcores >= 4))
+GA.net.weak.5core <- get.inducedSubgraph(GA.net.weak,v=which(GA.net.weak.kcores >= 5))
+GA.net.weak.6core <- get.inducedSubgraph(GA.net.weak,v=which(GA.net.weak.kcores >= 6))
+
+# Now, look at the plots.
+gplot(GA.net.weak, edge.col="grey40", vertex.col=v.cols, main="PINS Get Along With Network",gmode="graph", label = GA.net.weak.kcores, label.pos = 5, label.cex = 0.6)
+
+#gplot(GA.net.weak.0core, edge.col="grey40", vertex.col=GA.net.weak.0core%v%"v.cols", gmode="graph", label = GA.net.weak.0core%v%"core.id", label.pos = 5, label.cex = 0.6)
+#gplot(GA.net.weak.1core, edge.col="grey40", vertex.col=GA.net.weak.1core%v%"v.cols", gmode="graph", label = GA.net.weak.1core%v%"core.id", label.pos = 5, label.cex = 0.6)
+#gplot(GA.net.weak.2core, edge.col="grey40", vertex.col=GA.net.weak.2core%v%"v.cols", gmode="graph", label = GA.net.weak.2core%v%"core.id", label.pos = 5, label.cex = 0.6)
+#gplot(GA.net.weak.3core, edge.col="grey40", vertex.col=GA.net.weak.3core%v%"v.cols", gmode="graph", label = GA.net.weak.3core%v%"core.id", label.pos = 5, label.cex = 0.6)
+#gplot(GA.net.weak.4core, edge.col="grey40", vertex.col=GA.net.weak.4core%v%"v.cols", gmode="graph", label = GA.net.weak.4core%v%"core.id", label.pos = 5, label.cex = 0.6)
+#gplot(GA.net.weak.5core, edge.col="grey40", vertex.col=GA.net.weak.5core%v%"v.cols", gmode="graph", label = GA.net.weak.5core%v%"core.id", label.pos = 5, label.cex = 0.6)
+#gplot(GA.net.weak.6core, edge.col="grey40", vertex.col=GA.net.weak.6core%v%"v.cols", gmode="graph", label = GA.net.weak.6core%v%"core.id", label.pos = 5, label.cex = 0.6)
+```
+
+***
+
+# **Problems**
+
+##**Part B**:  
+
+###**For *each* network (i.e. *3 Shows Watched on TV* and *Boston Special Youth Project Affilation*) do the following**:  
+
+1.b. Import the edgelist into *R* and create a `bipartite` graph that is an object of class `network`.  
+2.b. Generate a plot of the network using the `gplot()` function where nodes in the first set are a different color, a different size, and a different shape than nodes in the second set.  
+3.b. What is the density of the graph? What does it mean?  
+4.b. Plot the degree distribution for each mode. Describe the properties. How are the distributions different?  
+5.b. Calculate the standardized degree centrality scores for each node set.    
+6.b. Calculate the mean degree centrality for each node set. Interpret each mean.     
+7.b. Calculate the dyadic clustering coefficient using the `reinforcement_tm()` function in the `tnet()` package. Interpret the coefficient.  
+
+###**Now, compare the networks**:  
+
+8.b. How do the degree centrality scores differ for each node set of the *3 Shows Watched on TV* and *Boston Special Youth Project Affilation* networks?  
+9.b. How do the dyadic clustering coefficients differ across the networks? What does the difference mean, conceptually?  
+
+###**BONUS Question**:  
+
+10.b. Calculate the graph centralization score for degree centrality of each node set for each network. Interpret the scores.  
+
+***
+
+# **Solutions**
+
+###**Analysis of 3 Shows Watched on TV network**: 
+
+1.b. Import the edgelist into *R* and create a `bipartite` graph that is an object of class `network`.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# First, import the object.
+tv.mat <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_tv_w1_adjancency.csv", as.is=TRUE, header=TRUE,row.names = 1))
+
+# Then, check the data
+dim(tv.mat) # 15 students by 37 shows.
+sum(tv.mat) # 45 edges.
+
+# Now, create the network object.
+tv.net <- as.network(tv.mat,bipartite=dim(tv.mat)[1],matrix.type="adjacency")
+
+# print out the network to check the dimensions and edges.
+summary(tv.net,print.adj = FALSE)
+```
+
+
+2.b. Generate a plot of the network using the `gplot()` function where nodes in the first set are a different color, a different size, and a different shape than nodes in the second set.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Create the different colors, sizes, and shapes.
+v.col   <- c(rep("orange",dim(as.matrix(tv.net))[1]),c(rep("lightblue",dim(as.matrix(tv.net))[2])))
+v.size  <- c(rep(0.9,dim(as.matrix(tv.net))[1]),c(rep(0.6,dim(as.matrix(tv.net))[2])))
+v.shape <- c(rep(3,dim(as.matrix(tv.net))[1]),c(rep(4,dim(as.matrix(tv.net))[2])))
+
+# Now, plot the network.
+set.seed(605)
+op <- par(mar=c(1,0,4,0))
+gplot(tv.net,gmode="twomode",usearrows=FALSE, edge.col="grey60", edge.lwd=1.2, 
+      label = network.vertex.names(tv.net), label.pos = 3, label.cex = 0.8,
+      vertex.col=v.col, vertex.sides = v.shape, vertex.cex = v.size 
+)
+par(op)
+title(main = "Bipartite Graph of Television Watching Among 605 Students", sub = "Orange Triangle = Student\n Blue Square = TV Show")
+```
+
+3.b. What is the density of the graph? What does it mean?  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# write a function for the density.
+density.bipartite <- function(net.object){
+    density <- sum(as.matrix(net.object))/(dim(as.matrix(net.object))[1]*dim(as.matrix(net.object))[2])
+  return(density)
+}
+
+# Now, execute the function.
+density.bipartite(tv.net)
+```
+
+The density is 0.08, meaning that 8% of the ties that could exist between the modes are observed in this network. Note that this is an underestimate because the nominations were restricted to 3. The equation for the density under this constraint is actually: $$\frac{L}{N \times M^*}$$ where ${M^*}$ is the maximum number of nodes in *M* that an actor in *N* could nominate. Since the nominations were restricted to 3, ${M^*}$ should be 3 in the equation.  
+
+So, what is the actual density of this graph?  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# What is the actual density?
+sum(as.matrix(tv.net))/(dim(as.matrix(tv.net))[1]*3)
+```
+
+It is 1, every tie that could exist, did occur. This is because everyone listed 3 shows. 
+
+4.b. Plot the degree distribution for each mode. Describe the properties. How are the distributions different?  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Calculate the raw degree scores.
+degree.bipartite <- function(biparitite.net){
+  degree.n <- rowSums(as.matrix(biparitite.net)) # degree for the first node set.
+  degree.m <- colSums(as.matrix(biparitite.net)) # degree for the second node set.
+  return(list(deg.n = degree.n, deg.m = degree.m)) # put them both together.
+}
+tv.net.degree <- degree.bipartite(tv.net)
+
+# Take a look at the distribution.
+table(tv.net.degree$deg.n) # note here that everyone is the same.
+table(tv.net.degree$deg.m) # not the case here!
+
+# Now plot the data.
+hist(tv.net.degree$deg.m,col=rgb(0,0,139,alpha=100,maxColorValue = 255),ylim=c(0,35),xlim=c(1,4),xlab="Degree",main="Histogram for\n TV Show Degree Distribution")
+```
+
+The plot indicates that most television shows are only watched by 1 person. But, there are 2 shows that have a degree of 2 (Parks and Rec & Planet Earth) and 2 shows with degree 4 (Brooklyn 99 & The Office).    
+
+
+5.b. Calculate the standardized degree centrality scores for each node set.    
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Standardized.
+degree.s.bipartite <- function(biparitite.net){
+  s.degree.n <- (rowSums(as.matrix(biparitite.net)))/dim(as.matrix(biparitite.net))[2] # degree for the first node set.
+  s.degree.m <- (colSums(as.matrix(biparitite.net)))/dim(as.matrix(biparitite.net))[1] # degree for the second node set.
+  return(list(s.deg.n = s.degree.n, s.deg.m = s.degree.m)) # put them both together.
+}
+tv.net.degree.s <- degree.s.bipartite(tv.net)
+
+# Now look at the data.
+table(tv.net.degree.s$s.deg.n)
+table(tv.net.degree.s$s.deg.m)
+```  
+
+6.b. Calculate the mean degree centrality for each node set. Interpret each mean.     
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Write a function to do this for us.
+mean.degree.bipartite <- function(biparitite.net){
+  mean.degree.n <- sum(as.matrix(biparitite.net)) / dim(as.matrix(biparitite.net))[1]
+  mean.degree.m <- sum(as.matrix(biparitite.net)) / dim(as.matrix(biparitite.net))[2]
+ return(c(mean.degree.n,mean.degree.m)) # put them both together.
+}
+
+tv.net.mean.deg <- mean.degree.bipartite(tv.net)
+tv.net.mean.deg
+```
+
+The mean degree for the first mode, students, was 3 indicating that the average node in this node set picked 3 shows. We already know from the analysis above that everyone picked 3. For the second mode, the mean degree is 1.21 indicating that the average node in this node set had about 1.21 students watching the show.   
+
+7.b. Calculate the dyadic clustering coefficient using the `reinforcement_tm()` function in the `tnet()` package. Interpret the coefficient.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# load the tnet package.
+library(tnet) 
+
+# First, we need to coerce our network to be of class "tnet" using as.tnet() so that the reinforcement() function will work.
+tv.tnet <- as.tnet(as.matrix(tv.net))
+
+# Now, calculate the dyadic clustering coefficient.
+reinforcement_tm(tv.tnet)
+```
+
+The clustering coefficient is 0.07, indicating that 7% of the 4-paths in this graph are closed 4-cyles.  
+
+***
+
+###**Analysis of Boston Special Youth Project Affilation network**: 
+
+1.b. Import the edgelist into *R* and create a `bipartite` graph that is an object of class `network`.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# First, import the object.
+gangs.edgelist <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/edgelist.bipartite.gangs.csv", as.is=TRUE, header=TRUE))
+
+# Note that this is an edgelist.
+dim(gangs.edgelist) # 60,234 edges.
+
+# We need to know how many people in the first mode.
+length(unique(gangs.edgelist[,1])) # 166.
+
+# Now, the number in the second mode.
+length(unique(gangs.edgelist[,2])) # 33,487.
+
+# We should have 33,653 vertices in the object we create.
+length(unique(gangs.edgelist[,1])) + length(unique(gangs.edgelist[,2]))
+
+# Now, create the network object.
+gangs.net <- as.network(gangs.edgelist,matrix.type="edgelist",bipartite=length(unique(gangs.edgelist[,1])))
+
+# print out the network to check the dimensions and edges.
+summary(gangs.net,print.adj = FALSE)
+```
+
+2.b. Generate a plot of the network using the `gplot()` function where nodes in the first set are a different color, a different size, and a different shape than nodes in the second set.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Create the different colors, sizes, and shapes.
+v.col   <- c(rep("blue",dim(as.matrix(gangs.net))[1]),c(rep("lightgreen",dim(as.matrix(gangs.net))[2])))
+v.size  <- c(rep(0.9,dim(as.matrix(gangs.net))[1]),c(rep(0.6,dim(as.matrix(gangs.net))[2])))
+v.shape <- c(rep(3,dim(as.matrix(gangs.net))[1]),c(rep(4,dim(as.matrix(gangs.net))[2])))
+
+# Now, plot the network.
+set.seed(605)
+op <- par(mar=c(1,0,4,0))
+gplot(gangs.net,gmode="twomode",usearrows=FALSE, edge.col="grey60", edge.lwd=1.2, 
+      #label = network.vertex.names(gangs.net), label.pos = 3, label.cex = 0.8,
+      vertex.col=v.col, vertex.sides = v.shape, vertex.cex = v.size 
+)
+par(op)
+title(main = "Bipartite Graph of Gang Members and Events", sub = "Blue Triangle = Gang Member\n Green Square = Event")
+```  
+
+The plot shows the 166 gang members and their involvement in 33,487 events.   
+
+*When you look at this plot, what sticks out regarding the **structure** of the graph?*  
+
+
+3.b. What is the density of the graph? What does it mean?  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Execute the function from above.
+density.bipartite(gangs.net)
+
+# Note the difference with the density provided by the summary of the network object.
+summary(gangs.net,print.adj = FALSE)
+
+```
+
+The degree is 0.01, indicating that about 1% of the ties that could occur did occur in this network. In other words, the affiliation network is very sparse.  
+
+4.b. Plot the degree distribution for each mode. Describe the properties. How are the distributions different?  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Unstandardized.
+gangs.net.degree <- degree.bipartite(gangs.net)
+
+# Take a look at the distribution.
+table(gangs.net.degree$deg.n)
+table(gangs.net.degree$deg.m)
+
+# Now plot the data.
+hist(gangs.net.degree$deg.n,col=rgb(25,25,100,alpha=100,maxColorValue = 255),ylim=c(0,100),xlim=c(1,5000),xlab="Degree",main="Histogram for\n Gang Member Degree Distribution",breaks=20)
+hist(gangs.net.degree$deg.m,col=rgb(50,100,50,alpha=100,maxColorValue = 255), ylim=c(0,20000),xlim=c(1,12),xlab="Degree",main="Histogram for\n Event Degree Distribution",breaks=20)
+```
+
+We can see that there is a great deal of skew in both distributions. For individuals, many people only appear just a few times. A similar relationship is seen for the event data.    
+
+5.b. Calculate the standardized degree centrality scores for each node set.    
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Standardized.
+gangs.net.degree.s <- degree.s.bipartite(gangs.net)
+```
+
+6.b. Calculate the mean degree centrality for each node set. Interpret each mean.     
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Use the function from above.
+gangs.net.mean.deg <- mean.degree.bipartite(gangs.net)
+gangs.net.mean.deg
+```
+
+The mean degree for the first mode, gang members, is 358 indicating that the average node in this node set was at 358 events. For the second mode, the mean degree is 1.77 indicating that the average node in this node set had about 1.77, or almost 2, gang members at the event.  
+
+
+7.b. Calculate the dyadic clustering coefficient using the `reinforcement_tm()` function in the `tnet()` package. Interpret the coefficient.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# load the tnet package.
+library(tnet) 
+
+# First, we need to coerce our network to be of class "tnet" using as.tnet() so that the reinforcement() function will work.
+gangs.tnet <- as.tnet(as.matrix(gangs.net))
+
+# Now, calculate the dyadic clustering coefficient.
+reinforcement_tm(gangs.tnet)
+```
+
+The clustering coefficient is 0.09, indicating that 9% of the 4-paths in this graph are closed 4-cyles. In other words, there is not a lot of dyadic clustering in this network. Put differently, most individuals are not attending the same events.        
+
+***  
+
+###**Now, compare the networks**:  
+
+8.b. How do the degree centrality scores differ for each node set of the *3 Shows Watched on TV* and *Boston Special Youth Project Affilation* networks?  
+
+Since these networks differ in the size of their vertex sets, we should look at the standardized scores.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+tv.net.degree.s    <- degree.s.bipartite(tv.net)
+gangs.net.degree.s <- degree.s.bipartite(gangs.net)
+
+# Put the means for each vertex set together and look at them.
+c(mean(tv.net.degree.s$s.deg.n), mean(gangs.net.degree.s$s.deg.n))
+```  
+
+We can see that the mean standardized degree for the TV network is 0.08, whereas the mean for the gang network is 0.01. In other words, the average node in either vertex set for the TV network has nearly 8 times as many ties incident on that node relative to the gang network. *That is a LOT of TV watching!*
+
+
+9.b. How do the dyadic clustering coefficients differ across the networks? What does the difference mean, conceptually?  
+
+The dyadic clustering coefficient for the TV network is 0.07, whereas the dyadic clustering coefficient for the gang network is 0.09. Interestingly, the level of dyadic clustering is nearly the same in the graphs, and is actually higher in the gang network. Conceptually, this would indicate that gang members are more likely to share events than are students likely to share TV shows.   
+However, note that the dyadic clustering coefficient for TV network is underestimated given the constraint imposed on having only 3 nominations. In reality, there may be more shared TV show watching in the network.  
+
+
+###**BONUS Question**:  
+
+10.b. Calculate the graph centralization score for degree centrality of each node set for each network. Interpret the scores.  
+
+If you go back to the notes on centralization for degree centrality, you can see how we might calculate these values. We would just take into account the maximum possible sum of deviations:
+
+
+$$C_ND =  \dfrac{\sum\limits_{i=1}^g [C_N(N^*) - C_N(N_i)]}{[(N-1)(M)]}$$
+
+$$C_MD =  \dfrac{\sum\limits_{i=1}^g [C_M(M^*) - C_M(M_i)]}{[(M-1)(N)]}$$
+
+Where $C_N(N^*)$ and $C_M(M^*)$ are the largest degree centrality scores in the *N* and *M* node sets, respectively. 
+
+Let's see how this would work in our calculation.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+# Write a function to do this for us.
+centralization.bipartite <- function(biparitite.net){
+  # define the objects.
+    N <- dim(as.matrix(biparitite.net))[1]
+    M <- dim(as.matrix(biparitite.net))[2]
+    degree.n <- rowSums(as.matrix(biparitite.net))
+    degree.m <- colSums(as.matrix(biparitite.net))
+  # calculate the score.
+    cent.n <- (sum(max(degree.n)-degree.n)) / ((N-1)*(M))
+    cent.m <- (sum(max(degree.m)-degree.m)) / ((M-1)*(N))
+  # create the object to return.
+  return(c(cent.n,cent.m))
+}
+
+# Now, look at these for the networks.
+centralization.bipartite(tv.net)
+centralization.bipartite(gangs.net)
+```  
+
+For the TV network, we see that there is no graph centralization in the first node set. This makes sense as all students had the same degree. For the second node set, we see that there is more variation, though it is closer to zero than it is to 1.
+
+For the gang network, the graph centralization for the first node set is more than twice as high than the graph centralization for the second node set. This would indicate that in the first node set, there are individuals who have a relatively higher degree. In other words, some individuals in the first node set (i.e. gang members) have a very high degree or attend many events.
+
+***  
+
+####***Questions?***####
+
+
+```{r,echo=FALSE,eval=FALSE}
+# END OF SOLUTIONS.
+```
