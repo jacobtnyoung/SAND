@@ -1,0 +1,78 @@
+---
+output: 
+  html_document:
+    theme: yeti
+    toc: false
+    toc_float: false
+    collapsed: false
+    smooth_scroll: false
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<br>
+
+## *Centrality*
+
+----
+
+<br>
+
+This lecture provides an introduction to centrality measures for individual nodes as well as centralization measures for graphs. In particular, the following centrality measures are described:  
+
+  + Degree  
+  
+  + Closeness  
+  
+  + Betweenness
+  
+The accompanying labs provide an overview of these measures using the [sna](https://cran.r-project.org/web/packages/sna/index.html) package in [R](http://cran.r-project.org/). In addition, a problem set (with solutions) is provided to work through the material covered.
+
+<br>
+
+#### Lecture Materials  
+
+<br>
+
+  + **Degree Centrality**
+  
+    + [Degree Centrality lecture](_lectures/lecture-04-degree-centrality.pdf) 
+  
+    + R script for Degree Centrality lecture
+  
+    + Degree Centrality lab (html) (Rmd)
+  
+    + Degree Centrality problem set (pdf) and solutions (html) (Rmd)
+  
+  <br>
+
+  + **Closeness & Betweeness Centrality**
+  
+    + [Closeness & Betweenness Centrality lecture](_lectures/lecture-05-close-between-centrality.pdf)
+    
+    + R script for Closeness & Betweenness Centrality lecture (.R)
+  
+    + Closeness & Betweenness Centrality lab (html) (Rmd)
+  
+    + Betweenness Centrality problem set (pdf, see Part A) and solutions (html) (Rmd)
+
+<br>
+
+____
+
+<br>
+
+#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

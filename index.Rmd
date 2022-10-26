@@ -16,11 +16,12 @@ text-align: justify}
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
 <br>
 
 ## Statistical Analysis of Network Data
 
-I teach a course on the statistical analysis of networks which provides a survey of the various tools for used in network analysis. The overarching goal of the course is that, upon completion, students will be capable of developing research questions from a network perspective and incorporating network-based tools in their own research. The course is designed to be primarily methodological, dedicating the majority of the time to working through the mechanics of network-based tools. Students will also gain experience with R, a commonly used software program for network data management, analysis, and visualization.
+This course provides a survey of the various tools for used in network analysis. The overarching goal of the course is that, upon completion, students will be capable of developing research questions from a network perspective and incorporating network-based tools in their own research. The course is designed to be primarily methodological, dedicating the majority of the time to working through the mechanics of network-based tools. Students will also gain experience with R, a commonly used software program for network data management, analysis, and visualization.
 
 Even if you are not taking the course, feel free to browse the lecture notes and labs. As always, I welcome any feedback!
 
@@ -28,28 +29,27 @@ Even if you are not taking the course, feel free to browse the lecture notes and
 
 For the labs, .html format and RMarkdown (.Rmd) format documents are provided. The .html files can be opened by first downloading the file and then opening it using any web browser. The .Rmd files can be opened in any web browser, but require [RStudio](https://www.rstudio.com/) to execute.
 
-
 <br>
 
 
 ## *Lecture Notes and Labs*  
 ____
 
-[Introduction to Network Analysis](intro_SAND.html)
+[Introduction to Network Analysis](_pages/page-01-intro.html)
 
-[Network Data Structures and Sources of Network Data](network_data_SAND.html)
+[Network Data Structures and Sources of Network Data](_pages/page-02-network-data.html)
 
-[Getting Started with R and Network Visualization](R_network_vis_SAND.html)
+[Getting Started with R and Network Visualization](_pages/page-03-r-network-vis.html)
 
-[Centrality](centrality_SAND.html)
+[Centrality](_pages/page-04-centrality.html)
 
-[Cohesive Subgroups](subgroups_SAND.html)
+[Cohesive Subgroups](_pages/page-05-subgroups.html)
 
-[Bipartite Graphs/Two-Mode Networks](bipartite_SAND.html)
+[Bipartite Graphs/Two-Mode Networks](_pages/page-06-bipartite.html)
 
-[Exponential Random Graph Models (ERGMs)](ergm_SAND.html)
+[Exponential Random Graph Models (ERGMs)](_pages/page-07-ergm.html)
 
-[Stochastic Actor-Based Models (SABMs)](sabm_SAND.html)
+[Stochastic Actor-Based Models (SABMs)](_pages/page-08-sabm.html)
 
 <br>
 

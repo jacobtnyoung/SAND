@@ -1,0 +1,64 @@
+---
+output: 
+  html_document:
+    theme: yeti
+    toc: false
+    toc_float: false
+    collapsed: false
+    smooth_scroll: false
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<br>
+
+## *Exponential Random Graph Models (ERGMs)*
+
+----
+
+<br>
+
+These lectures examine the logic of generative models for network data.   
+
+The lecture introduces the exponential random graph model (ERGM) as a flexible tool for specifying network configurations that generate global network structures.  
+
+The first lab provides an overview of different dependence specifications of the model (e.g. dyadic independence) and working with node level attributes using the ergm package.  
+
+The second lab (Simulation and Goodness of Fit) examines functions for goodness of fit and simulation in the ergm package. A comprehensive archive of materials, discussion, syntax, papers, etc. for the ergm package is available at the statnet website.  
+
+A problem set (with solutions) is provided to work through the material covered.
+
+<br>
+
+#### Lecture Materials  
+
+  + [Introduction to ERGMs lecture](_lectures/lecture-09-ergm-intro.pdf)
+  
+  + R script for Introduction to ERGMs lecture (.R)  
+  
+  + Introduction to ERGMs lab (html) (Rmd)  
+  
+  + Simulation and Goodness of Fit lab (html) (Rmd)  
+  
+  + ERGMs problem set (pdf) and solutions (html) (Rmd)
+
+<br>
+
+____
+
+<br>
+
+#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

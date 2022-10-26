@@ -13,7 +13,7 @@
 
 <title>index.knit</title>
 
-<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/header-attrs-2.15/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -60,6 +60,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -80,6 +81,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -137,11 +141,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -262,15 +270,15 @@ text-align: justify}
 <p><br></p>
 <div id="statistical-analysis-of-network-data" class="section level2">
 <h2>Statistical Analysis of Network Data</h2>
-<p>I teach a course on the statistical analysis of networks which
-provides a survey of the various tools for used in network analysis. The
-overarching goal of the course is that, upon completion, students will
-be capable of developing research questions from a network perspective
-and incorporating network-based tools in their own research. The course
-is designed to be primarily methodological, dedicating the majority of
-the time to working through the mechanics of network-based tools.
-Students will also gain experience with R, a commonly used software
-program for network data management, analysis, and visualization.</p>
+<p>This course provides a survey of the various tools for used in
+network analysis. The overarching goal of the course is that, upon
+completion, students will be capable of developing research questions
+from a network perspective and incorporating network-based tools in
+their own research. The course is designed to be primarily
+methodological, dedicating the majority of the time to working through
+the mechanics of network-based tools. Students will also gain experience
+with R, a commonly used software program for network data management,
+analysis, and visualization.</p>
 <p>Even if you are not taking the course, feel free to browse the
 lecture notes and labs. As always, I welcome any feedback!</p>
 <p><em>Note on file formats</em></p>
@@ -284,18 +292,19 @@ href="https://www.rstudio.com/">RStudio</a> to execute.</p>
 <div id="lecture-notes-and-labs" class="section level2">
 <h2><em>Lecture Notes and Labs</em></h2>
 <hr />
-<p><a href="intro_SAND.html">Introduction to Network Analysis</a></p>
-<p><a href="network_data_SAND.html">Network Data Structures and Sources
-of Network Data</a></p>
-<p><a href="R_network_vis_SAND.html">Getting Started with R and Network
-Visualization</a></p>
-<p><a href="centrality_SAND.html">Centrality</a></p>
-<p><a href="subgroups_SAND.html">Cohesive Subgroups</a></p>
-<p><a href="bipartite_SAND.html">Bipartite Graphs/Two-Mode
+<p><a href="_pages/page-01-intro.html">Introduction to Network
+Analysis</a></p>
+<p><a href="_pages/page-02-network-data.html">Network Data Structures
+and Sources of Network Data</a></p>
+<p><a href="_pages/page-03-r-network-vis.html">Getting Started with R
+and Network Visualization</a></p>
+<p><a href="_pages/page-04-centrality.html">Centrality</a></p>
+<p><a href="_pages/page-05-subgroups.html">Cohesive Subgroups</a></p>
+<p><a href="_pages/page-06-bipartite.html">Bipartite Graphs/Two-Mode
 Networks</a></p>
-<p><a href="ergm_SAND.html">Exponential Random Graph Models
+<p><a href="_pages/page-07-ergm.html">Exponential Random Graph Models
 (ERGMs)</a></p>
-<p><a href="sabm_SAND.html">Stochastic Actor-Based Models
+<p><a href="_pages/page-08-sabm.html">Stochastic Actor-Based Models
 (SABMs)</a></p>
 <p><br></p>
 <hr />
@@ -307,8 +316,8 @@ class="section level4">
 the <a href="https://github.com/jacobtnyoung/SAND/issues">Issues</a>
 page. Thanks!</h4>
 <p><br> <br></p>
-<div id="last-updated-22-august-2022" class="section level6">
-<h6><strong><em>Last updated 22 August, 2022</em></strong></h6>
+<div id="last-updated-26-october-2022" class="section level6">
+<h6><strong><em>Last updated 26 October, 2022</em></strong></h6>
 </div>
 </div>
 </div>

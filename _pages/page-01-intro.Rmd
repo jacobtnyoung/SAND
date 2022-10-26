@@ -19,9 +19,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br>
 
-## Introduction to Network Analysis
-
-<br>
+## *Introduction to Network Analysis*  
+____
 
 The introductory lecture covers the basics of network analysis: what it is, why we do it, etc. 
 
@@ -35,7 +34,7 @@ The learning goals of this lecture are to:
 
 #### Lecture Materials
 
- + [Introduction lecture](_lectures/crj_605_networks_1_intro_slides.pdf) 
+ + [Introduction lecture](_lectures/lecture-01-introduction.pdf) 
  
  + [R script for Introduction lecture](_lecture_syntax/intro.lecture.syntax.R)
 

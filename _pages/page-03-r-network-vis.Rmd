@@ -1,0 +1,62 @@
+---
+output: 
+  html_document:
+    theme: yeti
+    toc: false
+    toc_float: false
+    collapsed: false
+    smooth_scroll: false
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<br>
+
+
+## *Getting Started with R and Network Visualization*
+
+----
+
+<br>
+
+In this section of the course, we begin working with [R](http://cran.r-project.org/). We will focus on three goals:  
+
+  1. An introduction to [R](http://cran.r-project.org/) to familiarize users with [R](http://cran.r-project.org/).  
+  
+  2. An introduction to network analysis in [R](http://cran.r-project.org/) covers how network objects are created and manipulated using the [sna](https://cran.r-project.org/web/packages/sna/index.html) package.  
+  
+  3. Basic network visualization is reviewed using the [sna](https://cran.r-project.org/web/packages/sna/index.html) package.
+
+<br>
+
+
+#### Lecture Materials
+
+ + Intro to R lab ([html](_labs/lab-01-intro-r.html)) ([Rmd](_labs/lab-01-intro-r.Rmd))
+ 
+ + Intro to Networks lab ([html](_labs/lab-02-intro-nets.html)) ([Rmd](_labs/lab-02-intro-nets.Rmd))
+ 
+ + Visualization lab ([html](_labs/lab-03-intro-visualization.html)) ([Rmd](_labs/lab-03-intro-visualization.Rmd))
+ 
+ + Example networks used in labs (undirected network) (directed network)
+
+<br>
+
+____
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
