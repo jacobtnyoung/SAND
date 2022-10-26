@@ -1,6 +1,6 @@
 ---
-title: "Basic Network Analysis with R Lab"
-date: "CRJ 605 Statistical Analysis of Networks"
+title: "Lab 01 - Basic Network Analysis with R Lab"
+date: "CRJ 605 Statistical Analysis of Networks (SAND)"
 output: 
   html_document:
     df_print: paged
@@ -9,10 +9,20 @@ output:
     toc: yes
     toc_float: yes
     code_fold: show
+    self_contained: false
 ---
 
-###
-*This lab will work through some basic examples of matrices and how they are created, imported, and manipulated in R.*
+<style>
+body {
+text-align: justify}
+</style>
+
+
+----
+
+##*This lab will work through some basic examples of matrices and how they are created, imported, and manipulated in R.*
+
+<br>
 
 ###**Working with matrices**    
 
@@ -242,6 +252,12 @@ net.d <- network(data.d,directed=TRUE) # Note: we don't need to tell it that the
 
 ####***Questions?***####
 
-```{r,echo=FALSE,eval=FALSE}
-#END OF LAB
-```
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

@@ -33,7 +33,7 @@ These lectures examine the logic of simulation based models for network dynamics
 
   + [Introduction to SABMs lecture](_lectures/lecture-10-sabm-intro.pdf)
   
-  + Introduction to SABMs lab (html) (Rmd)
+  + Introduction to SABMs lab ([html](_labs\lab-11-sabm-intro.html)) ([Rmd](_labs\lab-11-sabm-intro.Rmd))
     
     + Advice networks (W1 .csv) (W2 .csv) (W3 .csv) for lab
     
@@ -41,7 +41,7 @@ These lectures examine the logic of simulation based models for network dynamics
     
   + [Co-Evolution of Networks and Behavior lecture](_lectures\lecture-11-sabm-coevolution.pdf)
   
-  + Co-Evolution of Networks and Behavior lab (html) (Rmd)
+  + Co-Evolution of Networks and Behavior lab ([html](_labs\lab-12-sabm-coevolution.html)) ([Rmd](_labs\lab-12-sabm-coevolution.Rmd))
 
 <br>
 

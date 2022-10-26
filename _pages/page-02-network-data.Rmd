@@ -28,9 +28,9 @@ These lectures cover the basics of using matrices to represent networks. Fundame
 
 #### Lecture Materials  
 
-  + [Data Structures lecture](lectures/lecture-02-data-structures.pdf)  
+  + [Data Structures lecture](_lectures/lecture-02-data-structures.pdf)  
   
-  + [Sources of Data lecture](lectures/lecture-03-data-sources.pdf)  
+  + [Sources of Data lecture](_lectures/lecture-03-data-sources.pdf)  
   
   + [R script for Data Structures lecture](lecture_syntax/crj_605_networks_2_data_structures_syntax.R)
 

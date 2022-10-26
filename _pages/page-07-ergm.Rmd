@@ -43,9 +43,9 @@ A problem set (with solutions) is provided to work through the material covered.
   
   + R script for Introduction to ERGMs lecture (.R)  
   
-  + Introduction to ERGMs lab (html) (Rmd)  
+  + Introduction to ERGMs lab ([html](_labs\lab-09-ergm-intro.html)) ([Rmd](_labs\lab-09-ergm-intro.Rmd))  
   
-  + Simulation and Goodness of Fit lab (html) (Rmd)  
+  + Simulation and Goodness of Fit lab ([html](_labs\lab-10-ergm-gof.html)) ([Rmd](_labs\lab-10-ergm-gof.Rmd))  
   
   + ERGMs problem set (pdf) and solutions (html) (Rmd)
 

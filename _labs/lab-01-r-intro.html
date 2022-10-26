@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Getting Started with R Lab</title>
+
+<script src="lab-01-r-intro_files/header-attrs-2.15/header-attrs.js"></script>
+<script src="lab-01-r-intro_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="lab-01-r-intro_files/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="lab-01-r-intro_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="lab-01-r-intro_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="lab-01-r-intro_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="lab-01-r-intro_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="lab-01-r-intro_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="lab-01-r-intro_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="lab-01-r-intro_files/navigation-1.1/tabsets.js"></script>
+<script src="lab-01-r-intro_files/navigation-1.1/codefolding.js"></script>
+<link href="lab-01-r-intro_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="lab-01-r-intro_files/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; } /* Alert */
+code span.an { color: #008000; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #0000ff; } /* ControlFlow */
+code span.ch { color: #008080; } /* Char */
+code span.cn { } /* Constant */
+code span.co { color: #008000; } /* Comment */
+code span.cv { color: #008000; } /* CommentVar */
+code span.do { color: #008000; } /* Documentation */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.im { } /* Import */
+code span.in { color: #008000; } /* Information */
+code span.kw { color: #0000ff; } /* Keyword */
+code span.op { } /* Operator */
+code span.ot { color: #ff4000; } /* Other */
+code span.pp { color: #ff4000; } /* Preprocessor */
+code span.sc { color: #008080; } /* SpecialChar */
+code span.ss { color: #008080; } /* SpecialString */
+code span.st { color: #008080; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #008080; } /* VerbatimString */
+code span.wa { color: #008000; font-weight: bold; } /* Warning */
+
+.sourceCode .row {
+  width: 100%;
+}
+.sourceCode {
+  overflow-x: auto;
+}
+.code-folding-btn {
+  margin-right: -30px;
+}
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Getting Started with R Lab</h1>
+<h4 class="date">CRJ 605 Statistical Analysis of Networks (SAND)</h4>
+
+</div>
+
+
+<script src="https://cdn.datacamp.com/datacamp-light-latest.min.js"></script>
+<style>
+body {
+text-align: justify}
+</style>
+<p><br></p>
+<div id="things-about-r-to-get-you-started" class="section level1">
+<h1><em>10 Things about R to get you started:</em></h1>
+<p><br></p>
+<div id="what-is-r" class="section level2">
+<h2><strong>1. What is R</strong></h2>
+<p>R is a dialect of the <em>S</em> language that was written by John
+Chambers and others at Bell Labs in the 70s. In the 90s, R was developed
+and made available to the public with the GNU general public license.
+Importantly, R is <em>free</em>, meaning that you don’t have to pay for
+it (duh), but it is also <strong>open source</strong>, meaning that you
+have freedom to use and modify it.</p>
+<p>R is an operating system for data science software. Just as Windows
+allows you to turn on your computer, open a web browser, moved files
+around, and write a paper using MS Word, R allows you to install and run
+packages and manage files while organizing large data projects. Just
+like Windows would be a very boring piece of software without all of the
+applications you run while on the computer, R would be a boring language
+without all of the packages it can run.</p>
+<p><br></p>
+</div>
+<div id="installing-and-starting" class="section level2">
+<h2><strong>2. Installing and Starting</strong></h2>
+<p>Go to <a
+href="http://cran.r-project.org">http://cran.r-project.org</a>. Find the
+“Download R for…” link that is appropriate for your operating
+system.</p>
+<p>When R starts it loads some basic info and provides you with a
+prompt: <code>&gt;</code></p>
+<p>This prompt is the fundamental entry point for communicating with R.
+We type expressions at the prompt, R evaluates these expressions, and
+returns output.</p>
+<p><br></p>
+</div>
+<div id="objects-in-r" class="section level2">
+<h2><strong>3. Objects in R</strong></h2>
+<p>R is a programming language. That means, it allows us to give
+instructions to our computer to do stuff. We will see that there is a
+lot of “stuff” we can do. But, the basic orientation to R is
+understanding <strong>objects</strong>.</p>
+<p>What is an <em>object</em>? Without getting to philosophical, an
+<em>object</em> is something we create in the R environment. Think of an
+R session as a box. We are creating objects and putting them into the
+box. This is quite different from data analysis programs like SPSS or
+Stata.</p>
+<p><br></p>
+<p>We create objects by using the assignment operator:
+<code>&lt;-</code></p>
+<p>What you type on the right is assigned to what you type on the left.
+For example:<br />
+<code>y &lt;- 4</code> (we have assigned the value 4 to the object
+y)<br />
+<code>x &lt;- 6</code> (we have assigned the value 6 to the object
+x)<br />
+<code>z &lt;- y</code> (we have assigned the value of the object y to
+the object z, i.e. z = 4)</p>
+<p>After assigning a value to an object, type the name of the object and
+hit return/enter to see what the value is.</p>
+<p>Objects can start with a letter or a period. <em>But</em>, you cannot
+name a object starting with a number (or other symbols used by R).<br />
+Some examples:<br />
+<code>the.number.two &lt;- 2</code><br />
+<code>2 &lt;- the.number.two</code><br />
+<code>2.the.number &lt;- 2</code><br />
+<code>;.2 &lt;- 2</code></p>
+<p>R is case sensitive (i.e. <code>A</code> is a different object than
+<code>a</code>). R is insensitive to white space though.<br />
+These two examples are treated the same in R:<br />
+<code>x &lt;- 2</code><br />
+<code>x&lt;-              2</code></p>
+<p>To have R ignore text, use the <code>#</code> sign to make
+comments.<br />
+For example:
+<code>x &lt;- 2 # this assigns the value 2 to object x.</code></p>
+<p>In R there are no carriage returns (e.g. Stata uses <code>///</code>
+in code). Sorry :(</p>
+<p><br></p>
+</div>
+<div id="functions-in-r" class="section level2">
+<h2><strong>4. Functions in R</strong></h2>
+<p>A major strength of R is the ability to manipulate objects using
+functions. A function takes an argument (aka input) and returns some
+value (aka output).</p>
+<p>For example, suppose we wanted to create a list of numbers, called a
+<em>vector</em>. We want to create an object that is defined by the list
+of numbers. In R, there is a preprogrammed function <code>c()</code>,
+which combines or <em>concatenates</em> values to create a single
+object. We can create an object <code>x</code>, that is a vector of 1,
+2, 3, 4, and 5 using: <code>x &lt;- c(1,2,3,4,5)</code>.</p>
+<p>This reads: the object x is assigned the values 1, 2, 3, 4, and 5.
+The function is “<code>c</code>” and the argument is
+<code>1,2,3,4,5</code>.</p>
+<p>The number of values (aka elements) a vector contains is referred to
+as the “length”. We can use the <code>length()</code> function to return
+this information for us. For example: <code>length(x)</code> shows that
+the vector <code>x</code> has 5 values or elements.</p>
+<p><em>Reminder</em>: R is a language, so part of the learning curve is
+getting familiar with the names of functions.</p>
+<p><br></p>
+</div>
+<div id="referencing-and-indexing-objects-in-r" class="section level2">
+<h2><strong>5. Referencing and Indexing Objects in R</strong></h2>
+<p>In R, specific elements in an object are referenced by using brackets
+(i.e. <code>[</code> or <code>]</code>).</p>
+<p>For example, let’s create a vector and work with it:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span> ) <span class="co"># create the vector.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>x</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">5</span>] <span class="co"># what is the fifth element in x?  </span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>] <span class="co"># what are the second through fourth elements in x?  </span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>x[<span class="fu">c</span>( <span class="dv">1</span>,<span class="dv">4</span> )] <span class="co"># what are the first and fourth elements in x?  </span></span></code></pre></div>
+<p><em>Note</em> the difference in use between <code>[#:#]</code> and
+<code>[c(#,#)]</code>. The colon <code>:</code> means “through” and the
+comma <code>,</code> means “and”.</p>
+<p>We can also change values by indexing:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">5</span>]   <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># change the fifth element in x to 5.  </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># change the first through fifth elements in x to 0.  </span></span></code></pre></div>
+<p><br></p>
+<p>Using brackets to identify particular elements, called
+<em>indexing</em>, is VERY useful. By using indexing, we can create
+objects from other objects, or reference particular locations. The
+utility of this will be more obvious later.</p>
+<p><br></p>
+<div id="you-try-it" class="section level3">
+<h3><strong>You try it!</strong></h3>
+<div data-datacamp-exercise="" data-height="300" data-encoded="true">
+eyJsYW5ndWFnZSI6InIiLCJwcmVfZXhlcmNpc2VfY29kZSI6InkgPC0gYyggMSwyLDMsNCw1LDYsNyw4LDksMTAgKVxueVs0XVxueVs0OjddXG55W2MoIDIsOSApXVxueVs1OjhdIDwtIDAiLCJzYW1wbGUiOiIjIENyZWF0ZSBhIHZlY3RvciBjYWxsZWQgeSwgd2l0aCB0aGUgZWxlbWVudHMgMSB0aHJvdWdoIDEwLlxuXG4jIHdoYXQgaXMgdGhlIGZvdXJ0aCBlbGVtZW50IGluIHk/XG5cbiMgd2hhdCBhcmUgdGhlIGZpcnN0IHRocm91Z2ggc2V2ZW50aCBlbGVtZW50cyBpbiB5P1xuXG4jIHdoYXQgYXJlIHRoZSBzZWNvbmQgYW5kIG5pbnRoIGVsZW1lbnRzIGluIHk/XG5cbiMgY2hhbmdlIHRoZSBmaWZ0aCB0aHJvdWdoIGVpZ2h0aCBlbGVtZW50cyBpbiB5IHRvIDAuIiwic29sdXRpb24iOiIjIENyZWF0ZSBhIHZlY3RvciBjYWxsZWQgeSwgd2l0aCB0aGUgZWxlbWVudHMgMSB0aHJvdWdoIDEwLlxueSA8LSBjKCAxLDIsMyw0LDUsNiw3LDgsOSwxMCApXG5cbiMgd2hhdCBpcyB0aGUgZm91cnRoIGVsZW1lbnQgaW4geT9cbnlbNF1cbiMgd2hhdCBhcmUgdGhlIGZpcnN0IHRocm91Z2ggc2V2ZW50aCBlbGVtZW50cyBpbiB5P1xueVs0OjddXG4jIHdoYXQgYXJlIHRoZSBzZWNvbmQgYW5kIG5pbnRoIGVsZW1lbnRzIGluIHk/XG55W2MoIDIsOSApXVxuIyBjaGFuZ2UgdGhlIGZpZnRoIHRocm91Z2ggZWlnaHRoIGVsZW1lbnRzIGluIHkgdG8gMC5cbnlbNTo4XSA8LSAwIn0=
+</div>
+<p><br></p>
+</div>
+</div>
+<div id="types-of-objects-classes-in-r" class="section level2">
+<h2><strong>6. Types of objects (“classes”) in R</strong></h2>
+<p>Objects in R can be of different types or <strong>classes</strong>.
+There are four:</p>
+<ul>
+<li>numeric, a number (e.g. <code>1, 2</code>)</li>
+<li>character, a letter or word
+(e.g. <code>"Shelley", "Trevor"</code>)</li>
+<li>factor, a category (e.g. <code>female, male</code>)</li>
+<li>logical, True or False values (e.g. <code>TRUE, FALSE</code>)</li>
+</ul>
+<p>Each type of vector serves different purposes:</p>
+<ul>
+<li><em>numeric</em>: keep track of quantitative measures, counts, or
+orders of things<br />
+</li>
+<li><em>character</em>: store non-numeric data, typically unstructured
+text<br />
+</li>
+<li><em>factor</em>: represent distinct and mutually-exclusive
+categories<br />
+</li>
+<li><em>logical</em>: designate cases that meet some criteria, usually
+group inclusion</li>
+</ul>
+<p><br></p>
+<p>For example, let’s build a few objects:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nums <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span> )</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>names <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="st">&quot;Shelley&quot;</span>, <span class="st">&quot;Trevor&quot;</span> )</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>sex <span class="ot">&lt;-</span> <span class="fu">factor</span>( <span class="fu">c</span>( <span class="st">&quot;female&quot;</span>, <span class="st">&quot;male&quot;</span> ) )</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>is.female <span class="ot">&lt;-</span> sex <span class="sc">==</span> <span class="st">&quot;female&quot;</span></span></code></pre></div>
+<p>Note that numbers <strong>do not</strong> require <code>" "</code>
+around them but characters <strong>do</strong> require <code>" "</code>
+around them. Also, that the object <code>is.female</code> is created by
+stating a condition.</p>
+<p>Each object has a class, which defines the “type” of vector a
+particular object is:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>name.list <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="st">&quot;Hugo&quot;</span>,<span class="st">&quot;Desmond&quot;</span>,<span class="st">&quot;Largo&quot;</span> ) <span class="co"># assign the characters to an object.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">is.character</span>( name.list ) <span class="co"># is the object a character vector?</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">is.numeric</span>( name.list ) <span class="co">#is the object a numeric vector?  </span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">is.factor</span>( name.list ) <span class="co"># is the object a factor vector?</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">is.logical</span>( name.list ) <span class="co"># is the object a logical vector?</span></span></code></pre></div>
+<p>Missing values are dealt with in R by NA.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="dv">3</span>,<span class="cn">NA</span>,<span class="dv">10</span> ) <span class="co"># create a vector with a missing value.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span><span class="sc">*</span>y <span class="co"># multiple the vector by 2.  </span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">is.na</span>( y ) <span class="co"># which positions in y have missing values?  </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>y[ <span class="fu">is.na</span>( y )] <span class="co">#subset meeting condition.</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>y[ <span class="sc">!</span><span class="fu">is.na</span>( y )] <span class="co"># subset meeting a different condition.</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div id="matrices-in-r" class="section level2">
+<h2><strong>7. Matrices in R</strong></h2>
+<p>In addition to vectors, we can create a matrix, which is a
+2-dimensional representation of data. A matrix has dimensions <em>r X
+c</em> which means rows by columns. The number of rows and columns a
+matrix has is referred to as its “order” or “dimensionality”. This
+information is returned by using the <code>dim()</code> function.
+Matrices can be created by combining existing vectors using the
+<code>rbind()</code> and <code>cbind()</code> functions. The
+<code>rbind()</code> function means “row bind” and binds together
+vectors by rows. Think of it as stacking vectors on each other. The
+<code>cbind()</code> function means “column bind” and binds together
+vectors by rows. Think of it as placing them side by side. Let’s take a
+look:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x  <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="dv">6</span>,<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span> )</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>y  <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="dv">8</span>,<span class="dv">7</span>,<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">1</span> )</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">rbind</span>( x,y ) <span class="co">#bind x and y by row to create a 2 X 5 matrix.</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>m1 <span class="co">#just enter the name of the object to print it.</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">cbind</span>( x,y ) <span class="co">#bind x and y by column to create a 5 X 2 matrix.</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>m2 <span class="co">#just enter the name of the object to print it.</span></span></code></pre></div>
+<p>For both functions, the dimensions of the vectors must be the same
+(i.e. same number of rows and columns).<br />
+Let’s see some examples:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>l  <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="dv">6</span>,<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span> )</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>n  <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="dv">8</span>,<span class="dv">7</span>,<span class="dv">5</span> )</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>( l,n ) <span class="co"># returns an error because the dimensions differ.</span></span></code></pre></div>
+<p>We can index the matrix <code>m1</code> or <code>m2</code> by using
+the brackets <code>[ ]</code> with a comma between the two dimensions.
+Since a matrix is 2-dimensions, we can reference a specific element, an
+entire row, or an entire column:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>m1[<span class="dv">2</span>,<span class="dv">2</span>] <span class="co">#what is the value of the element in the 2nd row, 2nd column?</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>m1[,<span class="dv">2</span>]  <span class="co">#what are the values in the second column?</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>m1[<span class="dv">2</span>,]  <span class="co">#what are the values in the second row?</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>m2[<span class="dv">2</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co">#change the value to zero.</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>m2[<span class="dv">2</span>,]  <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co">#change the second row to zeros.</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>m2[,<span class="dv">2</span>]  <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co">#change the second column to zeros.</span></span></code></pre></div>
+<p>In the code chunk above, note the difference between
+<code>[,#]</code> and <code>[#,]</code>. A comma in front of the
+argument (i.e. <code>[,#]</code>) applies to the columns) and a common
+after the argument (i.e. <code>[#,]</code>) applies to the rows.</p>
+<p>Also, notice that <code>m1[2,2]</code>, is an object, just as
+<code>m1</code> is an object. In effect, we are <em>subsetting</em> the
+object <code>m1</code> when we index it.</p>
+<p>Matrices can also be created from a list of numbers using the
+<code>matrix()</code> and <code>c()</code> functions.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">matrix</span>( <span class="fu">c</span>( <span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span> ),<span class="at">nrow=</span><span class="dv">3</span>,<span class="at">ncol=</span><span class="dv">3</span> )</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>m3</span></code></pre></div>
+<p><br></p>
+</div>
+<div id="one-of-the-most-important-functions-in-r-help"
+class="section level2">
+<h2><strong>8. One of the most important functions in R:
+<code>help()</code></strong></h2>
+<p>A useful feature of R is an extensive documentation of each of the
+functions. To access the main R help archive online, type:
+<code>help.start()</code><br />
+The <code>help()</code> function, or a simple <code>?</code>, can be
+used to get help about a specific function. For example:
+<code>help(c)</code> or <code>?c</code> returns the help page for the
+<code>c()</code> function.</p>
+<p>Take a look at the help page. The first line shows you the function
+and the package it is written for in brackets (more on packages below).
+The help page provides a description, how to use it (i.e. what are the
+arguments), and a description of what each argument does. Further
+details and examples are provided as well.</p>
+<p>Let’s take a look at another function that creates sequences of
+numbers, the <code>seq( )</code> function. There are several ways to use
+the <code>seq( )</code> function. The most common are:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">seq</span>( <span class="at">from=</span>, <span class="at">to=</span>, <span class="at">by=</span> ) <span class="co"># Starts at from, ends at to, steps defined by by.</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">seq</span>( <span class="at">from=</span>, <span class="at">to=</span>, <span class="at">length=</span> ) <span class="co"># Starts at from, ends at to, steps defined by length.  </span></span></code></pre></div>
+<p>For example:<br />
+if we want to create an object of 5 values that starts with 1 and ends
+with 5, we type: <code>seq( from=1, to=5, by=1 )</code>.<br />
+if we want to create an object of 5 values that starts with 1 and ends
+with 9, we type: <code>seq( from=1, to=9, by=2 )</code>.<br />
+We could also have used the <code>length=</code> argument:
+<code>seq( from=1, to=10, length=5 )</code>.</p>
+<p>Since R knows that <code>from=</code> or <code>to=</code> or
+<code>by=</code> or <code>length=</code> are arguments, we do not have
+to type them in the syntax: <code>seq( 1, 9, 2 )</code> is identical to
+<code>seq( from=1, to=9, by=2 )</code> (as far as R is concerned).</p>
+<p>For the help function to work, you need to know the exact name of the
+function. If you don’t know this, but have a fuzzy idea of what it might
+be are what you want the function to do, you can use the
+<code>help.search("</code>fuzzy notion<code>")</code> function (or just
+put <code>??</code> in front of the word).</p>
+<p>For example, say you want to calculate the standard deviation for an
+object, but do not know the function name. Try:
+<code>help.search( "standarddeviation" )</code> or
+<code>??standarddeviation</code> (note the absence of a space). This
+returns the list of help topics that contain the phrase. We see that the
+standard deviation function is called <code>sd()</code>.</p>
+<p><br></p>
+</div>
+<div id="packages-and-the-install.packages-and-library-functions"
+class="section level2">
+<h2><strong>9. Packages and the <code>install.packages()</code> and
+<code>library()</code> Functions</strong></h2>
+<p>R has MANY preprogrammed functions that are automatically loaded when
+you open the program. Functions are stored in “packages”. Although there
+are many preprogrammed functions, there are even MORE functions that you
+can install on your own. A package in R is a collection of functions,
+usually written for a specific purpose.</p>
+<p>We can see the packages available from CRAN at <a
+href="http://cran.r-project.org">http://cran.r-project.org/</a>. Just
+click on the “packages” link or go to <a
+href="https://cran.r-project.org/web/packages/index.html">https://cran.r-project.org/web/packages/index.html</a>.
+As of writing this there are nearly 13,000 packages. There is a WIDE
+variety of packages available, this is another reason why R is awesome.
+If you can think it, someone has probably written a package for it in R
+(and if not, <em>you</em> can write one and contribute [isn’t it
+great!]).</p>
+<p><strong>Take a few moments and look through the packages</strong></p>
+<p>If there is a particular package you want to add, you simply use the
+<code>install.packages()</code> function like this:
+<code>install.packages("</code>package name<code>")</code>.</p>
+<p>After the package is installed on your machine, you do not need to
+reinstall it each time you open a new session. Rather, you just need to
+load the package using the <code>library()</code> function like this:
+<code>library("</code>package name<code>")</code>.</p>
+<p>For example, let’s look at the sudoku package (yep, someone wrote a
+program to create sudoku puzzles in R). To get it we type:
+<code>install.packages( "sudoku" )</code> and then we select a “mirror”.
+This installs the package in your local library of packages. To load the
+package we use the <code>library()</code> function:
+<code>library( "sudoku" )</code>. Let’s take a look at what the package
+has: <code>help( package="sudoku" )</code>.</p>
+<p>Note that some packages require other packages for them to work. If
+there is an error, you need to install the additional packages.</p>
+<p>For example, let’s install the ergm package, a set of tools for
+estimating exponential random graph models. To get it we type:
+<code>install.packages( "ergm" )</code> and look at the additional
+packages that are installed. Then type:
+<code>library( "ergm" )</code>.</p>
+<p>Note that each time you open R you have to load any packages that you
+manually loaded using the <code>install.packages()</code> function. In
+other words, if we closed R and then reopened it, we would need to type
+<code>library( "ergm" )</code> to load the functions in
+<code>ergm</code>.</p>
+<p>Note that we <em>do not</em> have to reinstall the package using
+<code>install.packages()</code>, we just have to load the library.</p>
+<p>If you have installed the package, but have not loaded it, R will
+return an error saying that a particular function is not found.<br />
+For example, the function <code>ergmm()</code> in the package
+<code>latentnet</code> is used to fit latent space and latent space
+cluster random network models. Type <code>?ergmm</code> and you get an
+error stating that there is no documentation available. This is because
+the <code>latetnet</code> library has not been loaded (even if you have
+installed <code>latentnet</code>). Typing
+<code>install.packages( "latentnet" )</code> and
+<code>library( latentnet )</code> prior to <code>?ergmm()</code> will
+solve this problem.</p>
+<p>A final point on loading packages. Since anyone can write and
+contributes packages to R, it is not surprising that some packages
+occasionally use the same names for functions. When you have loaded
+libraries for packages that have conflicting functions, R will output a
+message indicating there is an issue.</p>
+<p>For example, the <code>sna</code> package and the <code>tnet</code>
+package both have a function called <code>betweenness</code>, but the
+functions are programmed differently. When you load <code>tnet</code>
+after loading <code>sna</code> (or <em>visa versa</em>), R will give you
+a warning that an “object is being masked”. That means the functionality
+of <code>betweenness</code> in <code>sna</code> is no longer used. Let’s
+check it out:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>( <span class="st">&quot;sna&quot;</span> )</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( sna )</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>( <span class="st">&quot;tnet&quot;</span> )</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>( tnet )</span></code></pre></div>
+<p>This can be a bit frustrating. In such cases, you can unload the
+package using the <code>detach()</code> function. See:
+<code>?detach</code> for an example.</p>
+<p><br></p>
+</div>
+<div id="r-session-management" class="section level2">
+<h2><strong>10. R Session Management</strong></h2>
+<p>All variables created in R are stored in the “workspace”. Think of it
+as a work bench that has a bunch of stuff on it that you have
+created.</p>
+<p>To see what exists in the workspace, type: <code>ls()</code>.</p>
+<p>We can remove specific variables with the <code>rm()</code> function.
+This helps clear up space (i.e. conserve memory). For example:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>( <span class="dv">1</span>,<span class="dv">5</span>,<span class="dv">1</span> ) <span class="co"># create the object.</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>()          <span class="co"># see the objects.</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>( x )         <span class="co"># remove the object x.</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>()          <span class="co"># no more x.</span></span></code></pre></div>
+<p>To remove everything from the workspace use:
+<code>rm( list=ls() )</code>. This is helpful for starting a session to
+make sure everything is cleaned out.</p>
+<p>When you start R, it nominates one of the directories on your hard
+drive as a working directory, which is where it looks for user-written
+programs and data files.</p>
+<p>To determine the current directory, type: <code>getwd()</code>.<br />
+You can set the working directory also by typing:
+<code>setwd("</code>your desired directory here<code>")</code>.</p>
+<p>For example, if you are using Windows OS and want to set your
+directory to be the “C” drive, type: <code>setwd( "C:/" )</code>.
+<em>NOTE</em>: when you copy and paste filepaths in Windows, the folders
+are denoted with <code>\</code>, while R uses <code>/</code>.</p>
+<p>Or, if you are using Mac OS and want to set your directory to be a
+folder called “Users”, type: <code>setwd( "/Users" )</code>.</p>
+<p>On the Windows OS you can set R to automatically start up in your
+preferred working directory by right clicking on the program shortcut,
+choosing properties, and completing the ‘Start in’ field. On the Mac OS
+you can set the initial working directory using the Preferences
+menu.</p>
+<p>To save the workspace use the <code>save.image()</code> function.
+This function requires a file path, a file name, and the extension
+“.RData” which is the format for an R workspace file.</p>
+<p>For example, to save a workspace called “OurFirstLab” to the current
+directory, simply type: <code>save.image("OurFirstLab.Rdata")</code>.
+You can also write in the directory of you want to save it somewhere
+else. You can also do this by the pull-down menu with the File/Save
+option.</p>
+<p>To load a previously saved workspace, you can either click on the
+file outside of R or use the <code>load()</code> function
+(e.g. <code>load("OurFirstLab.Rdata")</code>). If you get an error, make
+sure you are referring the correct directory. You can also choose Load
+Workspace from the pull-down menu.</p>
+<p>Note that only the objects in the workspace are saved, not the text
+of what you have written.</p>
+<p><br></p>
+</div>
+<div id="bonus-r-studio" class="section level2">
+<h2><strong>11. (Bonus!) R Studio</strong></h2>
+<p>You may be surprised to discover how little functionality is
+implemented in the standard R GUI (i.e. graphical user interface). The
+standard R GUI implements only very rudimentary functionality through
+menus: reading help, managing multiple graphics windows, editing some
+source and data files, and some other basic functionality. There are no
+menu items, buttons, or palettes for loading data, transforming data,
+plotting data, or doing any real work with data. Commercial applications
+like SAS, SPSS, and Stata include user interfaces with much more
+functionality.</p>
+<p>This was just the nature of working with R until some awesome human
+beings created RStudio. RStudio is one of several projects to build an
+easier-to-use GUI for R. It is a free, open-source IDE (i.e. integrated
+development environment) for working with R. Unlike the standard R GUI,
+RStudio tiles windows on the screen and puts different windows in
+different tabs. RStudio can be downloaded from: <a
+href="http://www.rstudio.com">http://www.rstudio.com</a>.</p>
+<p>For a brief, but informative, introduction to RStudio, check out this
+<a href="https://www.youtube.com/embed/xgPwDlAtuNI">video</a>.</p>
+<p>Go ahead and open RStudio and let’s take a look!</p>
+<hr />
+<p><br></p>
+<div
+id="please-report-any-needed-corrections-to-the-issues-page.-thanks"
+class="section level5">
+<h5><strong><em>Please</em></strong> report any needed corrections to
+the <a href="https://github.com/jacobtnyoung/SAND/issues">Issues</a>
+page. Thanks!</h5>
+<p><br> <br></p>
+<div id="last-updated-26-october-2022" class="section level6">
+<h6><strong><em>Last updated 26 October, 2022</em></strong></h6>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
