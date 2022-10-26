@@ -217,7 +217,7 @@ The `read.csv()` function can be used to read in .csv files that are arranged in
 
 We will use the "undirected_net_example.csv" file from my website. To access the file, we can use the url in the `read.csv()` function:
 ```{r,echo=TRUE,eval=TRUE}
-data.u <- read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/undirected_net_example.csv")
+data.u <- read.csv("https://github.com/jacobtnyoung/SAND/blob/6b4f13916e32814358852101667a63af97fc7f91/_data/undirected-network-example.csv")
 data.u
 class(data.u) #note that the read.csv function creates an object of class data.frame.
 ```  
@@ -228,7 +228,7 @@ We need to adjust the arguments to read in the file how we want it. Specifically
 - Set the `row.names=` argument equal to 1 to indicate that the name of the rows are in the first column.
 
 ```{r,echo=TRUE,eval=TRUE}
-data.u <- read.csv("http://www.weebly.com/uploads/2/3/4/5/23459640/undirected_net_example.csv",as.is=TRUE,header=TRUE,row.names=1)
+data.u <- read.csv("https://github.com/jacobtnyoung/SAND/blob/6b4f13916e32814358852101667a63af97fc7f91/_data/undirected-network-example.csv",as.is=TRUE,header=TRUE,row.names=1)
 data.u
 ```  
 
