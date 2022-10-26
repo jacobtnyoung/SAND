@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Lab 01 - Basic Network Analysis with R Lab</title>
+
+<script src="lab-02-nets-intro_files/header-attrs-2.15/header-attrs.js"></script>
+<script src="lab-02-nets-intro_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="lab-02-nets-intro_files/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="lab-02-nets-intro_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="lab-02-nets-intro_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="lab-02-nets-intro_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="lab-02-nets-intro_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="lab-02-nets-intro_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="lab-02-nets-intro_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="lab-02-nets-intro_files/navigation-1.1/tabsets.js"></script>
+<script src="lab-02-nets-intro_files/navigation-1.1/codefolding.js"></script>
+<link href="lab-02-nets-intro_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="lab-02-nets-intro_files/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; } /* Alert */
+code span.an { color: #008000; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #0000ff; } /* ControlFlow */
+code span.ch { color: #008080; } /* Char */
+code span.cn { } /* Constant */
+code span.co { color: #008000; } /* Comment */
+code span.cv { color: #008000; } /* CommentVar */
+code span.do { color: #008000; } /* Documentation */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.im { } /* Import */
+code span.in { color: #008000; } /* Information */
+code span.kw { color: #0000ff; } /* Keyword */
+code span.op { } /* Operator */
+code span.ot { color: #ff4000; } /* Other */
+code span.pp { color: #ff4000; } /* Preprocessor */
+code span.sc { color: #008080; } /* SpecialChar */
+code span.ss { color: #008080; } /* SpecialString */
+code span.st { color: #008080; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #008080; } /* VerbatimString */
+code span.wa { color: #008000; font-weight: bold; } /* Warning */
+
+.sourceCode .row {
+  width: 100%;
+}
+.sourceCode {
+  overflow-x: auto;
+}
+.code-folding-btn {
+  margin-right: -30px;
+}
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Lab 01 - Basic Network Analysis with R
+Lab</h1>
+<h4 class="date">CRJ 605 Statistical Analysis of Networks (SAND)</h4>
+
+</div>
+
+
+<style>
+body {
+text-align: justify}
+</style>
+<hr />
+<p><em>This lab will work through some basic examples of matrices and
+how they are created, imported, and manipulated in R.</em></p>
+<p><br></p>
+<div id="working-with-matrices" class="section level3">
+<h3><strong>Working with matrices</strong></h3>
+<p>First, clear the workspace:<br />
+<code>rm(list = ls())</code></p>
+<p>Let’s start by working with an example of an undirected, binary
+network. We will create an object that is the adjacency matrix.</p>
+<p>To create the adjacency matrix, we use the <code>matrix()</code>
+function and the <code>concatenate()</code> or <code>c()</code>
+function.<br />
+We can look at what these functions do by asking for help using the
+<code>help()</code> or <code>?()</code> functions.<br />
+Recall that the help describes the arguments that the function takes and
+also provides examples.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>?matrix <span class="co"># help for the matrix() function.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>?c <span class="co"># help for the c() function.</span></span></code></pre></div>
+<p>Now, let’s create the data object:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">nrow=</span><span class="dv">5</span>,<span class="at">byrow=</span><span class="cn">TRUE</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p>This command reads as follows:<br />
+- Combine the following numbers;<br />
+- From these combined numbers, create a matrix by reading across the
+list;<br />
+- Create an object called data. This object will be a matrix with 5
+rows.</p>
+<p>We can see the object by just typing the object name:
+<code>data</code>. <em>Note</em> that if the number of elements does not
+correctly match the dimensions of the matrix, R gives you an error.</p>
+<p>For example:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>junk1 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>),<span class="at">nrow=</span><span class="dv">2</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>) </span></code></pre></div>
+<pre><code>## Warning in matrix(c(1, 2, 3, 4, 5, 6, 7), nrow = 2, byrow = TRUE): data length
+## [7] is not a sub-multiple or multiple of the number of rows [2]</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Because there are 7 elements here, the 8th element needed for a matrix is replaced with the first value in the vector.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>junk1</span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]    1    2    3    4
+## [2,]    5    6    7    1</code></pre>
+<p>After we have created our data object, we can examine the dimensions
+with the dim function: <code>dim(data)</code>.</p>
+<p>We can also attach names to the rows and columns of the matrix by
+using the <code>rownames()</code> and <code>colnames()</code>
+functions.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(data)<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">&quot;Jen&quot;</span>,<span class="st">&quot;Tom&quot;</span>,<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Leaf&quot;</span>,<span class="st">&quot;Jim&quot;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(data)<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">&quot;Jen&quot;</span>,<span class="st">&quot;Tom&quot;</span>,<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Leaf&quot;</span>,<span class="st">&quot;Jim&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>data</span></code></pre></div>
+<pre><code>##      Jen Tom Bob Leaf Jim
+## Jen    0   1   0    0   0
+## Tom    1   0   1    0   0
+## Bob    0   1   0    1   1
+## Leaf   0   0   1    0   1
+## Jim    0   0   1    1   0</code></pre>
+<p>We can refer to specific elements, rows, or columns by using the
+<code>[</code> and <code>]</code> symbols. This reads as:
+“object[row,column]”.</p>
+<p>For example, lets look at the relation Jen sends to Tom.</p>
+<p>Recall from lecture that this is element 1,2 in the matrix (i.e. row
+one, column two). <code>data[1,2]</code></p>
+<p>This command reads as follows: for the object data, return the value
+at row 1 column 2.</p>
+<p>We can also call the values for an entire row or column. A single
+value is called a scalar.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>data[<span class="dv">1</span>,] <span class="co"># this reads: return the first row of data.</span></span></code></pre></div>
+<pre><code>##  Jen  Tom  Bob Leaf  Jim 
+##    0    1    0    0    0</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data[,<span class="dv">1</span>] <span class="co"># this reads: return the first column of data.</span></span></code></pre></div>
+<pre><code>##  Jen  Tom  Bob Leaf  Jim 
+##    0    1    0    0    0</code></pre>
+<p>Since we have defined names for the rows and columns, we can use
+those as well.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>data[<span class="st">&quot;Jen&quot;</span>,] <span class="co"># reference the row pertaining to Jen.</span></span></code></pre></div>
+<pre><code>##  Jen  Tom  Bob Leaf  Jim 
+##    0    1    0    0    0</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>data[,<span class="st">&quot;Jen&quot;</span>] <span class="co"># reference the column pertaining to Jen.</span></span></code></pre></div>
+<pre><code>##  Jen  Tom  Bob Leaf  Jim 
+##    0    1    0    0    0</code></pre>
+<p><em>Note</em>: the following does not work because it needs a
+character, defined by the “” symbols around the name.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>data[,Jen] <span class="co">#returns an error because there is no object called Jen. </span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>data[,<span class="st">&quot;Jen&quot;</span>] <span class="co"># compare the difference with the prior line.</span></span></code></pre></div>
+<p>We can also call a series of values:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>data[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,] <span class="co"># return the first three rows of the object data.</span></span></code></pre></div>
+<pre><code>##     Jen Tom Bob Leaf Jim
+## Jen   0   1   0    0   0
+## Tom   1   0   1    0   0
+## Bob   0   1   0    1   1</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>data[,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>] <span class="co"># return the first three columns of the object data.</span></span></code></pre></div>
+<pre><code>##      Jen Tom Bob
+## Jen    0   1   0
+## Tom    1   0   1
+## Bob    0   1   0
+## Leaf   0   0   1
+## Jim    0   0   1</code></pre>
+<p>We can also call a group of values that are non-contiguous using the
+<code>c()</code> function:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>data[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),] <span class="co"># return the first and second rows of the object data.</span></span></code></pre></div>
+<pre><code>##     Jen Tom Bob Leaf Jim
+## Jen   0   1   0    0   0
+## Bob   0   1   0    1   1</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>data[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)] <span class="co"># return the first and second columns of the object data.</span></span></code></pre></div>
+<pre><code>##      Jen Bob
+## Jen    0   0
+## Tom    1   1
+## Bob    0   0
+## Leaf   0   1
+## Jim    0   1</code></pre>
+<p>We can also call a group of values that that do not contain specified
+values by putting a “-” (i.e. a minus sign) in front of the c
+function:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>data[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>),] <span class="co"># return the object data without rows 1 and 3.</span></span></code></pre></div>
+<pre><code>##      Jen Tom Bob Leaf Jim
+## Tom    1   0   1    0   0
+## Leaf   0   0   1    0   1
+## Jim    0   0   1    1   0</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>data[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)] <span class="co"># return the object data without columns 1 and 3.</span></span></code></pre></div>
+<pre><code>##      Tom Leaf Jim
+## Jen    1    0   0
+## Tom    0    0   0
+## Bob    1    1   1
+## Leaf   0    0   1
+## Jim    0    1   0</code></pre>
+</div>
+<div id="exploring-the-network-package" class="section level3">
+<h3><strong>Exploring the <code>network</code> package</strong></h3>
+<p>Now that we have our data object set up, lets manipulate it into a
+network and a graph. To do this, we can use the <code>network</code>
+package. <code>network</code> is a package containing tools to create
+and modify network objects created by Carter Butts (<a
+href="http://erzuli.ss.uci.edu/~buttsc/"
+class="uri">http://erzuli.ss.uci.edu/~buttsc/</a>). See <a
+href="http://cran.r-project.org/web/packages/network/index.html"
+class="uri">http://cran.r-project.org/web/packages/network/index.html</a>
+for an overview.</p>
+<p>First, we need to install the package using:
+<code>install.packages("network")</code>. <em>Note</em>: if you have
+already installed the package, no do not need to reinstall it.</p>
+<p>If it is already installed, we should check to make sure we have the
+most recent version: <code>update.packages("network")</code></p>
+<p>Whenever we start R, we need to load the package because it is not
+automatically loaded. To do this, use the <code>library()</code>
+function. <code>library("network")</code></p>
+<p>To get a list of the contents of the package, as for help with
+respect to the package itself use the <code>help()</code> function, but
+tell R we want help on the package:
+<code>help(package="network")</code></p>
+</div>
+<div id="working-with-unidirected-binary-networks"
+class="section level3">
+<h3><strong>Working with <em>Unidirected</em>, Binary
+Networks</strong></h3>
+<p>Now that the package is loaded, lets create a new object from our
+matrix that is a network. That is, we will use the network function to
+create an object that is of class “network”. To use some of the
+functions, it has to be a specific class.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>data <span class="co"># look at our data object.</span></span></code></pre></div>
+<pre><code>##      Jen Tom Bob Leaf Jim
+## Jen    0   1   0    0   0
+## Tom    1   0   1    0   0
+## Bob    0   1   0    1   1
+## Leaf   0   0   1    0   1
+## Jim    0   0   1    1   0</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(data) <span class="co"># what class is the object &quot;data&quot;?</span></span></code></pre></div>
+<pre><code>## [1] &quot;matrix&quot; &quot;array&quot;</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>net.u <span class="ot">&lt;-</span> <span class="fu">as.network</span>(data) <span class="co">#now, coerce the object &quot;data&quot; into a object called &quot;net.u&quot; that is of class &quot;network&quot;.</span></span></code></pre></div>
+<p>When we enter the object in the command line, summary info about the
+object is produced: <code>net.u</code>. This is because the object is of
+class “network”. We can use the class function to confirm this:
+<code>class(net.u)</code>.</p>
+<p>Let’s look at the object again: <code>net.u</code>. <em>What does the
+summary output of the object tell us?</em></p>
+<p>Note that the network is treated as <strong>directed</strong>. By
+default, the function <code>as.network()</code> sets the argument
+<code>directed =</code> to <code>TRUE</code>. We can see this by looking
+at the structure of the function in the help page:
+<code>?as.network</code>. <em>What do we need to change in the
+<code>as.network()</code> function?</em></p>
+<p>We need to change the input for the <code>directed=</code> argument
+because our network is <strong>undirected</strong>. In other words,
+<code>directed = FALSE</code>. This tells the function that the matrix
+we are entering is an undirected network:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>net.u.correct <span class="ot">&lt;-</span> <span class="fu">as.network</span>(data,<span class="at">directed=</span><span class="cn">FALSE</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, compare the difference since telling the function that the network is directed:</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>net.u</span></code></pre></div>
+<pre><code>##  Network attributes:
+##   vertices = 5 
+##   directed = TRUE 
+##   hyper = FALSE 
+##   loops = FALSE 
+##   multiple = FALSE 
+##   bipartite = FALSE 
+##   total edges= 10 
+##     missing edges= 0 
+##     non-missing edges= 10 
+## 
+##  Vertex attribute names: 
+##     vertex.names 
+## 
+## No edge attributes</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>net.u.correct</span></code></pre></div>
+<pre><code>##  Network attributes:
+##   vertices = 5 
+##   directed = FALSE 
+##   hyper = FALSE 
+##   loops = FALSE 
+##   multiple = FALSE 
+##   bipartite = FALSE 
+##   total edges= 5 
+##     missing edges= 0 
+##     non-missing edges= 5 
+## 
+##  Vertex attribute names: 
+##     vertex.names 
+## 
+## No edge attributes</code></pre>
+<p>The <code>summary()</code> function is a generic function that
+summarizes objects. We can use it on an object of class “network” to
+provide more information: <code>summary(net.u.correct)</code>. More
+information about what can be done with the <code>summary()</code>
+function for an object of class network is shown on the
+<code>?as.network</code> page.</p>
+<p>We could also enter the data as an edgelist using the
+<code>matrix.type =</code> argument. By default, the function
+<code>as.network()</code> sets the argument <code>matrix.type =</code>
+to <code>adjacency</code>. For an edgelist, we would need to change the
+input for the <code>matrix.type =</code> argument to
+<code>edgelist</code>.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># For example, lets make an edgelist:</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>edge       <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="st">&quot;Jen&quot;</span>,<span class="st">&quot;Tom&quot;</span>,<span class="st">&quot;Tom&quot;</span>,<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Leaf&quot;</span>,<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Jim&quot;</span>,<span class="st">&quot;Leaf&quot;</span>,<span class="st">&quot;Jim&quot;</span>),<span class="at">nrow=</span><span class="dv">5</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>) <span class="co"># 5 rows and we are reading off by row.</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>edge</span></code></pre></div>
+<pre><code>##      [,1]   [,2]  
+## [1,] &quot;Jen&quot;  &quot;Tom&quot; 
+## [2,] &quot;Tom&quot;  &quot;Bob&quot; 
+## [3,] &quot;Bob&quot;  &quot;Leaf&quot;
+## [4,] &quot;Bob&quot;  &quot;Jim&quot; 
+## [5,] &quot;Leaf&quot; &quot;Jim&quot;</code></pre>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>edge.net.u <span class="ot">&lt;-</span> <span class="fu">as.network</span>(edge,<span class="at">directed=</span><span class="cn">FALSE</span>,<span class="at">matrix.type=</span><span class="st">&quot;edgelist&quot;</span>) <span class="co"># we have changed the default to edgelist for the matrix.type argument.</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(edge.net.u)</span></code></pre></div>
+<pre><code>## Network attributes:
+##   vertices = 5
+##   directed = FALSE
+##   hyper = FALSE
+##   loops = FALSE
+##   multiple = FALSE
+##   bipartite = FALSE
+##  total edges = 5 
+##    missing edges = 0 
+##    non-missing edges = 5 
+##  density = 0.5 
+## 
+## Vertex attributes:
+##   vertex.names:
+##    character valued attribute
+##    5 valid vertex names
+## 
+## No edge attributes
+## 
+## Network adjacency matrix:
+##      Bob Jen Jim Leaf Tom
+## Bob    0   0   1    1   1
+## Jen    0   0   0    0   1
+## Jim    1   0   0    1   0
+## Leaf   1   0   1    0   0
+## Tom    1   1   0    0   0</code></pre>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note that the as.network() function will often recognize the matrix type being entered:</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>edge.net.u <span class="ot">&lt;-</span> <span class="fu">as.network</span>(edge,<span class="at">directed=</span><span class="cn">FALSE</span>)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(edge.net.u)</span></code></pre></div>
+<pre><code>## Network attributes:
+##   vertices = 5
+##   directed = FALSE
+##   hyper = FALSE
+##   loops = FALSE
+##   multiple = FALSE
+##   bipartite = FALSE
+##  total edges = 5 
+##    missing edges = 0 
+##    non-missing edges = 5 
+##  density = 0.5 
+## 
+## Vertex attributes:
+##   vertex.names:
+##    character valued attribute
+##    5 valid vertex names
+## 
+## No edge attributes
+## 
+## Network adjacency matrix:
+##      Bob Jen Jim Leaf Tom
+## Bob    0   0   1    1   1
+## Jen    0   0   0    0   1
+## Jim    1   0   0    1   0
+## Leaf   1   0   1    0   0
+## Tom    1   1   0    0   0</code></pre>
+</div>
+<div id="working-with-directed-binary-networks" class="section level3">
+<h3><strong>Working with <em>Directed</em>, Binary
+Networks</strong></h3>
+<p>Now, lets work with the example of a directed, binary network. We
+will create an object that is the adjacency matrix.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>data.d <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>),<span class="at">nrow=</span><span class="dv">5</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>) <span class="co"># again, note that these were written in by row, so we want it to read by row (i.e. byrow=TRUE).</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>data.d <span class="co"># take a look at the matrix.</span></span></code></pre></div>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    0    1    0    0    0
+## [2,]    0    0    1    0    0
+## [3,]    0    0    0    1    1
+## [4,]    0    0    1    0    1
+## [5,]    0    0    1    1    0</code></pre>
+<p>Now, let’s coerce it to be an object of class network.</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>net.d <span class="ot">&lt;-</span> <span class="fu">as.network</span>(data.d,<span class="at">directed=</span><span class="cn">TRUE</span>)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(net.d)</span></code></pre></div>
+<pre><code>## Network attributes:
+##   vertices = 5
+##   directed = TRUE
+##   hyper = FALSE
+##   loops = FALSE
+##   multiple = FALSE
+##   bipartite = FALSE
+##  total edges = 8 
+##    missing edges = 0 
+##    non-missing edges = 8 
+##  density = 0.4 
+## 
+## Vertex attributes:
+##   vertex.names:
+##    character valued attribute
+##    5 valid vertex names
+## 
+## No edge attributes
+## 
+## Network adjacency matrix:
+##   1 2 3 4 5
+## 1 0 1 0 0 0
+## 2 0 0 1 0 0
+## 3 0 0 0 1 1
+## 4 0 0 1 0 1
+## 5 0 0 1 1 0</code></pre>
+<p>Just as before, we could also enter the data as an edgelist. Since we
+have directed relations, we have more edges. This is because
+reciprocated ties count twice. So, we have to tell the
+<code>matrix()</code> function that the matrix has 8 rows, instead of
+5.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>edge.d     <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="st">&quot;Jen&quot;</span>,<span class="st">&quot;Tom&quot;</span>,<span class="st">&quot;Tom&quot;</span>,<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Leaf&quot;</span>,<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Jim&quot;</span>,<span class="st">&quot;Leaf&quot;</span>,<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Leaf&quot;</span>,<span class="st">&quot;Jim&quot;</span>,<span class="st">&quot;Jim&quot;</span>,<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Jim&quot;</span>,<span class="st">&quot;Leaf&quot;</span>),<span class="at">nrow=</span><span class="dv">8</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>edge.d.net <span class="ot">&lt;-</span><span class="fu">as.network</span>(edge.d,<span class="at">directed=</span><span class="cn">TRUE</span>,<span class="at">matrix.type=</span><span class="st">&quot;edgelist&quot;</span>)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(edge.d.net)</span></code></pre></div>
+<pre><code>## Network attributes:
+##   vertices = 5
+##   directed = TRUE
+##   hyper = FALSE
+##   loops = FALSE
+##   multiple = FALSE
+##   bipartite = FALSE
+##  total edges = 8 
+##    missing edges = 0 
+##    non-missing edges = 8 
+##  density = 0.4 
+## 
+## Vertex attributes:
+##   vertex.names:
+##    character valued attribute
+##    5 valid vertex names
+## 
+## No edge attributes
+## 
+## Network adjacency matrix:
+##      Bob Jen Jim Leaf Tom
+## Bob    0   0   1    1   0
+## Jen    0   0   0    0   1
+## Jim    1   0   0    1   0
+## Leaf   1   0   1    0   0
+## Tom    1   0   0    0   0</code></pre>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># I have added the argument &quot;print.adj=FALSE&quot;, what is different?</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(edge.d.net,<span class="at">print.adj=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>## Network attributes:
+##   vertices = 5
+##   directed = TRUE
+##   hyper = FALSE
+##   loops = FALSE
+##   multiple = FALSE
+##   bipartite = FALSE
+##  total edges = 8 
+##    missing edges = 0 
+##    non-missing edges = 8 
+##  density = 0.4 
+## 
+## Vertex attributes:
+##   vertex.names:
+##    character valued attribute
+##    5 valid vertex names
+## 
+## No edge attributes</code></pre>
+</div>
+<div id="importing-network-data" class="section level3">
+<h3><strong>Importing Network data</strong></h3>
+<p>If we had a large network, these routines (i.e. using the
+<code>matrix()</code> function) would be tedious. Most of the time, we
+have a file that is an adjacency matrix or an edgelist that we can
+import.<br />
+The <code>read.csv()</code> function can be used to read in .csv files
+that are arranged in this way. Let’s take a look at the help for this
+function: <code>?read.csv</code>.</p>
+<p>We will use the “undirected_net_example.csv” file from my website. To
+access the file, we can use the url in the <code>read.csv()</code>
+function:</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>data.u <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://github.com/jacobtnyoung/SAND/blob/6b4f13916e32814358852101667a63af97fc7f91/_data/undirected-network-example.csv&quot;</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>data.u</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(data.u) <span class="co">#note that the read.csv function creates an object of class data.frame.</span></span></code></pre></div>
+<p>We need to adjust the arguments to read in the file how we want it.
+Specifically, we want to do the following: - Set the <code>as.is=</code>
+argument equal to <code>TRUE</code> so that it reads the data as it is.
+- Set the <code>header=</code> argument to <code>TRUE</code> to indicate
+that there is a header, or column labels. - Set the
+<code>row.names=</code> argument equal to 1 to indicate that the name of
+the rows are in the first column.</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>data.u <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://github.com/jacobtnyoung/SAND/blob/6b4f13916e32814358852101667a63af97fc7f91/_data/undirected-network-example.csv&quot;</span>,<span class="at">as.is=</span><span class="cn">TRUE</span>,<span class="at">header=</span><span class="cn">TRUE</span>,<span class="at">row.names=</span><span class="dv">1</span>)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>data.u</span></code></pre></div>
+<p>Now, make the object into one of class network:</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>net.u <span class="ot">&lt;-</span> <span class="fu">as.network</span>(data.u,<span class="at">directed=</span><span class="cn">FALSE</span>) <span class="co">#recall that since this network is undirected, so we set the directed argument to FALSE.</span></span></code></pre></div>
+<p>We could also import the file if it is saved locally (i.e. we are not
+going to the web to get it). Let’s do this for the directed network. I
+have saved the file to my desktop. First, look at what directory we are
+in using: <code>getwd()</code> function. This function gets the wording
+directory R is currently looking at.</p>
+<p>Then, set the directory where the file is using the
+<code>setwd()</code> function. You can get the location of the file in
+Windows using properties, or info on Mac. <em>Note</em>: you have to
+configure this path to your machine. For me, it is:
+<code>setwd("/Users/jyoung20/Desktop")</code>.</p>
+<p>Then, use read.csv as above:</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;/Users/jyoung20/Desktop&quot;</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>data.d <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;directed_net_example.csv&quot;</span>,<span class="at">as.is=</span><span class="cn">TRUE</span>,<span class="at">header=</span><span class="cn">TRUE</span>,<span class="at">row.names=</span><span class="dv">1</span>)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>net.d <span class="ot">&lt;-</span> <span class="fu">network</span>(data.d,<span class="at">directed=</span><span class="cn">TRUE</span>) <span class="co"># Note: we don&#39;t need to tell it that the network is directed since this is the default, but a good habit to get into.</span></span></code></pre></div>
+<p><br><br><br><br></p>
+<p>####<strong><em>Questions?</em></strong>####</p>
+<p><br></p>
+<div
+id="please-report-any-needed-corrections-to-the-issues-page.-thanks"
+class="section level5">
+<h5><strong><em>Please</em></strong> report any needed corrections to
+the <a href="https://github.com/jacobtnyoung/SAND/issues">Issues</a>
+page. Thanks!</h5>
+<p><br> <br></p>
+<div id="last-updated-26-october-2022" class="section level6">
+<h6><strong><em>Last updated 26 October, 2022</em></strong></h6>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

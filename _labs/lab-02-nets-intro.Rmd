@@ -20,11 +20,11 @@ text-align: justify}
 
 ----
 
-##*This lab will work through some basic examples of matrices and how they are created, imported, and manipulated in R.*
+*This lab will work through some basic examples of matrices and how they are created, imported, and manipulated in R.*
 
 <br>
 
-###**Working with matrices**    
+### **Working with matrices**    
 
 First, clear the workspace:  
 `rm(list = ls())`
@@ -120,7 +120,7 @@ data[,-c(1,3)] # return the object data without columns 1 and 3.
   
   
 
-###**Exploring the `network` package**  
+### **Exploring the `network` package**  
 Now that we have our data object set up, lets manipulate it into a network and a graph. To do this, we can use the `network` package. `network` is a package containing tools to create and modify network objects created by Carter Butts (http://erzuli.ss.uci.edu/~buttsc/). See http://cran.r-project.org/web/packages/network/index.html for an overview.
 
 ```{r,echo=FALSE,eval=TRUE,message=FALSE}
@@ -140,7 +140,7 @@ To get a list of the contents of the package, as for help with respect to the pa
 `help(package="network")`  
   
   
-###**Working with *Unidirected*, Binary Networks**  
+### **Working with *Unidirected*, Binary Networks**  
 Now that the package is loaded, lets create a new object from our matrix that is a network. That is, we will use the network function to create an object that is of class "network". To use some of the functions, it has to be a specific class.
 
 ```{r,echo=TRUE,eval=TRUE}
@@ -182,7 +182,7 @@ summary(edge.net.u)
 ```  
   
   
-###**Working with *Directed*, Binary Networks**
+### **Working with *Directed*, Binary Networks**
 Now, lets work with the example of a directed, binary network. We will create an object that is the adjacency matrix.
 
 ```{r,echo=TRUE,eval=TRUE}
@@ -207,7 +207,7 @@ summary(edge.d.net,print.adj=FALSE)
 ```  
   
   
-###**Importing Network data**
+### **Importing Network data**
 ```{r,echo=FALSE,eval=TRUE}
 rm(list = ls()) 
 ```  
@@ -216,7 +216,7 @@ If we had a large network, these routines (i.e. using the `matrix()` function) w
 The `read.csv()` function can be used to read in .csv files that are arranged in this way. Let's take a look at the help for this function: `?read.csv`.  
 
 We will use the "undirected_net_example.csv" file from my website. To access the file, we can use the url in the `read.csv()` function:
-```{r,echo=TRUE,eval=TRUE}
+```{r,echo=TRUE,eval=FALSE}
 data.u <- read.csv("https://github.com/jacobtnyoung/SAND/blob/6b4f13916e32814358852101667a63af97fc7f91/_data/undirected-network-example.csv")
 data.u
 class(data.u) #note that the read.csv function creates an object of class data.frame.
@@ -227,13 +227,13 @@ We need to adjust the arguments to read in the file how we want it. Specifically
 - Set the `header=` argument to `TRUE` to indicate that there is a header, or column labels.
 - Set the `row.names=` argument equal to 1 to indicate that the name of the rows are in the first column.
 
-```{r,echo=TRUE,eval=TRUE}
+```{r,echo=TRUE,eval=FALSE}
 data.u <- read.csv("https://github.com/jacobtnyoung/SAND/blob/6b4f13916e32814358852101667a63af97fc7f91/_data/undirected-network-example.csv",as.is=TRUE,header=TRUE,row.names=1)
 data.u
 ```  
 
 Now, make the object into one of class network: 
-```{r,echo=TRUE,eval=TRUE}
+```{r,echo=TRUE,eval=FALSE}
 net.u <- as.network(data.u,directed=FALSE) #recall that since this network is undirected, so we set the directed argument to FALSE.
 ```
 
