@@ -21,13 +21,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Statistical Analysis of Network Data
 
-This course provides a survey of the various tools for used in network analysis. The overarching goal of the course is that, upon completion, students will be capable of developing research questions from a network perspective and incorporating network-based tools in their own research. The course is designed to be primarily methodological, dedicating the majority of the time to working through the mechanics of network-based tools. Students will also gain experience with R, a commonly used software program for network data management, analysis, and visualization.
+This course provides a survey of the various tools used when analyzing networks. The overarching goal of the course is that, upon completion, students will be capable of developing research questions from a network perspective and incorporating network-based tools in their own research. The course is designed to be primarily methodological, dedicating the majority of the time to working through the mechanics of network-based tools. Students will also gain experience with [R](https://cran.r-project.org/), a commonly used software program for network data management, analysis, and visualization.
 
-Even if you are not taking the course, feel free to browse the lecture notes and labs. As always, I welcome any feedback!
+Even if you are not taking the course, feel free to browse the lecture notes and labs. As always, I welcome any [feedback](https://github.com/jacobtnyoung/SAND/issues)!
 
 *Note on file formats*
 
-For the labs, .html format and RMarkdown (.Rmd) format documents are provided. The .html files can be opened by first downloading the file and then opening it using any web browser. The .Rmd files can be opened in any web browser, but require [RStudio](https://www.rstudio.com/) to execute.
+Lectures are provided in .pdf format. Labs are provided in .html format and RMarkdown (.Rmd) format. The .html files can be opened by first downloading the file and then opening it using any web browser. The .Rmd files can be opened in any web browser, but require [RStudio](https://www.rstudio.com/) to [knit](https://cran.r-project.org/web/packages/knitr/index.html).
 
 <br>
 
