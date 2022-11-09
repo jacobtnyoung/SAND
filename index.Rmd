@@ -35,7 +35,7 @@ For the labs, .html format and RMarkdown (.Rmd) format documents are provided. T
 ## *Lecture Notes and Labs*  
 ____
 
-[Introduction to Network Analysis](_pages/page-01-intro.html)
+[Introduction to Network Analysis](https://jacobtnyoung.github.io/SAND//_pages/page-01-intro.html)
 
 [Network Data Structures and Sources of Network Data](_pages/page-02-network-data.html)
 
