@@ -1,14 +1,15 @@
 ---
-title: "Identifying Cohesive Subgroups in R Lab"
+title: "Lab 06-Identifying Cohesive Subgroups"
 date: "CRJ 605 Statistical Analysis of Networks"
 output: 
   html_document:
     df_print: paged
-    theme: cosmo
+    theme: lumen
     highlight: haddock
     toc: yes
     toc_float: yes
     code_fold: show
+    self_contained: true
 ---
 
 ```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}

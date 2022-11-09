@@ -43,7 +43,7 @@ A problem set (with solutions) is provided to work through the material covered.
 
   + [Bipartite Graphs lecture](_lectures\lecture-07-bipartite.pdf)
   
-  + Bipartite Graphs lab ([html](_labs\lab-07-bipartite.html)) ([Rmd](_labs\lab-07-bipartite.Rmd))
+  + Lab 07-Bipartite Graphs/Two-Mode Networks ([html](_labs\lab-07-bipartite.html)) ([Rmd](_labs\lab-07-bipartite.Rmd))
   
     + Two-mode edgelist (.csv) from Young & Ready (2015) used in Bipartite Graphs lecture & Bipartite Graphs lab  
   <br>
@@ -52,7 +52,7 @@ A problem set (with solutions) is provided to work through the material covered.
   
   + [Projection & Weighted Graphs lecture](_lectures\lecture-08-projection-weighted.pdf)
   
-  + Projection & Weighted Graphs lab ([html](_labs\lab-08-projection-weighted.html)) ([Rmd](_labs\lab-08-projection-weighted.Rmd))
+  + Lab 08-Projection & Weighted Graphs ([html](_labs\lab-08-projection-weighted.html)) ([Rmd](_labs\lab-08-projection-weighted.Rmd))
 
 <br>
 

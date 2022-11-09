@@ -50,7 +50,7 @@ The accompanying labs provide an overview of these measures using the [sna](http
   
     + R script for Degree Centrality lecture
   
-    + Degree Centrality lab ([html](_labs/lab-04-degree-centrality.html)) ([Rmd](_labs/lab-04-degree-centrality.Rmd))
+    + Lab 04-Degree Centrality and Centralization ([html](_labs/lab-04-degree-centrality.html)) ([Rmd](_labs/lab-04-degree-centrality.Rmd))
   
     + Degree Centrality problem set (pdf) and solutions (html) (Rmd)
   
@@ -62,7 +62,7 @@ The accompanying labs provide an overview of these measures using the [sna](http
     
     + R script for Closeness & Betweenness Centrality lecture (.R)
   
-    + Closeness & Betweenness Centrality lab ([html](_labs/lab-05-close-between-centrality.html)) ([Rmd](_labs/lab-05-close-between-centrality.Rmd))
+    + Lab 05-Closeness & Betweenness Centrality/Centralization ([html](_labs/lab-05-close-between-centrality.html)) ([Rmd](_labs/lab-05-close-between-centrality.Rmd))
   
     + Betweenness Centrality problem set (pdf, see Part A) and solutions (html) (Rmd)
 

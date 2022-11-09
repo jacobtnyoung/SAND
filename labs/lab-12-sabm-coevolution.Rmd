@@ -1,14 +1,15 @@
 ---
-title: "Coevolution of Networks and Behavior with Stochastic Actor-Based Models (SABMs) in R Lab"
+title: "Lab 12-Coevolution of Networks and Behavior with Stochastic Actor-Based Models (SABMs)"
 date: "CRJ 605 Statistical Analysis of Networks"
 output: 
   html_document:
     df_print: paged
-    theme: cosmo
+    theme: lumen
     highlight: haddock
     toc: yes
     toc_float: yes
     code_fold: show
+    self_contained: true
 ---
 
 ```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}

@@ -42,11 +42,11 @@ In this section of the course, we begin working with [R](http://cran.r-project.o
 
 #### Lecture Materials
 
- + Intro to R lab ([html](_labs/lab-01-r-intro.html)) ([Rmd](_labs/lab-01-r-intro.Rmd))
+ + Lab 01-Introduction to R ([html](_labs/lab-01-r-intro.html)) ([Rmd](_labs/lab-01-r-intro.Rmd))
  
- + Intro to Networks lab ([html](_labs/lab-02-nets-intro.html)) ([Rmd](_labs/lab-02-nets-intro.Rmd))
+ + Lab 02-Introduction to Networks in R ([html](_labs/lab-02-nets-intro.html)) ([Rmd](_labs/lab-02-nets-intro.Rmd))
  
- + Visualization lab ([html](_labs/lab-03-visualization-intro.html)) ([Rmd](_labs/lab-03-visualization-intro.Rmd))
+ + Lab 03-Basics of Network Visualization ([html](_labs/lab-03-visualization-intro.html)) ([Rmd](_labs/lab-03-visualization-intro.Rmd))
  
  + Example networks used in labs (undirected network) (directed network)
 
