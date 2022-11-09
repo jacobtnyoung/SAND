@@ -1,7 +1,10 @@
 ---
-output: 
-  html_document:
-    theme: yeti
+title: Statistical Analysis of Network Data (SAND)
+author: Jacob T.N. Young
+output:
+  prettydoc::html_pretty:
+    theme: tactile
+    highlight: github
     toc: false
     toc_float: false
     collapsed: false
@@ -14,7 +17,7 @@ text-align: justify}
 </style>
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set( echo = TRUE )
 ```
 
 <br>
