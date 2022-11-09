@@ -42,13 +42,13 @@ A problem set (with solutions) is provided to work through the material covered.
 
 #### Lecture Materials  
 
-  + [Introduction to ERGMs lecture](_lectures/lecture-09-ergm-intro.pdf)
+  + [Introduction to ERGMs lecture](../lectures/lecture-09-ergm-intro.pdf)
   
-  + R script for Introduction to ERGMs lecture (.R)  
+  + [R script for Introduction to ERGMs lecture](../lecture_syntax/lecture-syntax-09-ergm-intro.R)
   
-  + Lab 09-Introduction to Exponential Random Graph Models (ERGMs) ([html](_labs\lab-09-ergm-intro.html)) ([Rmd](_labs\lab-09-ergm-intro.Rmd))  
+  + Lab 09-Introduction to Exponential Random Graph Models (ERGMs) ([html](../labs/lab-09-ergm-intro.html)) ([Rmd](../labs/lab-09-ergm-intro.Rmd))  
   
-  + Lab 10-Simulation and Goodness of Fit with Exponential Random Graph Models (ERGMs) ([html](_labs\lab-10-ergm-gof.html)) ([Rmd](_labs\lab-10-ergm-gof.Rmd))  
+  + Lab 10-Simulation and Goodness of Fit with Exponential Random Graph Models (ERGMs) ([html](../labs/lab-10-ergm-gof.html)) ([Rmd](../labs/lab-10-ergm-gof.Rmd))  
   
   + ERGMs problem set (pdf) and solutions (html) (Rmd)
 

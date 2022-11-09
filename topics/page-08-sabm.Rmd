@@ -34,17 +34,17 @@ These lectures examine the logic of simulation based models for network dynamics
 
 #### Lecture Materials  
 
-  + [Introduction to SABMs lecture](_lectures/lecture-10-sabm-intro.pdf)
+  + [Introduction to SABMs lecture](../lectures/lecture-10-sabm-intro.pdf)
   
-  + Lab 11-Introduction to Stochastic Actor-Based Models (SABMs) ([html](_labs\lab-11-sabm-intro.html)) ([Rmd](_labs\lab-11-sabm-intro.Rmd))
+  + Lab 11-Introduction to Stochastic Actor-Based Models (SABMs) ([html](../labs/lab-11-sabm-intro.html)) ([Rmd](../labs/lab-11-sabm-intro.Rmd))
     
     + Advice networks (W1 .csv) (W2 .csv) (W3 .csv) for lab
     
     + Attribute data (rating .csv) for lab
     
-  + [Co-Evolution of Networks and Behavior lecture](_lectures\lecture-11-sabm-coevolution.pdf)
+  + [Co-Evolution of Networks and Behavior lecture](../lectures/lecture-11-sabm-coevolution.pdf)
   
-  + Lab 12-Coevolution of Networks and Behavior with Stochastic Actor-Based Models (SABMs) ([html](_labs\lab-12-sabm-coevolution.html)) ([Rmd](_labs\lab-12-sabm-coevolution.Rmd))
+  + Lab 12-Coevolution of Networks and Behavior with Stochastic Actor-Based Models (SABMs) ([html](../labs/lab-12-sabm-coevolution.html)) ([Rmd](../labs/lab-12-sabm-coevolution.Rmd))
 
 <br>
 
