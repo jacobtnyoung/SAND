@@ -37,9 +37,9 @@ The learning goals of this lecture are to:
 
 #### Lecture Materials
 
- + [Introduction lecture](_lectures/lecture-01-introduction.pdf) 
+ + [Introduction lecture](lectures/lecture-01-introduction.pdf) 
  
- + [R script for Introduction lecture](_lecture_syntax/intro.lecture.syntax.R)
+ + [R script for Introduction lecture](lecture_syntax/intro.lecture.syntax.R)
 
 <br>
 
