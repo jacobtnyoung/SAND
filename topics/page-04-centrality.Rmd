@@ -48,7 +48,7 @@ The accompanying labs provide an overview of these measures using the [sna](http
   
     + [Degree Centrality lecture](../lectures/lecture-04-degree-centrality.pdf) 
   
-    + [R script for Degree Centrality lecture]((../lecture_syntax/lecture-syntax-04-degree-centrality.R))
+    + [R script for Degree Centrality lecture](../lecture_syntax/lecture-syntax-04-degree-centrality.R)
   
     + Lab 04-Degree Centrality and Centralization ([html](../labs/lab-04-degree-centrality.html)) ([Rmd](../labs/lab-04-degree-centrality.Rmd))
   
@@ -60,7 +60,7 @@ The accompanying labs provide an overview of these measures using the [sna](http
   
     + [Closeness & Betweenness Centrality lecture](../lectures/lecture-05-close-between-centrality.pdf)
     
-    + [R script for Closeness & Betweenness Centrality lecture]((../lecture_syntax/lecture-syntax-05-close-between-centrality.R))
+    + [R script for Closeness & Betweenness Centrality lecture](../lecture_syntax/lecture-syntax-05-close-between-centrality.R)
   
     + Lab 05-Closeness & Betweenness Centrality/Centralization ([html](../labs/lab-05-close-between-centrality.html)) ([Rmd](../labs/lab-05-close-between-centrality.Rmd))
   
