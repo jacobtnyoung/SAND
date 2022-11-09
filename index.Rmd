@@ -35,21 +35,21 @@ For the labs, .html format and RMarkdown (.Rmd) format documents are provided. T
 ## *Lecture Notes and Labs*  
 ____
 
-[Introduction to Network Analysis](https://jacobtnyoung.github.io/SAND//_pages/page-01-intro.html)
+[Introduction to Network Analysis](https://jacobtnyoung.github.io/SAND/_pages/page-01-intro.html)
 
-[Network Data Structures and Sources of Network Data](_pages/page-02-network-data.html)
+[Network Data Structures and Sources of Network Data](https://jacobtnyoung.github.io/SAND/_pages/page-02-network-data.html)
 
-[Getting Started with R and Network Visualization](_pages/page-03-r-network-vis.html)
+[Getting Started with R and Network Visualization](https://jacobtnyoung.github.io/SAND/_pages/page-03-r-network-vis.html)
 
-[Centrality](_pages/page-04-centrality.html)
+[Centrality](https://jacobtnyoung.github.io/SAND/_pages/page-04-centrality.html)
 
-[Cohesive Subgroups](_pages/page-05-subgroups.html)
+[Cohesive Subgroups](https://jacobtnyoung.github.io/SAND/_pages/page-05-subgroups.html)
 
-[Bipartite Graphs/Two-Mode Networks](_pages/page-06-bipartite.html)
+[Bipartite Graphs/Two-Mode Networks](https://jacobtnyoung.github.io/SAND/_pages/page-06-bipartite.html)
 
-[Exponential Random Graph Models (ERGMs)](_pages/page-07-ergm.html)
+[Exponential Random Graph Models (ERGMs)](https://jacobtnyoung.github.io/SAND/_pages/page-07-ergm.html)
 
-[Stochastic Actor-Based Models (SABMs)](_pages/page-08-sabm.html)
+[Stochastic Actor-Based Models (SABMs)](https://jacobtnyoung.github.io/SAND/_pages/page-08-sabm.html)
 
 <br>
 
