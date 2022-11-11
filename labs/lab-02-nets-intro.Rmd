@@ -357,7 +357,7 @@ We will use the **lab-02-undirected-example.csv** file from my website. To acces
 ```{r,echo=TRUE,eval=FALSE}
 
 # define the object
-data.u <- read.csv( "https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv" )
+data.u <- read.csv( "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv" )
 
 # look at the object
 data.u
@@ -373,7 +373,7 @@ We need to adjust the arguments to read in the file how we want it. Specifically
 - Set the `row.names=` argument equal to 1 to indicate that the name of the rows are in the first column.
 
 ```{r,echo=TRUE,eval=FALSE}
-data.u <- read.csv("https://github.com/jacobtnyoung/SAND/blob/6b4f13916e32814358852101667a63af97fc7f91/_data/undirected-network-example.csv",as.is=TRUE,header=TRUE,row.names=1)
+data.u <- read.csv("https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv",as.is=TRUE,header=TRUE,row.names=1)
 data.u
 ```  
 
