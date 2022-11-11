@@ -352,11 +352,19 @@ rm( list = ls() )
 If we had a large network, these routines (i.e. using the `matrix()` function) would be tedious. Most of the time, we have a file that is an adjacency matrix or an edgelist that we can import.  
 The `read.csv()` function can be used to read in .csv files that are arranged in this way. Let's take a look at the help for this function: `?read.csv`.  
 
-We will use the "undirected_net_example.csv" file from my website. To access the file, we can use the url in the `read.csv()` function:
+We will use the **lab-02-undirected-example.csv** file from my website. To access the file, we can place the url in the `read.csv()` function. Here is the url: https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv.
+
 ```{r,echo=TRUE,eval=FALSE}
-data.u <- read.csv("https://github.com/jacobtnyoung/SAND/blob/6b4f13916e32814358852101667a63af97fc7f91/_data/undirected-network-example.csv")
+
+# define the object
+data.u <- read.csv( "https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv" )
+
+# look at the object
 data.u
-class(data.u) #note that the read.csv function creates an object of class data.frame.
+
+# note that the read.csv function creates an object of class data.frame.
+class( data.u )
+
 ```  
 
 We need to adjust the arguments to read in the file how we want it. Specifically, we want to do the following:
