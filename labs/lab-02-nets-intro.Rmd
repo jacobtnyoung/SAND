@@ -176,7 +176,6 @@ mat[,-c(1,3)]
 
 ```  
   
-  
 
 ### **Exploring the `network` package**  
 Now that we have our object `mat` is created, let's manipulate it into a network and a graph. To do this, we can use the `network` package. `network` is a package containing tools to create and modify network objects created by [Carter Butts](http://erzuli.ss.uci.edu/~buttsc/). See the [network page](http://cran.r-project.org/web/packages/network/index.html) for an overview of package functionality.
