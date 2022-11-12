@@ -46,9 +46,9 @@ A problem set (with solutions) is provided to work through the material covered.
   
   + [R script for Introduction to ERGMs lecture](../lecture_syntax/lecture-syntax-09-ergm-intro.R)
   
-  + Lab 09-Introduction to Exponential Random Graph Models (ERGMs) ([html](../labs/lab-09-ergm-intro.html)) ([Rmd](../labs/lab-09-ergm-intro.Rmd))  
+  + [Lab 09-Introduction to Exponential Random Graph Models (ERGMs)](../labs/lab-09-ergm-intro.html)
   
-  + Lab 10-Simulation and Goodness of Fit with Exponential Random Graph Models (ERGMs) ([html](../labs/lab-10-ergm-gof.html)) ([Rmd](../labs/lab-10-ergm-gof.Rmd))  
+  + [Lab 10-Simulation and Goodness of Fit with Exponential Random Graph Models (ERGMs)](../labs/lab-10-ergm-gof.html)
   
   + ERGMs problem set (pdf) and solutions (html) (Rmd)
 

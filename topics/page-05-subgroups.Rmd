@@ -48,7 +48,7 @@ The accompanying lab provide an overview of these measures using the [igraph](ht
   
   + [R script for Identifying Subgroups lecture](../lecture_syntax/lecture-syntax-06-subgroups.R)
   
-  + Lab 06-Identifying Cohesive Subgroups ([html](../labs/lab-06-subgroups.html)) ([Rmd](../labs/lab-06-subgroups.Rmd))
+  + [Lab 06-Identifying Cohesive Subgroups](../labs/lab-06-subgroups.html)
 
 <br>
 
