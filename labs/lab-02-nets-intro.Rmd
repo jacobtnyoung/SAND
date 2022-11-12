@@ -233,7 +233,7 @@ We need to change the input for the `directed=` argument because our network is 
 
 # create a new object called net.u.correct
 net.u.correct <- as.network( 
-  data, 
+  mat, 
   directed = FALSE )
 
 # compare the difference since telling the function that the network is directed
@@ -356,30 +356,58 @@ We will use the **lab-02-undirected-example.csv** file from my website. To acces
 
 ```{r,echo=TRUE,eval=FALSE}
 
-# define the object
-data.u <- read.csv( "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv" )
+# define the path
+url <- "https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv"
+
+# define the data using the url object
+mat.u <- read.csv( url )
 
 # look at the object
-data.u
+mat.u
 
 # note that the read.csv function creates an object of class data.frame.
-class( data.u )
+class( mat.u )
 
 ```  
 
-We need to adjust the arguments to read in the file how we want it. Specifically, we want to do the following:
-- Set the `as.is=` argument equal to `TRUE` so that it reads the data as it is.
-- Set the `header=` argument to `TRUE` to indicate that there is a header, or column labels.
-- Set the `row.names=` argument equal to 1 to indicate that the name of the rows are in the first column.
+We need to adjust the arguments to read in the file how we want it. Specifically, we want to do the following:  
+
+  + Set the `as.is=` argument equal to `TRUE` so that it reads the data as it is.
+
+  + Set the `header=` argument to `TRUE` to indicate that there is a header, or column labels.
+
+  + Set the `row.names=` argument equal to 1 to indicate that the name of the rows are in the first column.
 
 ```{r,echo=TRUE,eval=FALSE}
-data.u <- read.csv("https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv",as.is=TRUE,header=TRUE,row.names=1)
-data.u
+
+# look at the arguments
+mat.u2 <- read.csv( 
+  url,
+  as.is=TRUE,
+  header=TRUE,
+  row.names=1 
+  )
+
+mat.u2
+
+# compare them
+mat.u
+mat.u2
+
 ```  
+
 
 Now, make the object into one of class network: 
+
 ```{r,echo=TRUE,eval=FALSE}
-net.u <- as.network(data.u,directed=FALSE) #recall that since this network is undirected, so we set the directed argument to FALSE.
+
+# recall that since this network is undirected
+# so we set the directed= argument to FALSE
+net.u <- as.network( 
+  mat.u2,
+  directed=FALSE
+   )
+
 ```
 
 We could also import the file if it is saved locally (i.e. we are not going to the web to get it). Let's do this for the directed network. I have saved the file to my desktop. First, look at what directory we are in using: `getwd()` function. This function gets the wording directory R is currently looking at.  
