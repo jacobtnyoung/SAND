@@ -372,20 +372,21 @@ class( mat.u )
 
 We need to adjust the arguments to read in the file how we want it. Specifically, we want to do the following:  
 
-  + Set the `as.is=` argument equal to `TRUE` so that it reads the data as it is.
+  + Set the `as.is =` argument equal to `TRUE` so that it reads the data as it is.
 
-  + Set the `header=` argument to `TRUE` to indicate that there is a header, or column labels.
+  + Set the `header =` argument to `TRUE` to indicate that there is a header, or column labels.
 
-  + Set the `row.names=` argument equal to 1 to indicate that the name of the rows are in the first column.
+  + Set the `row.names =` argument equal to 1 to indicate that the name of the rows are in the first column.
 
 ```{r,echo=TRUE,eval=FALSE}
 
 # look at the arguments
 mat.u2 <- read.csv( 
   url,
-  as.is=TRUE,
-  header=TRUE,
-  row.names=1 
+  as.is = TRUE,
+  header = TRUE,
+  row.names = 1,
+  col.names = 1 
   )
 
 mat.u2
