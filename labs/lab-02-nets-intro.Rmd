@@ -356,7 +356,7 @@ We will use the **lab-02-undirected-example.csv** file from my website. To acces
 ```{r,echo=TRUE,eval=FALSE}
 
 # define the path
-url <- "https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv"
+url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv"
 
 # define the data using the url object
 mat.u <- read.csv( url )
