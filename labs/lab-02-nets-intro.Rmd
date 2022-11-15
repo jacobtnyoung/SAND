@@ -86,10 +86,10 @@ We can also attach names to the rows and columns of the matrix by using the `row
 ```{r,echo=TRUE,eval=TRUE}
 
 # attach row names
-rownames( mat )<-c( "Jen","Tom","Bob","Leaf","Jim" )
+rownames( mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
 
 # attach column names
-colnames( mat )<-c( "Jen","Tom","Bob","Leaf","Jim" )
+colnames( mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
 
 # print out the object
 mat
@@ -384,8 +384,7 @@ mat.u2 <- read.csv(
   url,
   as.is = TRUE,
   header = TRUE,
-  row.names = 1,
-  col.names = 1 
+  row.names = 1 
   )
 
 mat.u2
@@ -405,10 +404,14 @@ Now, make the object into one of class network:
 # so we set the directed= argument to FALSE
 net.u <- as.network( 
   mat.u2,
-  directed=FALSE
+  directed = FALSE
    )
 
 ```
+
+
+!!!HERE WITH GOING THROUGH
+
 
 We could also import the file if it is saved locally (i.e. we are not going to the web to get it). Let's do this for the directed network. I have saved the file to my desktop. First, look at what directory we are in using: `getwd()` function. This function gets the wording directory R is currently looking at.  
 
