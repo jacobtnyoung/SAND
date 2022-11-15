@@ -353,7 +353,7 @@ The `read.csv()` function can be used to read in .csv files that are arranged in
 
 We will use the **lab-02-undirected-example.csv** file from my website. To access the file, we can place the url in the `read.csv()` function. Here is the url: https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv.
 
-```{r,echo=TRUE,eval=FALSE}
+```{r, echo=TRUE, eval=FALSE, warning=FALSE}
 
 # define the path
 url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv"
