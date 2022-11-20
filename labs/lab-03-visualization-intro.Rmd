@@ -12,12 +12,15 @@ output:
     self_contained: true
 ---
 
-###
-*This lab goes through some basics of visualizing networks using the `gplot()` function in the sna package.*
+*This lab goes through some basics of visualizing networks using the `gplot()` function in the `sna` package.*
 
 ***
 
-###**Network Visualization**    
+
+**FOR THIS LAB, YOU NEED TO GO TO THE LAYERING PIECE FROM THE R WORKSHOP SO YOU CAN GET THAT CODE AND WORK THE LOGIC IN HERE**
+
+
+### **Network Visualization**    
 
 One of the great features of working with network data is the ability to ***see*** the data through visualization. Visualizing the structure of a network is helpful for discerning patterns that might be of interest. 
 
@@ -36,107 +39,216 @@ Douglas Luke's (2015: 47) *A User's Guide to Network Analysis* provides several 
 
 Let's look at the example he uses as an illustration by working with the `gplot()` function in the sna package.  
 
-First, we need to install the sna package using `install.packages("sna")` and load the library using `library(sna)`. Remember, if you have already installed a package then you do not need to use the `install.packages()` function. But, if you have not installed the package in a while, you should use `update.packages()` to incorporate any changes that have been made to the page.
+First, we need to install the sna package using `install.packages( "sna" )` and load the library using `library( sna )`. Remember, if you have already installed a package then you do not need to use the `install.packages()` function. But, if you have not installed the package in a while, you should use `update.packages()` to incorporate any changes that have been made to the page.
 
-Next, let's get the UserNetR package from Douglas Luke's GitHub page. First, install the devtools package using `install.packages("devtools")` and then load the library for the package `library(devtools)`. Then, install the UserNetR package: `install_github("DougLuke/UserNetR")` and load the library: `library(UserNetR)`.  
+Next, let's get the `UserNetR` package from Douglas Luke's GitHub page. Since this package is not on the CRAN package repository, we need to install it from Github. We do this in four steps:  
+
+  + First, install the devtools package using `install.packages( "devtools" )`
+  
+  + And then load the library for the package with `library( devtools )`
+  
+  + Now, install the `UserNetR` package `install_github( "DougLuke/UserNetR" )`
+  
+  + Finally, load the library `library( UserNetR )`  
+
 
 ```{r,echo=FALSE,eval=TRUE,message=FALSE}
-library(sna)
-library(devtools)
-library(UserNetR)
+
+library( sna )
+library( devtools )
+library( UserNetR )
+
 ```
 
-Now, let's take a look at the `Moreno` network (see `help(Moreno, package=UserNetR)`. These data are contained in a sociogram constructed by Jacob Moreno, and published in the New York Times in 1933 (see Moreno, J. L. 1934. *Who shall survive? A new approach to the problem of human interrelations*. Nervous and mental disease monograph series, no. 58. Washington, DC: Nervous and Mental Disease Publishing Co. for more extensive discussion).  
+Now, let's take a look at the `Moreno` network (see `help( Moreno, package = UserNetR )`. These data are contained in a sociogram constructed by [Jacob Moreno](https://en.wikipedia.org/wiki/Jacob_L._Moreno), and published in the New York Times in 1933 (see Moreno, J. L. 1934. *Who shall survive? A new approach to the problem of human interrelations*. Nervous and mental disease monograph series, no. 58. Washington, DC: Nervous and Mental Disease Publishing Co. for a more extensive discussion).  
+
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE}
-summary(Moreno,print.adj=FALSE) # Note that we ask the summary() function to not print out the adjacency matrix.
+
+# Note that we ask the summary() function to not print out the adjacency matrix.
+summary( Moreno, print.adj = FALSE )
 
 # Now, let's compare two different plot layouts.
 
 # Here is a circle.
-gplot(Moreno,mode="circle")
+gplot( Moreno, mode = "circle" )
 
 # Here is a separate layout.
-gplot(Moreno,mode="fruchtermanreingold")
+gplot( Moreno, mode = "fruchtermanreingold" )
+
 ```
 
-#####*How do these plots differ in their ability to highlight the aesthetics mentioned above for relations among individuals?*
+##### *How do these plots differ in their ability to highlight the aesthetics mentioned above for relations among individuals?*
+
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
 # Let's plot them together for comparison.
-op <- par(mar=rep(2,4),mfrow=c(1,2))
-gplot(Moreno,mode="circle",main="Plotted as a circle")
-gplot(Moreno,mode="fruchtermanreingold",main="Plotted using a spring algorithm")
+
+# First, we define the plot layout window.
+op <- par( 
+  mar = rep( 2, 4 ), # set the margins
+  mfrow = c( 1, 2 )  # se the dimensions
+  )
+
+# plot the circle layout (add the main() argument for a title)
+gplot( Moreno, mode = "circle", main = "Plotted as a circle" )
+
+# plot the Fruchterman Reingold layout
+gplot( Moreno, mode = "fruchtermanreingold", main = "Plotted using a spring algorithm" )
+
 ```
+
+
 ```{r,echo=FALSE,eval=TRUE,message=FALSE}
-par(op)
+
+par( op )
+
 ```  
 
 If we add information about gender, we can see a bit more that is revealed by the spring algorithm.
 
 To do so, we use the `vertex.col=` argument with the vertex attribute *gender*. To do so, we need to access the vertex attribute. We can do this with:  
 
-* the `get.vertex.attribute()` function where we specify the attribute we want, like `get.vertex.attribute(Moreno, "gender")`.  
+* the `get.vertex.attribute()` function in the `sna` package. Use `library( sna )` and specify the attribute we want, like `get.vertex.attribute( Moreno,  "gender" )`. *What does this command return?*  
   
 * or use the shorthand for this with `network object %v% atttribute`, like `Moreno %v% "gender"`.
 
+
 ```{r,echo=TRUE,eval=TRUE,message=FALSE}
-op <- par(mar=rep(2,4),mfrow=c(1,2))
-gplot(Moreno,mode="circle",main="Plotted as a circle",vertex.col=get.vertex.attribute(Moreno,"gender"))
-gplot(Moreno,mode="fruchtermanreingold",main="Plotted using a spring algorithm",vertex.col=Moreno %v% "gender")
-legend("bottomleft",legend=c("Male","Female"),col=c("red","black"),title="legend",pt.cex=0.75,bty="n",pch=19)
+
+op <- par( mar = rep( 2, 4 ), mfrow = c( 1, 2 ) )
+
+gplot( Moreno,
+      mode = "circle",
+      main = "Plotted as a circle",
+      vertex.col = get.vertex.attribute( Moreno, "gender" ) # use the vertex attribute.
+      )
+
+gplot( Moreno,
+       mode = "fruchtermanreingold",
+       main = "Plotted using a spring algorithm",
+       vertex.col = Moreno %v% "gender" # note the difference here compared to above.
+       )
+
+# let's add a legend to the plot
+legend(
+  "bottomleft",
+  legend = c( "Male","Female" ),
+  col = c( "red","black" ),
+  title = "legend",
+  pt.cex = 0.75,
+  bty = "n",
+  pch = 19 
+  )
+
 ```
+
 ```{r,echo=FALSE,eval=TRUE,message=FALSE}
-par(op)
+
+par( op )
+
 ```  
 
-#####*What is the primary story that the plot tells? Does a particular layout help us see that better?*
+##### *What is the primary story that the plot tells? Does a particular layout help us see that better?*
 
 
 ***
 
-###**Working with the `gplot()` function**  
+### **Working with the `gplot()` function**  
 Let's take a look at some of the visualization capabilities of `gplot()`. Let's start by looking at the function's help page: `?gplot`.
 
-To see the various functionality of the function, let's work with an example of an undirected network.
+To see the various functionality of the function, let's work with the example of an undirected network from [lab 02](). 
+
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE}
-# note that we can execute two functions with 1 command line by combining the functions.
-net.u <- as.network(
-    read.csv("http://www.weebly.com/uploads/2/3/4/5/23459640/undirected_net_example.csv",
-    as.is=TRUE,header=TRUE,row.names=1),directed=FALSE
+
+# define the path
+url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv"
+
+# define the object
+mat.u <- as.matrix(
+  read.csv( 
+    url,
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1
     )
+  )
 
-# take a look at the network.
-summary(net.u)
+# now, create the network
+net.u <- network(
+  mat.u,
+  directed = FALSE
+)
 
-# now, plot the object.
-gplot(net.u)
+# take a look at the network
+summary( net.u )
+
+#NOTE: we could have wrapped all of this into two statements
+net.u <- as.network( 
+  as.matrix(
+    read.csv( 
+      "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv",
+      as.is = TRUE,
+      header = TRUE,
+      row.names = 1 ) ),
+  directed = FALSE 
+  )
+
+summary( net.u )
+
+
+```
+
+Now that we have the object built, we can plot it.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+gplot( net.u )
+
 ```
 
 ***Note***: that this shows arrows. That is because `gplot()` assumes a directed network. We can see this in the help menu, `?gplot`, where is shows that for the type of network, the `gmode=` argument defaults to a directed graph. To fix this we can either:  
 
-* manually turn off the display of arrows using the `usearrows=` argument, `gplot(net.u, usearrows=FALSE)`.  
+* manually turn off the display of arrows using the `usearrows=` argument, `gplot( net.u, usearrows = FALSE )`.  
 
-* or indicate that the object to be plotted is a undirected graph or graph, `gplot(net.u, gmode="graph")`.  
+* or indicate that the object to be plotted is a undirected graph or graph, `gplot( net.u, gmode = "graph" )`.  
 
 
 The `gplot()` function has a number of arguments that can be used to work try and better display the information contained in the network.
 
 For example, we can add labels to the vertices using the `network.vertex.names()` function.
+
 ```{r,echo=TRUE,eval=TRUE,message=FALSE}
-gplot(net.u, gmode="graph", label=network.vertex.names(net.u))
+
+gplot(
+  net.u, 
+  gmode = "graph", 
+  label = network.vertex.names( net.u )
+  )
+
 ```
 
-Alternatively, we could just add in a string of names for the label, `gplot(net.u, gmode="graph", label=c("Jen","Tom","Bob","Leaf","Jim"))`.  
-Or we could read them in as an object: `names <- c("Jen","Tom","Bob","Leaf","Jim")` and then plot using `gplot(net.u, gmode="graph", label=names)`.  
+Alternatively, we could add in a string of names for the label, `gplot( net.u, gmode = "graph",  label = c( "Jen", "Tom", "Bob", "Leaf", "Jim" ) )`.  
+Or we could read them in as an object: `names <- c( "Jen", "Tom", "Bob", "Leaf", "Jim" )` and then to the plot using `gplot( net.u, gmode = "graph", label = names )`.  
 
 
 A great feature of R is that we can tune the graphing parameters. Here are several examples: 
 
-* Add boxes around the labels, change their size, and color them, `gplot(net.u, gmode="graph", boxed.labels=T, label.cex=1.5,label.col="blue", label=network.vertex.names(net.u))`.  
+  + Labels:
+  
+    + Add boxes around the labels, `boxed.labels = TRUE`
 
-* What if we wanted different colored names? Just enter the colors as a variable using the `c()` function, `gplot(net.u, gmode="graph", boxed.labels=T, label.cex=1.5,label.col=c("red","blue","green","orange","grey"), label=network.vertex.names(net.u))`.
+    + Change label size, `label.cex = 1.5`
+  
+    + Color the labels, `label.col = "blue"`
+
+
+HERE WITH REFORMATTING
+
+
+* What if we wanted different colored names? Just enter the colors as a variable using the `c()` function, `gplot( net.u, gmode = "graph", boxed.labels = TRUE, label.cex = 1.5, label.col = c( "red", "blue", "green", "orange", "grey" ), label = network.vertex.names( net.u ) )`.
 
 * What if we want to color the nodes? use the `vertex.col=` argument, `gplot(net.u, gmode="graph", boxed.labels=T, label.cex=1.5,vertex.col=c("red","blue","green","orange","grey"), label=network.vertex.names(net.u))`.  
 
@@ -148,7 +260,7 @@ I would encourage you to take some time to look through it and play around with 
 
 ***
 
-###**Adjusting Plot Layout**  
+### **Adjusting Plot Layout**  
 When a layout is generated, the results can be saved for later reuse using the `coord=` argument.
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE}
@@ -176,7 +288,7 @@ gplot(net.u, coord=coords, gmode="graph",label=network.vertex.names(net.u))
 
 There is also the option to do three-dimensional visualization with `gplot3d()`, which requires the rgl package. Let's take a look at this by first installing the rgl package using `install.packages("rgl")` and then loading the library with `library(rgl)`. Then, we can look at the `gplot3d()` function using help: `?gplot3d`. *Note* that the rgl packages requires the program XQuartz if you are using a Mac. It can be downloaded from: https://www.xquartz.org/.
 
-```{r,echo=FALSE,eval=TRUE,message=FALSE}
+```{r,echo=FALSE,eval=FALSE,message=FALSE}
 library(rgl)
 ?gplot3d
 ```  
@@ -187,15 +299,15 @@ gplot3d(net.u, label=network.vertex.names(net.u))
 
 ***
 
-###**Class data example**  
+### **Class data example**  
 Now let's take a look at the class data to continue working with the `gplot()` function. First, load the .RData file from my website.
 
-```{r, echo=TRUE, eval=TRUE, message=FALSE}
+```{r, echo=TRUE, eval=FALSE, message=FALSE}
 # First, clear the workspace.
 rm(list = ls())
 
 # Now, load the file.
-load(url("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_class_survey_data_w1.rdata"))
+#load(url("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_class_survey_data_w1.rdata"))
 
 #Take a look at the object.
 ls()
@@ -219,11 +331,11 @@ For each network, the survey data have been attached to the objects as vertex at
 
 Let's work with the `spend.time.net` object. This is the network for whether ego spends time with alter outside of class.
 
-```{r, echo=TRUE, eval=TRUE, message=FALSE}
+```{r, echo=TRUE, eval=FALSE, message=FALSE}
 summary(spend.time.net, print.adj=FALSE)
 ```  
 
-####*What does the summary of this network tell us?*  
+#### *What does the summary of this network tell us?*  
 
 We can look at the various vertex data by using the shorthand `network %v% "attribute"`. For example:  
 
@@ -232,13 +344,13 @@ We can look at the various vertex data by using the shorthand `network %v% "attr
 
 Then, use that info in a plot. For example: 
 
-```{r, echo=TRUE, eval=TRUE, message=FALSE}
+```{r, echo=TRUE, eval=FALSE, message=FALSE}
 gplot(spend.time.net,vertex.cex=spend.time.net %v% "Sleept1") #size the nodes by the amount of sleep.
 #Yike!  
 ```
 
 The problem is that we need to rescale the vertex attribute so that the nodes are not too big. Let's build a function to do that and then execute the `gplot()` function:
-```{r, echo=TRUE, eval=TRUE, message=FALSE}
+```{r, echo=TRUE, eval=FALSE, message=FALSE}
 rescale <- function(nchar,low,high){
   min_d <- min(nchar)
   max_d <- max(nchar)
@@ -251,12 +363,12 @@ gplot(spend.time.net,vertex.cex=rescale(spend.time.net %v% "Sleept1", 0.5, 1.5),
 # that looks better!
 ```
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,interval=FALSE}
+```{r,echo=TRUE,eval=FALSE,message=FALSE,interval=FALSE}
 set.seed(605)
 coords <- gplot(spend.time.net)
 ``` 
 
-```{r, echo=TRUE, eval=TRUE, message=FALSE}
+```{r, echo=TRUE, eval=FALSE, message=FALSE}
 #Now, let's add additional information to the plot:
 gplot(spend.time.net,arrowhead.cex=0.5, coord=coords, label.cex=0.75,
         main="Spend Time Network", # add a title.
@@ -270,8 +382,15 @@ gplot(spend.time.net,arrowhead.cex=0.5, coord=coords, label.cex=0.75,
 
 ***
 
-####***Questions?***####
+#### ***Questions?***
 
-```{r,echo=FALSE,eval=FALSE}
-#END OF LAB
-```
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

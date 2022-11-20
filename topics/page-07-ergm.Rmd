@@ -58,7 +58,7 @@ ____
 
 <br>
 
-#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 <br>
