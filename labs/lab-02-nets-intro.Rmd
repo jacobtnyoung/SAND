@@ -22,7 +22,7 @@ text-align: justify}
 
 *This lab will work through some basic examples of matrices and how they are created, imported, and manipulated in R.*
 
-<br>
+***
 
 ### **Working with matrices**    
 
