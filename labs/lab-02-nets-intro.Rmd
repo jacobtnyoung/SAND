@@ -469,7 +469,14 @@ net.d <- as.network(
 
 ```  
 
-<br><br><br><br>
+```{r, echo=TRUE, eval=TRUE}
+
+# now, print the object.
+net.d
+
+```
+
+***
 
 #### ***Questions?***
 

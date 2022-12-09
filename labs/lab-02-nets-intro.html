@@ -3464,38 +3464,88 @@ that the name of the rows are in the first column.</p></li>
 <span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a><span class="co"># compare them</span></span>
 <span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>mat.u</span>
 <span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>mat.u2</span></code></pre></div>
-<p>Now, make the object into one of class network:</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># recall that since this network is undirected</span></span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="co"># so we set the directed= argument to FALSE</span></span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>net.u <span class="ot">&lt;-</span> <span class="fu">as.network</span>( </span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  mat.u2,</span>
-<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">directed =</span> <span class="cn">FALSE</span></span>
-<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>   )</span></code></pre></div>
-<p>!!!HERE WITH GOING THROUGH</p>
+<p>Now, make the object into one of <code>class</code> network:</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we have to first coerce the object to a matrix</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>mat.u2 <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>( </span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  mat.u2 )</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="co"># recall that since this network is undirected</span></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="co"># we set the directed= argument to FALSE</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>net.u <span class="ot">&lt;-</span> <span class="fu">as.network</span>( </span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>  mat.u2,</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">directed =</span> <span class="cn">FALSE</span></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>net.u</span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a><span class="co"># we could combine the as.matrix and as.network functions</span></span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a>net.u <span class="ot">&lt;-</span> <span class="fu">as.network</span>( </span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>( </span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a>    mat.u2 </span>
+<span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a>    ), </span>
+<span id="cb56-19"><a href="#cb56-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">directed =</span> <span class="cn">FALSE</span> </span>
+<span id="cb56-20"><a href="#cb56-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb56-21"><a href="#cb56-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-22"><a href="#cb56-22" aria-hidden="true" tabindex="-1"></a>net.u</span></code></pre></div>
+<p><br></p>
 <p>We could also import the file if it is saved locally (i.e. we are not
-going to the web to get it). Let’s do this for the directed network. I
-have saved the file to my desktop. First, look at what directory we are
-in using: <code>getwd()</code> function. This function gets the wording
-directory R is currently looking at.</p>
+going to the web to get it). <em>Typically</em> we do not do this
+because it is a bad practice. That is, creating a version of a file
+locally. But, sometimes you might be offline or you have files that
+cannot be put online.</p>
+<p>Let’s do this for the directed network. I have saved the file to my
+desktop. First, look at what directory we are in using:
+<code>getwd()</code> function. This function gets the wording directory
+R is currently looking at.</p>
 <p>Then, set the directory where the file is using the
-<code>setwd()</code> function. You can get the location of the file in
-Windows using properties, or info on Mac. <em>Note</em>: you have to
-configure this path to your machine. For me, it is:
-<code>setwd(&quot;/Users/jyoung20/Desktop&quot;)</code>.</p>
-<p>Then, use read.csv as above:</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;/Users/jyoung20/Desktop&quot;</span>)</span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>data.d <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;directed_net_example.csv&quot;</span>,<span class="at">as.is=</span><span class="cn">TRUE</span>,<span class="at">header=</span><span class="cn">TRUE</span>,<span class="at">row.names=</span><span class="dv">1</span>)</span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>net.d <span class="ot">&lt;-</span> <span class="fu">network</span>(data.d,<span class="at">directed=</span><span class="cn">TRUE</span>) <span class="co"># Note: we don&#39;t need to tell it that the network is directed since this is the default, but a good habit to get into.</span></span></code></pre></div>
-<p><br><br><br><br></p>
-<p>####<strong><em>Questions?</em></strong>####</p>
+<code>setwd()</code> function. You can get the location of the file by
+right-clicking and in Windows using <em>Properties</em> or on Mac using
+<em>Get Info</em>. Note that you have to configure this path to your
+machine.</p>
+<p>Then, use <code>read.csv</code> as above:</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot; PUT THE CORRECT PATH HERE&quot;</span>)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>mat.d <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;lab-02-undirected-example.csv&quot;</span>,</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">as.is=</span><span class="cn">TRUE</span>,</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">header=</span><span class="cn">TRUE</span>,</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.names=</span><span class="dv">1</span></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: we don&#39;t need to tell it that the network is directed since this is the default, but a good habit to get into.</span></span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>net.d <span class="ot">&lt;-</span> <span class="fu">as.network</span>(</span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>( data.d ),</span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">directed=</span><span class="cn">TRUE</span></span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now, print the object.</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>net.d</span></code></pre></div>
+<pre><code>##  Network attributes:
+##   vertices = 5 
+##   directed = TRUE 
+##   hyper = FALSE 
+##   loops = FALSE 
+##   multiple = FALSE 
+##   bipartite = FALSE 
+##   total edges= 10 
+##     missing edges= 0 
+##     non-missing edges= 10 
+## 
+##  Vertex attribute names: 
+##     vertex.names 
+## 
+## No edge attributes</code></pre>
+<hr />
+<div id="questions" class="section level4">
+<h4><strong><em>Questions?</em></strong></h4>
 <p><br></p>
 <div id="please-report-any-needed-corrections-to-the-issues-page.-thanks" class="section level5">
 <h5><strong><em>Please</em></strong> report any needed corrections to
-the <a href="https://github.com/jacobtnyoung/SAND/issues">Issues</a>
+the <a href="https://github.com/jacobtnyoung/SAND/issues/new">Issues</a>
 page. Thanks!</h5>
 <p><br> <br></p>
-<div id="last-updated-15-november-2022" class="section level6">
-<h6><strong><em>Last updated 15 November, 2022</em></strong></h6>
+<div id="last-updated-09-december-2022" class="section level6">
+<h6><strong><em>Last updated 09 December, 2022</em></strong></h6>
+</div>
 </div>
 </div>
 </div>

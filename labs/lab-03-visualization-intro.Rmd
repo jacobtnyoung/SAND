@@ -12,13 +12,9 @@ output:
     self_contained: true
 ---
 
-*This lab goes through some basics of visualizing networks using the `gplot()` function in the `sna` package.*
+*This lab goes through some basics of visualizing networks using the `gplot()` function in the `sna` package. We also look at some approaches to building plots. *
 
 ***
-
-
-**FOR THIS LAB, YOU NEED TO GO TO THE LAYERING PIECE FROM THE R WORKSHOP SO YOU CAN GET THAT CODE AND WORK THE LOGIC IN HERE**
-
 
 ### **Network Visualization**    
 
@@ -37,11 +33,11 @@ Douglas Luke's (2015: 47) *A User's Guide to Network Analysis* provides several 
 * Minimize the total space used for the network display.  
 
 
-Let's look at the example he uses as an illustration by working with the `gplot()` function in the sna package.  
+Let's look at the example he uses as an illustration by working with the `gplot()` function in the `sna` package.  
 
-First, we need to install the sna package using `install.packages( "sna" )` and load the library using `library( sna )`. Remember, if you have already installed a package then you do not need to use the `install.packages()` function. But, if you have not installed the package in a while, you should use `update.packages()` to incorporate any changes that have been made to the page.
+First, we need to install the `sna` package using `install.packages( "sna" )` and load the library using `library( sna )`. Remember, if you have already installed a package then you do not need to use the `install.packages()` function. But, if you have not installed the package in a while, you should use `update.packages()` to incorporate any changes that have been made to the page.
 
-Next, let's get the `UserNetR` package from Douglas Luke's GitHub page. Since this package is not on the CRAN package repository, we need to install it from Github. We do this in four steps:  
+Next, let's get the `UserNetR` package from [Douglas Luke's GitHub page](https://github.com/DougLuke/UserNetR). Since this package is not on the CRAN package repository, we need to install it from Github. We do this in four steps:  
 
   + First, install the devtools package using `install.packages( "devtools" )`
   
@@ -158,7 +154,7 @@ par( op )
 ### **Working with the `gplot()` function**  
 Let's take a look at some of the visualization capabilities of `gplot()`. Let's start by looking at the function's help page: `?gplot`.
 
-To see the various functionality of the function, let's work with the example of an undirected network from [lab 02](). 
+To see the various functionality of the function, let's work with the example of an undirected network from [lab 02](https://jacobtnyoung.github.io/SAND/labs/lab-02-nets-intro.html). 
 
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE}
@@ -187,17 +183,18 @@ summary( net.u )
 
 #NOTE: we could have wrapped all of this into two statements
 net.u <- as.network( 
-  as.matrix(
+  as.matrix( 
     read.csv( 
-      "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv",
-      as.is = TRUE,
-      header = TRUE,
-      row.names = 1 ) ),
+      "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv", 
+      as.is = TRUE, 
+      header = TRUE, 
+      row.names = 1 
+      ) 
+    ),
   directed = FALSE 
   )
 
 summary( net.u )
-
 
 ```
 
@@ -230,8 +227,15 @@ gplot(
 
 ```
 
-Alternatively, we could add in a string of names for the label, `gplot( net.u, gmode = "graph",  label = c( "Jen", "Tom", "Bob", "Leaf", "Jim" ) )`.  
-Or we could read them in as an object: `names <- c( "Jen", "Tom", "Bob", "Leaf", "Jim" )` and then to the plot using `gplot( net.u, gmode = "graph", label = names )`.  
+Alternatively, we could add in a string of names for the label:  
+
+  +  `gplot( net.u, gmode = "graph",  label = c( "Jen", "Tom", "Bob", "Leaf", "Jim" ) )`
+  
+Or we could read them in as an object:  
+
+  +  `names <- c( "Jen", "Tom", "Bob", "Leaf", "Jim" )` 
+  
+  +  add to the plot using `gplot( net.u, gmode = "graph", label = names )`  
 
 
 A great feature of R is that we can tune the graphing parameters. Here are several examples: 
@@ -240,23 +244,21 @@ A great feature of R is that we can tune the graphing parameters. Here are sever
   
     + Add boxes around the labels, `boxed.labels = TRUE`
 
-    + Change label size, `label.cex = 1.5`
+    + Change label size using `label.cex`, such as `label.cex = 1.5`
   
-    + Color the labels, `label.col = "blue"`
+    + Color the labels using `label.col=`, such as: `label.col = "blue"`
 
+  + Colors:
+  
+    + different colored names, combine `label.col=` with the `c()` function. Such as:  `label.col = c( "red", "blue", "green", "orange", "grey" )`
+    
+    + different colored nodes, `vertex.col=` argument. Such as: `vertex.col=c("red","blue","green","orange","grey")`
+    
+    + different colored edges, using `edge.col=`, such as: `edge.col=c("red","blue","green","orange","grey")`
 
-HERE WITH REFORMATTING
+<br>
 
-
-* What if we wanted different colored names? Just enter the colors as a variable using the `c()` function, `gplot( net.u, gmode = "graph", boxed.labels = TRUE, label.cex = 1.5, label.col = c( "red", "blue", "green", "orange", "grey" ), label = network.vertex.names( net.u ) )`.
-
-* What if we want to color the nodes? use the `vertex.col=` argument, `gplot(net.u, gmode="graph", boxed.labels=T, label.cex=1.5,vertex.col=c("red","blue","green","orange","grey"), label=network.vertex.names(net.u))`.  
-
-* What if we want to color the edges? use the `edge.col=` argument, `gplot(net.u, gmode="graph", boxed.labels=T, label.cex=1.5,edge.col=c("red","blue","green","orange","grey"), label=network.vertex.names(net.u))`.   
-
-
-There is a lot of functionality to the `gplot()` function.  
-I would encourage you to take some time to look through it and play around with the various features.  
+There is a LOT of functionality to the `gplot()` function. See the arguements in the help file: `?gplot`. I would encourage you to take some time to look through it and play around with the various features.  
 
 ***
 
@@ -264,37 +266,73 @@ I would encourage you to take some time to look through it and play around with 
 When a layout is generated, the results can be saved for later reuse using the `coord=` argument.
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE}
-# Set the seed for the random number generator so we can always get the same plot layout.
-set.seed(25) 
+
+# Set the seed for the random number generator 
+# so we can always get the same plot layout.
+set.seed( 605 ) 
 
 # Define an object that will be the coordinates we want to use.
-coords <- gplot(net.u, gmode="graph",label=network.vertex.names(net.u))
+coords <- gplot( 
+  net.u, 
+  gmode = "graph",
+  label = network.vertex.names( net.u )
+  )
 
 # Show the vertex coordinates.
 coords
 
-# Saved (or a priori) layouts can be used via the coord argument:
-gplot(net.u, gmode="graph",label=network.vertex.names(net.u),coord=coords)
+# Saved (or a priori) layouts can be used via the coord= argument:
+gplot(
+  net.u, 
+  gmode = "graph",
+  label = network.vertex.names( net.u ),
+  coord = coords 
+  )
+
 ```  
 
-*Why do this?* The placement of the nodes shift when we call the `gplot()` function just due to the operation of the algorithm. This is useful if we want to show different aspects of the plot. 
+*Why do this?* The placement of the nodes shift when we call the `gplot()` function just due to the operation of the algorithm. This is useful if we want to show different aspects of the plot. Note that we can have different layouts of the nodes. If we like a particular one, we can save the coordinates. 
 
-Note that we can have different layouts of the nodes. If we like a particular one, we can save the coordinates. *But*, suppose the default settings are insufficient and we want to make a few small changes. The `interactive=` argument allows for tweaking.
+*But*, suppose the default settings are insufficient and we want to make a few small changes. The `interactive=` argument allows for tweaking.
 
 ```{r,echo=TRUE,eval=FALSE,message=FALSE}
-coords<-gplot(net.u, gmode="graph",label=network.vertex.names(net.u),coord=coords, interactive=TRUE)
-gplot(net.u, coord=coords, gmode="graph",label=network.vertex.names(net.u)) 
+
+# First, set up the coordinates you want.
+coords <- gplot(
+  net.u, 
+  gmode = "graph",
+  label = network.vertex.names( net.u ),
+  coord = coords, 
+  interactive=TRUE 
+  )
+
+# Then, use these in the plot.
+gplot( 
+  net.u, 
+  coord = coords, 
+  gmode = "graph",
+  label=network.vertex.names( net.u )
+  ) 
+
 ```
 
-There is also the option to do three-dimensional visualization with `gplot3d()`, which requires the rgl package. Let's take a look at this by first installing the rgl package using `install.packages("rgl")` and then loading the library with `library(rgl)`. Then, we can look at the `gplot3d()` function using help: `?gplot3d`. *Note* that the rgl packages requires the program XQuartz if you are using a Mac. It can be downloaded from: https://www.xquartz.org/.
+There is also the option to do three-dimensional visualization with `gplot3d()`, which requires the rgl package. Let's take a look at this by first installing the `rgl` package using `install.packages( "rgl" )` and then loading the library with `library( rgl )`. Then, we can look at the `gplot3d()` function using help: `?gplot3d`. *Note* that the `rgl` packages requires the program XQuartz if you are using a Mac. It can be downloaded from: https://www.xquartz.org/.
 
 ```{r,echo=FALSE,eval=FALSE,message=FALSE}
-library(rgl)
+
+library( rgl )
+
 ?gplot3d
+
 ```  
 
 ```{r,echo=TRUE,eval=FALSE,message=FALSE}
-gplot3d(net.u, label=network.vertex.names(net.u))
+
+gplot3d(
+  net.u, 
+  label = network.vertex.names( net.u )
+  )
+
 ```
 
 ***
