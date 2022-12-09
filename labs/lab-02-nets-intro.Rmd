@@ -399,37 +399,79 @@ mat.u2
 Now, make the object into one of `class` network: 
 
 ```{r,echo=TRUE,eval=FALSE}
+# we have to first coerce the object to a matrix
+mat.u2 <- as.matrix( 
+  mat.u2 )
 
 # recall that since this network is undirected
-# so we set the directed= argument to FALSE
+# we set the directed= argument to FALSE
 net.u <- as.network( 
   mat.u2,
   directed = FALSE
    )
 
+net.u
+
+# we could combine the as.matrix and as.network functions
+net.u <- as.network( 
+  as.matrix( 
+    mat.u2 
+    ), 
+  directed = FALSE 
+  )
+
+net.u
+
 ```
 
-!!!This renders an error, it needs to be coerced to a matrix:
+<br>
 
-as.matrix( mat.u2 )
+We could also import the file if it is saved locally (i.e. we are not going to the web to get it). *Typically* we do not do this because it is a bad practice. That is, creating a version of a file locally. But, sometimes you might be offline or you have files that cannot be put online.
 
-!!!HERE WITH GOING THROUGH
+Let's do this for the directed network. I have saved the file to my desktop. First, look at what directory we are in using: `getwd()` function. This function gets the wording directory R is currently looking at.  
 
+Then, set the directory where the file is using the `setwd()` function. You can get the location of the file by right-clicking and in Windows using *Properties* or on Mac using *Get Info*. Note that you have to configure this path to your machine.
 
-We could also import the file if it is saved locally (i.e. we are not going to the web to get it). Let's do this for the directed network. I have saved the file to my desktop. First, look at what directory we are in using: `getwd()` function. This function gets the wording directory R is currently looking at.  
+```{r, echo=FALSE, eval=TRUE}
 
-Then, set the directory where the file is using the `setwd()` function. You can get the location of the file in Windows using properties, or info on Mac. *Note*: you have to configure this path to your machine. For me, it is: `setwd("/Users/jyoung20/Desktop")`.  
+url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv"
 
-Then, use read.csv as above:
-```{r,echo=TRUE,eval=FALSE}
-setwd("/Users/jyoung20/Desktop")
-data.d <- read.csv("directed_net_example.csv",as.is=TRUE,header=TRUE,row.names=1)
-net.d <- network(data.d,directed=TRUE) # Note: we don't need to tell it that the network is directed since this is the default, but a good habit to get into.
+net.d <- as.network( 
+  as.matrix( 
+    read.csv( 
+      url, 
+      as.is = TRUE, 
+      header = TRUE, 
+      row.names = 1 ), 
+    directed = FALSE 
+    ) 
+  )
+
+```
+
+Then, use `read.csv` as above:
+```{r, echo=TRUE, eval=FALSE}
+
+setwd(" PUT THE CORRECT PATH HERE")
+
+mat.d <- read.csv(
+  "lab-02-undirected-example.csv",
+  as.is=TRUE,
+  header=TRUE,
+  row.names=1
+  )
+
+# Note: we don't need to tell it that the network is directed since this is the default, but a good habit to get into.
+net.d <- as.network(
+  as.matrix( data.d ),
+  directed=TRUE
+  )
+
 ```  
 
 <br><br><br><br>
 
-####***Questions?***####
+#### ***Questions?***
 
 <br>
 
