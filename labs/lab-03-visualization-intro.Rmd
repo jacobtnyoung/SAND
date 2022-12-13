@@ -402,8 +402,8 @@ gplot(spend.time.net,vertex.cex=rescale(spend.time.net %v% "Sleept1", 0.5, 1.5),
 ```
 
 ```{r,echo=TRUE,eval=FALSE,message=FALSE,interval=FALSE}
-set.seed(605)
-coords <- gplot(spend.time.net)
+set.seed( 605 )
+coords <- gplot( spend.time.net )
 ``` 
 
 ```{r, echo=TRUE, eval=FALSE, message=FALSE}
