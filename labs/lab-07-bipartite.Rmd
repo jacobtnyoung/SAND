@@ -13,17 +13,20 @@ output:
 ---
 
 ```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
-library(devtools)
-library(network)
-library(sna)
-```
 
-###
-*This lab examines various properties of bipartite graphs (e.g. density, degree centrality, dyadic clustering) using basic functions in R as well as the `tnet` package.*
+library( devtools )
+library( network )
+library( sna )
+
+```
 
 ***
 
-###**Bipartite Graphs/Two-Mode Networks**  
+*This lab examines various properties of bipartite graphs (e.g. density, degree centrality, dyadic clustering) using basic functions in R as well as the `tnet` package.*
+
+<br>
+
+### **Bipartite Graphs/Two-Mode Networks**  
 
 Bipartite graphs are useful for operationalizing context where nodes come from two separate classes. Examples:  
 
@@ -112,11 +115,11 @@ gplot(bipartite.example.net,gmode="twomode",usearrows=FALSE,label=network.vertex
 par(op)
 ```
 
-***
+<br>
 
-###**Structural Properties of Bipartite Graphs/Two-Mode Networks**  
+### **Structural Properties of Bipartite Graphs/Two-Mode Networks**  
 
-####*Density*  
+#### *Density*  
 
 The *density* of a bipartite graph is the number of observed edges, *L*, divided by the number of nodes in the first mode, *N*, multiplied by the number of nodes in the second mode, *M*. That is:   
 $$\frac{L}{N \times M}$$  
@@ -148,9 +151,9 @@ density.bipartite.simpler <- function(net.object){
 
 **What does the value of 0.4 for the density of our graph tell us?**
 
-***
+<br>
 
-####*Degree Centrality*  
+#### *Degree Centrality*  
 
 For a bipartite graph there are *two* degree distributions:  
 
@@ -172,9 +175,9 @@ table(colSums(as.matrix(bipartite.example.net)))
 
 **How should we interpret the centrality scores for each node set?**  
 
-***  
+<br>
 
-#####*Mean Degree Centrality*   
+##### *Mean Degree Centrality*   
 
 As before, we could examine the central tendency by examining the mean degree for each node/vertex set:  
 
@@ -193,9 +196,9 @@ mean(colSums(as.matrix(bipartite.example.net)))
 ```
 **How should we interpret the mean centrality score for each node set?**  
 
-***  
+<br>
 
-#####*Standardized Degree Centrality*   
+##### *Standardized Degree Centrality*   
 
 Degree centrality scores for each node/vertex set not only reflects each node’s connectivity to nodes in the other set, but also depend on the size of that set. As a result, larger networks will have a higher maximum possible degree centrality value. *Solution?*
 
@@ -244,9 +247,9 @@ gplot(bipartite.example.net,gmode="twomode",usearrows=FALSE,
 par(op)
 ```
 
-***
+<br>
 
-####*Dyadic Clustering*  
+#### *Dyadic Clustering*  
 
 The *density* tells us about the overall level of ties between the node/vertex sets in the graph and  *degree centrality* tells us about how many edges are incident on a node in each node/vertex set. *What about the overlap in ties?* In other words, do nodes in *N* tend to **share** nodes in *M*? This is the notion of *clustering* in a graph. 
 
@@ -274,12 +277,11 @@ bipartite.example.tnet <- as.tnet(as.matrix(bipartite.example.net))
 reinforcement_tm(bipartite.example.tnet)
 ```
 
-**What is the interpretation of the dyadic clustering coefficent in this example?**  
+**What is the interpretation of the dyadic clustering coefficient in this example?**  
 
+<br>
 
-***    
-
-###**Empirical Example**  
+### **Empirical Example**  
 
 Now, let's take a look at the biparite graph used in a paper I wrote with Justin Ready entitled ["Diffusion of Ideas and Technology: The Role of Networks in Influencing the Endorsement and Use of On-Officer Video Cameras"](https://journals.sagepub.com/doi/10.1177/1043986214553380). The goal of the paper was to examine how police officers develop cognitive frames about the usefulness of body-worn cameras and try to determine whether interactions with other officers provide a conduit for facilitating cognitive frames that increase camera legitimacy. 
 

@@ -13,16 +13,18 @@ output:
 ---
 
 ```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
-library(devtools)
-library(UserNetR)
-```
 
-###
-*This lab examines various definitions of **cohesive subgroups** the `cliques()` function in the `igraph` package and the `kcores()` function in the `sna` package.*
+library( devtools )
+library( UserNetR )
+
+```
 
 ***
 
-###**Cohesive Subgroups**  
+*This lab examines various definitions of **cohesive subgroups** the `cliques()` function in the `igraph` package and the `kcores()` function in the `sna` package.*
+
+
+### **Cohesive Subgroups**  
 
 How do we define *cohesion*? It is common to focus on four general properties of cohesive groups (Wasserman & Faust,1994: 251):  
 
@@ -43,9 +45,9 @@ We could approach this several ways:
 * Top-down: Looking at the whole network, sub-structures are areas of the graph that seem to be locally dense, but separated to some degree, from the rest of the graph. Example: components, k-cores, community detection.  
 
 
-###**Undirected Graphs**  
+### **Undirected Graphs**  
 
-####Cliques  
+#### Cliques  
 
 A *clique* in a graph is a subgraph of three or more nodes such that:  
 
@@ -102,6 +104,7 @@ v.col <- c("white","lightgreen","red","lightgreen","lightgreen","white")
 gplot(clique.example1.net, gmode = "graph", label = clique.example1.net%v%"vertex.names", vertex.col = v.col,coord = coords, edge.col = e.col)
 par(op)
 ```  
+
 ***  
 
 
@@ -137,20 +140,25 @@ Some solutions are to operationalize cohesiveness based on:
 
 * *Degree*, such that nodes are adjacent to many other nodes, thereby reducing the vulnerability of the structure. Examples: k-cores.  
 
+<br>
 
-####*n*-Cliques   
+#### *n*-Cliques   
 
-An *n*-clique is a subgraph in which the largest geodesic distance between any two nodes is no greater than *n*. That is: $$d(i,j) \leq n  \text{ for all }  n_i,n_j \in N_s$$.  
+An *n*-clique is a subgraph in which the largest geodesic distance between any two nodes is no greater than *n*. That is:  
+
+$$d(i,j) \leq n  \text{ for all }  n_i,n_j \in N_s$$  
 
 To my knowledge, `igraph` does not compute *n*-cliques. However, `sna` has a `clique.census()` function.
 
-***
+<br>
 
-####*k*-Cores  
+#### *k*-Cores  
 
-An alternative approach, is to base the clique on actor degree. A *k*-core is a subgraph in which each node is adjacent to at least a minimum number, *k*, other nodes in the subgraph. A node's minimum degree within the subgraph will be at least *k*. That is: $$d_s(i) \geq k \text{ for all }  n_i \in N_s$$.  
+An alternative approach, is to base the clique on actor degree. A *k*-core is a subgraph in which each node is adjacent to at least a minimum number, *k*, other nodes in the subgraph. A node's minimum degree within the subgraph will be at least *k*. That is:  
 
-Let's create the network that is examined in the **Identifying Subgroups** lecture:
+$$d_s(i) \geq k \text{ for all }  n_i \in N_s$$  
+
+Let's create the network that is examined in the [**Identifying Subgroups**]() lecture:
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE,display=FALSE}
 # first, detach igraph since it conflicts with sna.
@@ -222,12 +230,10 @@ title(main="All 4-cores",cex.main=2)
 gplot(random.net,gmode="graph",label=LETTERS[1:15], vertex.col="white", edge.col="grey40", coord = coords)
 par(op)
 ```
-  
 
-***  
+<br>  
 
-
-###**Cohesiveness in the PINS Get Along With Network**  
+### **Cohesiveness in the PINS Get Along With Network**  
 
 The *Prison Inmate Networks Study (PINS)* examines the social networks of prison inmates in a state correctional institution. Information about PINS can be accessed at: http://justicecenter.psu.edu/research/projects/prison-inmate-networks-study-pins.  
 
@@ -236,11 +242,18 @@ If you scroll through the website, you will see that there are two edgelists ava
 We can examine the cohesiveness scores by first building the *get along with* network from the edgelist on the website:
  
 ```{r,echo=TRUE,eval=TRUE,message=FALSE, figure.align = "center", figure.height = 5, figure.width = 5}
-GA.edgelist <- read.csv(url("http://justicecenter.psu.edu/research/projects/files/pins-get-along-with-edgelist"),header=FALSE,as.is=TRUE)
-GA.net <- as.network(GA.edgelist,directed=TRUE, matrix.type="edgelist")
 
-# Note that the network contains 9 isolates.
-length(which(has.edges(GA.net) ==FALSE))
+# set the url
+url <- "https://cjrc.la.psu.edu/wp-content/uploads/sites/21/2020/10/PINS-Get-Along-With-Edgelist.csv"
+
+# read in the edgelist
+GA.edgelist <- read.csv( url, header=FALSE, as.is=TRUE )
+
+# create the network object
+GA.net <- as.network( GA.edgelist, directed=TRUE, matrix.type="edgelist" )
+
+# note that the network contains 9 isolates
+length( which( has.edges( GA.net ) == FALSE ) )
 
 # We can remove these by using the get.inducedSubgraph() function.
 # Specifically, we stipulate in the v= argument that we only want vertices that have edges incident on them.
@@ -250,9 +263,9 @@ GA.net <- get.inducedSubgraph(GA.net, v=which(has.edges(GA.net) ==TRUE))
 gplot(GA.net, edge.col="grey40", vertex.col="lightgreen", main="PINS Get Along With Network")
 ```
 
-####*What are the features of the network that "jump-out" when you examine the plot?*   
+#### *What are the features of the network that "jump-out" when you examine the plot?*   
 
-***  
+<br>
 
 Note that we are now working with a directed graph. To examine the *coreness* of the graph, we need to make a decision about how to treat the edges.  
 
@@ -287,7 +300,9 @@ v.cols <- v.cols[GA.net.strong.kcores]
 gplot(GA.net.strong, edge.col="grey40", vertex.col=v.cols, main="PINS Get Along With Network",gmode="graph", label = GA.net.strong.kcores, label.pos = 5, label.cex = 0.6)
 ```
 
-####*What if we use the **weak** rule?*   
+<br>
+
+#### *What if we use the **weak** rule?*   
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE}
 GA.net.weak <- symmetrize(GA.net,rule="weak")
@@ -302,10 +317,17 @@ v.cols <- rbPal(6)[as.numeric(cut(GA.net.weak.kcores,breaks = 6))]
 gplot(GA.net.weak, edge.col="grey40", vertex.col=v.cols, main="PINS Get Along With Network",gmode="graph", label = GA.net.weak.kcores, label.pos = 5, label.cex = 0.6)
 ```
 
-***    
+***  
 
-####***Questions?***####
+#### ***Questions?***
 
-```{r,echo=FALSE,eval=FALSE}
-#END OF LAB
-```
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
