@@ -43,24 +43,40 @@ In contrast to one-mode networks, or unipartite graphs, where edges can be incid
 Let's build the example bipartite graph from the **Biparitite Graphs** lecture:
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# clear the workspace.
-rm(list = ls())
 
-# create the example network.
-bipartite.example <- rbind(c(1,1,0,0,0),c(1,0,0,0,0),c(1,1,0,0,0),c(0,1,1,1,1),c(0,0,1,0,0),c(0,0,1,0,1))
-rownames(bipartite.example) <- c("A","B","C","D","E","F")
-colnames(bipartite.example) <- c("1","2","3","4","5")
+# clear the workspace
+rm( list = ls() )
 
-# print out the object.
+# create the example network
+bipartite.example <- rbind(
+  c( 1,1,0,0,0 ),
+  c( 1,0,0,0,0 ),
+  c( 1,1,0,0,0 ),
+  c( 0,1,1,1,1 ),
+  c( 0,0,1,0,0 ), 
+  c( 0,0,1,0,1 ) )
+
+# assign names to the rows
+rownames( bipartite.example ) <- c( "A","B","C","D","E","F" )
+
+# assign names to the columns
+colnames( bipartite.example ) <- c( "1","2","3","4","5" )
+
+# print out the object
 bipartite.example
+
 ```
 
 We can create an object of class `network` by using the `as.network()` function in the `network` package. First, take a look at the help for the `as.network()` function, paying particular attention to the `bipartite=` argument.
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Call the network package.
-library(network)
+
+# call the network package
+library( network )
+
+# pull up the help for the as.network() function
 ?as.network
+
 ```
 
 In looking through the help file for the `as.network()` function, we see that the `bipartite=` argument says that this argument allows the count of the number of actors in the bipartite network. Recall from the **Biparitite Graphs** lecture that a bipartite adjacency matrix has order *NxM*, where *N* represents the number of rows (e.g. actors) and *M* represents the number of columns (e.g. events). In the `bipartite=` argument, we can specify the count as *N* or as *N* + *M*.  
@@ -68,14 +84,27 @@ In looking through the help file for the `as.network()` function, we see that th
 For example:
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+
 # Create a network object.
-bipartite.example.net <- as.network(bipartite.example,bipartite=dim(bipartite.example)[1]) # take the first dimension of the matrix.
-bipartite.example.net # there 11 vertices, 6 are bipartite (in the first mode), and 12 edges.
+bipartite.example.net <- as.network(
+  bipartite.example,
+  
+  # here, we define the number of nodes that are in the first mode
+  bipartite = dim( bipartite.example )[1]
+  )
 
-# Or,
+# there 11 vertices, 6 are bipartite (in the first mode), and 12 edges
+bipartite.example.net
 
-bipartite.example2.net <- as.network(bipartite.example,bipartite=(dim(bipartite.example)[1]+dim(bipartite.example)[2])) # add the first and second dimension.
-bipartite.example2.net # there 11 vertices, 6 are bipartite (in the first mode), and 12 edges.
+# Another way of build this
+bipartite.example2.net <- as.network(
+  bipartite.example,
+  # add the first and second dimension
+  bipartite=( dim( bipartite.example )[1] + dim( bipartite.example )[2] )
+  )
+
+# there 11 vertices, 6 are bipartite (in the first mode), and 12 edges
+bipartite.example2.net
 
 # Show that the structures are the same.
 as.matrix(bipartite.example.net) == as.matrix(bipartite.example2.net)
@@ -283,7 +312,7 @@ reinforcement_tm(bipartite.example.tnet)
 
 ### **Empirical Example**  
 
-Now, let's take a look at the biparite graph used in a paper I wrote with Justin Ready entitled ["Diffusion of Ideas and Technology: The Role of Networks in Influencing the Endorsement and Use of On-Officer Video Cameras"](https://journals.sagepub.com/doi/10.1177/1043986214553380). The goal of the paper was to examine how police officers develop cognitive frames about the usefulness of body-worn cameras and try to determine whether interactions with other officers provide a conduit for facilitating cognitive frames that increase camera legitimacy. 
+Now, let's take a look at the bipartite graph used in a paper I wrote with Justin Ready entitled ["Diffusion of Ideas and Technology: The Role of Networks in Influencing the Endorsement and Use of On-Officer Video Cameras"](https://journals.sagepub.com/doi/10.1177/1043986214553380). The goal of the paper was to examine how police officers develop cognitive frames about the usefulness of body-worn cameras and try to determine whether interactions with other officers provide a conduit for facilitating cognitive frames that increase camera legitimacy. 
 
 The bipartite graph is available as an edgelist is available [here](https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/officer.event.edgelist.csv). Let's import the edgelist and take a look at the network.
 
@@ -291,7 +320,9 @@ The bipartite graph is available as an edgelist is available [here](https://www.
 library(sna)
 library(network)
 
-officer.event.edgelist   <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/officer.event.edgelist.csv", as.is=TRUE, header=TRUE))
+url <- ( "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-07-officer-event-edgelist.csv" )
+
+officer.event.edgelist   <- as.matrix(read.csv(url, as.is=TRUE, header=TRUE))
 
 dim(officer.event.edgelist) # 358 edges in the network.
 length(unique(officer.event.edgelist[,1])) # 81 officers.

@@ -351,7 +351,7 @@ rm( list = ls() )
 If we had a large network, these routines (i.e. using the `matrix()` function) would be tedious. Most of the time, we have a file that is an adjacency matrix or an edgelist that we can import.  
 The `read.csv()` function can be used to read in .csv files that are arranged in this way. Let's take a look at the help for this function: `?read.csv`.  
 
-We will use the **lab-02-undirected-example.csv** file from my website. To access the file, we can place the url in the `read.csv()` function. Here is the url: https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv.
+We will use the **lab-02-undirected-example.csv** file from my website. To access the file, we can place the url in the `read.csv()` function. Here is the url: [https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv](https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv).
 
 ```{r, echo=TRUE, eval=FALSE, warning=FALSE}
 
