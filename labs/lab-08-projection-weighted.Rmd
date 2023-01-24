@@ -13,17 +13,16 @@ output:
 ---
 
 ```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
-library(devtools)
-library(network)
-library(sna)
+library( devtools )
+library( network )
+library( sna )
 ```
 
-###
 *This lab works with unipartite/one-mode projections of two-mode networks.*
 
 ***
 
-###**One-Mode Networks by Projection**  
+### **One-Mode Networks by Projection**  
 
 *Projection* is the process by which we map the connectivity between modes to a single mode. 
 
@@ -113,12 +112,13 @@ G
 # What does the diagonal represent in this matrix?
 # What do the off-diagonal elements represent?
 
-set.seed(1)
-gplot(G,gmode="graph",label=c("1","2","3","4","5"))
-```
+set.seed( 1 )
+gplot( G, gmode = "graph", label = c( "1","2","3","4","5" ) )
+
+``` 
 
 
-###**One-Mode Networks using `tnet()` functions**  
+### **One-Mode Networks using `tnet()` functions**  
 
 As discussed in the "Projection and Weighted Networks" lecture, we have some options when working with the projected network. For example, we can *binarize* the off-diagonal elements to reflect 0 and 1s for the presence and absense of ties. Alternatively, we could use the *summation* method whereby the off-diagonal elements represent the count of shared nodes. Finally, we could use the *Newman* method were ties are weighted by the number of edges incident on a node prior to projection.
 
@@ -189,7 +189,7 @@ par(mfrow=c(1,1))
 
 ***
 
-###**Empirical Example**  
+### **Empirical Example**  
 
 Now, let's take a look at the biparite graph used in a paper I wrote with Justin Ready entitled ["Diffusion of Ideas and Technology: The Role of Networks in Influencing the Endorsement and Use of On-Officer Video Cameras"](https://journals.sagepub.com/doi/10.1177/1043986214553380). The goal of the paper was to examine how police officers develop cognitive frames about the usefulness of body-worn cameras and try to determine whether interactions with other officers provide a conduit for facilitating cognitive frames that increase camera legitimacy. 
 
@@ -197,19 +197,22 @@ The bipartite graph is available as an edgelist is available [here](https://www.
 
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-library(sna)
-library(network)
 
-officer.event.edgelist   <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/officer.event.edgelist.csv", as.is=TRUE, header=TRUE))
+library( sna )
+library( network )
+
+url <- ( "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-07-officer-event-edgelist.csv" )
+
+officer.event.edgelist   <- as.matrix( read.csv( url, as.is=TRUE, header=TRUE ) ) 
 
 # create the matrix format.
-uR <-unique(officer.event.edgelist[,1])
-uC <- unique(officer.event.edgelist[,2])
-mat <- matrix(0, length(uR), length(uC))
-rownames(mat) <- uR
-colnames(mat) <- uC
+uR <-unique( officer.event.edgelist[,1] )
+uC <- unique( officer.event.edgelist[,2] )
+mat <- matrix( 0, length( uR ), length( uC ) )
+rownames( mat ) <- uR
+colnames( mat ) <- uC
 mat[officer.event.edgelist] <- 1
-diag(mat) <- 0
+diag( mat ) <- 0
 
 # Now, create the bipartite network. 
 officer.event.net <- as.network(mat,bipartite=81,matrix.type="adjacency")
@@ -261,10 +264,17 @@ par(mfrow=c(1,1))
 
 ```
 
-***
+***  
 
-####***Questions?***####
+#### ***Questions?***
 
-```{r,echo=FALSE,eval=FALSE}
-#END OF LAB
-```
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

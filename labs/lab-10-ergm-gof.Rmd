@@ -13,56 +13,74 @@ output:
 ---
 
 ```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
-library(devtools)
-library(network)
-library(sna)
-library(UserNetR)
+
+library( devtools )
+library( network )
+library( sna )
+library( UserNetR )
+
 ```
 
-
-###
 *This lab introduces simulating networks after estimating exponential random graph models using the `ergm` package. Additionally, goodness of fit using the `gof()` function is also discussed.*
 
 ***
 
-##**Getting Started**  
+## **Getting Started**  
 
 As discussed in the [Introduction to Random Graph Models](https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_8_ergm_a_slides.pdf) lecture, we are trying to build a model that accurately represents the processes that generated the observed network. Let's continue working with the `Bali` network from the `UserNetR` package. Recall that the `Bali` network shows the interactions among the Jemaah Islamiyah terrorist group that carried out the bombings in Bali in 2002. The object `Bali` is of class `network` and has 17 vertices and 126 edges. 
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# clear the workspace.
-rm(list = ls())
 
-# load the UserNetR package.
-library(UserNetR)
+# clear the workspace
+rm( list = ls() )
 
-# load the network packages so that we can work with the object.
-library(sna)
-library(network)
+# load the UserNetR package
+library( UserNetR )
+
+# load the network packages so that we can work with the object
+library( sna )
+library( network )
+
 ```
 
 Let's take a look at a plot of the data based on the roles.
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# lets create some colors for the roles.
-library(RColorBrewer)
-my.pal <- brewer.pal(length(unique(Bali%v%"role")),"Set2")
-role.col <- my.pal[as.factor(Bali%v%"role")]
 
-# lets plot the data and look at the various roles.
-set.seed(605)
-gplot(Bali, usearrows = FALSE, vertex.col = role.col, edge.col = "grey40")
-legend("topright", legend=c("Bomb Maker", "Command", "Ops Asst", "Suicide Bomber", "Team Lima"), col = my.pal, pch = 19, pt.cex=2)
-title("Interactions among the 17 members\n of the 2002 Bali terrorist network")
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+
+# lets create some colors for the roles
+library( RColorBrewer )
+
+my.pal <- brewer.pal( length( unique( Bali%v%"role" ) ), "Set2" )
+
+role.col <- my.pal[as.factor( Bali%v%"role" )]
+
+# lets plot the data and look at the various roles
+set.seed( 605 )
+
+gplot( Bali, 
+       usearrows = FALSE, 
+       vertex.col = role.col, 
+       edge.col = "grey40"
+         )
+
+legend( "topright", 
+        legend=c( "Bomb Maker", "Command", "Ops Asst", 
+                  "Suicide Bomber", "Team Lima" ), 
+        col = my.pal, pch = 19, pt.cex=2 
+        )
+title( "Interactions among the 17 members\n of the 2002 Bali terrorist network" )
+
 ```
 
 
-##**The `simulate.ergm()` or `simulate()` and `control.ergm()` functions**  
+## **The `simulate.ergm()` or `simulate()` and `control.ergm()` functions**  
 
 One way of examining how well our ergm model represents the underlying processes that generated the observed network is to simulate a network based on the model estimates. We can do this using the `simulate.ergm()` or `simulate()` function that is built into the `ergm` package. This function randomly samples networks from the specified model. Let's see how it works:
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+
 # load the ergm library.
-library(ergm)
+library( ergm )
 
 # take a look at the help for simulate.
 ?simulate.ergm
@@ -72,7 +90,7 @@ edge.indep.Bali <- ergm(Bali ~ edges)
 summary(edge.indep.Bali)
 
 # Now, simulate a network from the model.
-sim.edge.indep.Bali <- simulate.ergm(
+sim.edge.indep.Bali <- simulate(
   edge.indep.Bali, # we are going to use the estimates from this model for our simulation.
   nsim=1, # simulate 1 network.
   warning=FALSE, # suppress a warning that pops up when we use this function.
@@ -97,7 +115,7 @@ par(op)
 *How is the Bali network different from the network generated from the edge independence model? What are the structural features that the model is not capturing?*  
 
 
-##**Simulating more complex models and more graphs**  
+## **Simulating more complex models and more graphs**  
 
 Let's try a more complex model based on the nodal attribute `role`. Specifically let's allow:  
 
@@ -113,7 +131,7 @@ role.Bali <- ergm(Bali ~ edges + nodefactor("role") + nodematch("role"))
 summary(role.Bali)
 
 # Now, simulate a network from the model.
-sim.role.Bali <- simulate.ergm(role.Bali, nsim=1, warning=FALSE, seed = 605)
+sim.role.Bali <- simulate(role.Bali, nsim=1, warning=FALSE, seed = 605)
 
 # Let's take a look at the simulated network and compare it to our observed network.
 op <- par(mfrow=c(1,2), mai = c(0,0,0.7,0))
@@ -127,16 +145,17 @@ par(op)
 So far we have only simulated 1 network. Let's simulate several networks and see how they differ from the observed network. We can use the `nsim` argument to request more simulated objects.
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Simulate 8 networks
-sims.role.Bali <- simulate.ergm(role.Bali, nsim=8, warning=FALSE, seed = 605)
 
-# Note that the function returns these as a network.list object.
+# Simulate 8 networks
+sims.role.Bali <- simulate(role.Bali, nsim=8, warning=FALSE, seed = 605)
+
+# Note that the function returns these as a network.list object
 class(sims.role.Bali)
 
-# If we want to reference a specific simulated network, we use the [[]] indexing.
+# If we want to reference a specific simulated network, we use the [[]] indexing
 summary(sims.role.Bali[[1]],print.adj=FALSE)
 
-# Let's color the nodes based on their role.
+# Let's color the nodes based on their role
 library(RColorBrewer)
 my.pal <- brewer.pal(length(unique(Bali%v%"role")),"Set2")
 role.col <- my.pal[as.factor(Bali%v%"role")]
@@ -158,7 +177,7 @@ par(op)
 
 *How is the Bali network different from the networks generated from the dyad independence model? What are the structural features that the model is not capturing? Is the model doing a good job capturing the role of the attribute **Role**?*  
 
-##**Simulating alternative models**  
+## **Simulating alternative models**  
 
 Suppose we wanted to simulate a model where the effect of homophily is less strong. In other words, what would *this* network look like if there was not homophily? We can do this by plugging new values into the `simulate.ergm` function.  
 
@@ -185,7 +204,7 @@ no.homophily.coef[6] <- 0
 no.homophily.coef
 
 # now, plug the edited coefficient into a simulation.
-no.homophily.sim <- simulate.ergm(
+no.homophily.sim <- simulate(
   role.Bali, 
   coef = no.homophily.coef, # tell it to use the new coefficents.
   verbose = TRUE # tell it to show us what it is doing.
@@ -197,7 +216,7 @@ gplot(no.homophily.sim, main="No Homophily Simluation",vertex.col=role.col, gmod
 *How does the simulated network differ from the* `Bali` *network?*
 
 
-##**Goodness-of-fit (the basic logic)**  
+## **Goodness-of-fit (the basic logic)**  
 
 Recall that we are fitting a model to observed data. That is, we are specifying the stochastic process that generated our observed data. We have specified local processes that generate our observed network. So, one way to determine how well the model fits the data is to see how well the model generates global network properties. That is, if the processes we have specified are operating, would we get the indegree distribution (for example) we observe?
 
@@ -271,7 +290,7 @@ points(summary(Bali ~ triangle),4, pch="X", cex=2, col="red")
 *In looking at the simulation of the triangles, is our model generating as much transitivity as we observe in the Bali network?*  
 
 
-##**Goodness-of-fit with the `gof()` function**  
+## **Goodness-of-fit with the `gof()` function**  
 
 As we just saw, we can simulate lots of networks and then compare our observed network to the networks simulated from the model estimates. In `ergm`, there is a function that does this for us, `gof()`. The `gof()` function calculates *p*-values for geodesic distance, degree, and reachability summaries to diagnose the goodness-of-fit of exponential family random graph models.  
 
@@ -354,10 +373,18 @@ For example, take a look at the *degree distribution*. Nodes with degree 5 and 9
 
 As another example, take a look at the edge-wise shared partner distribution. The model is not generating enough dyads that have 7 and 8 shared partners ( that is *i* and *j* are tied and share 7 or 8 other nodes in common). This makes sense because we didn't fit a transitivity term to our network. So, basically, the simulations are telling us that the `nodefactor` and `nodematch` terms based on "role" are not the reason for the transitivity we observe in the network.
 
-***
 
-####***Questions?***####
+***  
 
-```{r,echo=FALSE,eval=FALSE}
-#END OF LAB
-```
+#### ***Questions?***
+
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

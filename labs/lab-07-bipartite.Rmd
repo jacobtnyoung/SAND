@@ -461,13 +461,19 @@ officer.event.tnet <- as.tnet(as.matrix(officer.event.net))
 reinforcement_tm(officer.event.tnet)
 ```
 
-**What is the interpretation of the dyadic clustering coefficent in this example?**  
+**What is the interpretation of the dyadic clustering coefficient in this example?**  
+
+***  
+
+#### ***Questions?***
 
 
-***
+<br>
 
-####***Questions?***####
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
-```{r,echo=FALSE,eval=FALSE}
-#END OF LAB
-```
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

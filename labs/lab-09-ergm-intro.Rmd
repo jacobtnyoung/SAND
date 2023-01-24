@@ -13,27 +13,30 @@ output:
 ---
 
 ```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
-library(devtools)
-library(network)
-library(sna)
-library(UserNetR)
+
+library( devtools )
+library( network )
+library( sna )
+library( UserNetR )
+
 ```
 
-###
 *This lab introduces some basics for working with exponential random graph models using the `ergm` package.*
 
 ***
 
-##**Getting Started**  
+## **Getting Started**  
 
 As discussed in the Introduction to Random Graph Models lecture, we are trying to build a model that accurately represents the processes that generated the observed network. Let's start by working with a network from the `UserNetR` package. If you have not already done so, you can download this package using the `install_github("DougLuke/UserNetR")` command. Note that the `install_github()` function is in the `devtools` package. 
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# clear the workspace.
-rm(list = ls())
 
-# load the UserNetR package.
-library(UserNetR)
+# clear the workspace
+rm( list = ls() )
+
+# load the UserNetR package
+library( UserNetR )
+
 ```
 
 If you use the `help(package="UserNetR")` command, you can see in the help page there are a number of datasets available for use. Let's take a look at the `Bali` network. This network shows the interactions among the Jemaah Islamiyah terrorist group that carried out the bombings in Bali in 2002. The object `Bali` is of class `network` and has 17 vertices and 126 edges. These data were originally collected and created by Stuart Koschade as part of his dissertation on the social network analysis of terrorist groups. The ties here represent contacts among the Bali terrorist cell. The dataset also includes an edge characteristic, IC, that measures the frequency and duration of the contact, where 1 indicates a weak relationship, and 5 indicates a strong relationship.
@@ -116,7 +119,7 @@ title("Interactions among the 17 members\n of the 2002 Bali terrorist network")
 *How might we go about incorporating this information into a model of the network?*  
 
 
-###**The `ergm` package and the `ergm()` function**  
+### **The `ergm` package and the `ergm()` function**  
 
 The package `ergm` fits and simulates exponential random graph models. If you have not already done so, install the package using `install.packages("ergm")`.  If you have not installed the `ergm` package recently, make sure you update using the `update.packages("ergm")` command.
 
@@ -145,7 +148,7 @@ Here, the coefficients are expressed as the conditional log-odds of a single act
 
 We can view all of the network statistics that have been programmed by using the `?ergm.terms` command. You can also use the `(vignette("ergm-term-crossRef"))` command to show you a bit more info about the model terms.  
 
-###**Edge independence (Bernoulii/Simple Random graphs)**  
+### **Edge independence (Bernoulii/Simple Random graphs)**  
 
 The ERGM expresses the probability of observing a tie between nodes *i* and *j* given some terms (i.e. network configurations). The edge independence model of Erdos and Renyi (1959) uses a single term, the number of edges in the graph, to represent the probability of a tie:   
 
@@ -196,7 +199,7 @@ plogis(-0.1473*1)
 plogis(edge.indep.Bali$coef[1]*1)
 ```
 
-###**Adding Nodal Covariates**  
+### **Adding Nodal Covariates**  
 
 Recall the plot of the terrorist network based on the roles each actor was assigned. 
 
@@ -359,10 +362,17 @@ summary(role3.Bali)
 ```
 
 
-***
+***  
 
-####***Questions?***####
+#### ***Questions?***
 
-```{r,echo=FALSE,eval=FALSE}
-#END OF LAB
-```
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
