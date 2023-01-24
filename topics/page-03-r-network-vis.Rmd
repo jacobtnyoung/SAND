@@ -48,7 +48,7 @@ In this section of the course, we begin working with [R](http://cran.r-project.o
  
  + [Lab 03-Basics of Network Visualization](../labs/lab-03-visualization-intro.html)
  
- + Example networks used in labs ([undirected network]("https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv")) (directed network)
+ + Example networks used in labs ([undirected network]("https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv")) ([directed network]("https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-directed-example.csv"))
 
 <br>
 

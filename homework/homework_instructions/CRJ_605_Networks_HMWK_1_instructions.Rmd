@@ -33,7 +33,7 @@ For this assignment, you will work with two networks created from the course sur
 5. Calculate the standardized indegree and outdegree for each actor.  
 6. Calculate the mean indegree and outdegree.  
 7. Compare the two means.  
-8. Calcuate the graph centralization for indegree and outdegree.  
+8. Calculate the graph centralization for indegree and outdegree.  
 9. Compare the two graph centralization scores.  
 
 ###**Now, compare the networks**:  
