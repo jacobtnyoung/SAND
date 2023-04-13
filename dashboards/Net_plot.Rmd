@@ -91,9 +91,29 @@ renderPlot({
   hist( 
     degree( 
       graph.for.plot(),
-      cmode = "indegree" )
+      cmode = "indegree" ),
+    xlab = "Degree Distribution",
+    main = "Histogram of Degree Distribution"
     )
   })
 
 ```
 
+
+<style>
+
+.chart-shim { overflow: auto; }
+ 
+table{
+   border-spacing:1px;
+   margin-top:30px;
+   margin-bottom:30px;
+   margin-left: auto;
+   margin-right: auto;
+   align:center} 
+
+td{ padding: 6px 10px 6px 10px } 
+
+th{ text-align: left; } 
+
+</style>
