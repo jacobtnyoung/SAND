@@ -41,59 +41,6 @@ The learning goals of this lecture are to:
 
 <br>
 
-#### Course Survey Materials
-
- + Raw course survey data
-   + [Wave 1]()
-   
-   + [Wave 2]()
-   
-   + [Wave 1 & Wave 2]()
- 
- 
-  + Course survey data instruments
-    + [Wave 1 instrument]() 
-    
-    + [Wave 2 instrument]()
-    
-    + [R script to clean raw course survey data from Wave 1]()
-    
-    + [R script to clean raw course survey data from Wave 1 & Wave 2]()
- 
-<br>
- 
-#### Adjacency matrices for course survey data:
-
-##### Wave 1
-
-  + [Spend time net]()
-  
-  + [Talk about course net]()
-  
-  + [Trust net]()
-  
-  + [TV net]()
-
-<br>
-
-##### Wave 2
-
-  + [Spend time net]()
-  
-  + [Talk about course net]()
-  
-  + [Trust net]()
-
-<br>  
-
-##### R data file with cleaned course survey data and network objects
-  
-  + [Wave 1]()
-  
-  + [Wave 1 & 2]()
-
-<br>
-
 ____
 
 <br>
