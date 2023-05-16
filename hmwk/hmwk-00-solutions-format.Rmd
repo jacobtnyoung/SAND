@@ -1,0 +1,32 @@
+---
+title: "Homework # - HOMEWORK NAME - SOLUTIONS"
+date: "CRJ 605 Statistical Analysis of Networks"
+output: 
+  html_document:
+    df_print: paged
+    theme: paper
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+    self_contained: true
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+
+CONTENT
+____
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

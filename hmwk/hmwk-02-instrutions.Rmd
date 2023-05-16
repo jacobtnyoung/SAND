@@ -1,0 +1,73 @@
+---
+title: "Homework 2 - HOMEWORK NAME - INSTRUCTIONS"
+date: "CRJ 605 Statistical Analysis of Networks"
+output: 
+  html_document:
+    df_print: paged
+    theme: cosmo
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+    self_contained: true
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The purpose of this assignment is to familiarize yourself with how networks are created and examined in *R*.  
+
+
+NOTE: This is stuff that will be in homework #1. 
+Think about a type of relationship. 
+Talk about why you picked this network.
+Create the network as an object.
+Create an adjacency matrix.
+HERE: what else goes here will depend on how far you plan on getting in the lectures
+
+HAVE THEM CREATE TWO networks above; that way they can compare the networks.
+
+
+THIS IS WHAT MAKES HMWK #2, WHERE THEY WILL WORK WITH THAT NETWORK.
+
+### **For *each* network (i.e. `talk.course.net` and `trust.net`) do the following**:  
+
+1. Import the network into *R* and create an object of class `network`.    
+2. Plot the network using the `gplot()` function.    
+3. Modify the plot using at least three arguments in the `gplot()` function.  
+4. Calculate the indegree and outdegree for each actor.  
+5. Calculate the standardized indegree and outdegree for each actor.  
+6. Calculate the mean indegree and outdegree.  
+7. Compare the two means.  
+8. Calculate the graph centralization for indegree and outdegree.  
+9. Compare the two graph centralization scores.  
+
+###**Now, compare the networks**:  
+
+10. How are the indegree and outdegree different for these networks?  
+11. What do the differences in the graph centralization scores for these networks tell us?  
+
+###**BONUS Question**:  
+
+12. For the `trust.net` network, are people who trust others *more* or *less* likely to be trusted?  
+
+### This assigment is **DUE** 2/14.
+
+
+____
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
