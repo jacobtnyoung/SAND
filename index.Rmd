@@ -38,6 +38,8 @@ Lectures are provided in .pdf format. Labs are provided in .html format and RMar
 ## *Lecture Notes and Labs*  
 ____
 
+THIS NEEDS TO CONFORM TO THE HEADINGS IN THE SYLLABUS
+
 [Introduction to Network Analysis](topics/page-01-intro.html)
 
 [Network Data Structures and Sources of Network Data](topics/page-02-network-data.html)
