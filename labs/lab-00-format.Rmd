@@ -1,6 +1,6 @@
 ---
 title: "Lab # - LAB NAME"
-date: "CRJ 605 Statistical Analysis of Networks"
+date: "CRJ 605 Statistical Analysis of Network Data"
 output: 
   html_document:
     df_print: paged
