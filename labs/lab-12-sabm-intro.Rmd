@@ -1,0 +1,421 @@
+---
+title: "Lab 11-Introduction to Stochastic Actor-Based Models (SABMs)"
+date: "CRJ 605 Statistical Analysis of Networks"
+output: 
+  html_document:
+    df_print: paged
+    theme: lumen
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+    self_contained: true
+---
+
+```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
+
+library( devtools )
+library( network )
+library( sna )
+library( RSiena )
+
+```
+
+*This lab examines longitudinal network structures using the `RSiena` package. Information about the Siena program can be found at:* http://www.stats.ox.ac.uk/~snijders/siena/
+
+***
+
+## **Getting Started**  
+
+As discussed in the Introduction to Stochastic Actor-Based Models lecture, we are trying to build a model that accurately represents the preferences among actors that generated the observed network between discrete time points. 
+
+Let's start by working with the advice network among 75 MBA students measured at three waves. At each wave, the students were asked to whom they ask for advice. Keep in mind, as we look through the advice network over three time periods, that we are trying to model the decisions actors make about the ties they send.
+
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+
+# clear the workspace and load the libraries
+
+rm( list = ls() )
+
+library( sna )
+
+library( network )
+
+
+#HERE: Need to get different data for this!!!
+
+
+# Load the data and assign each network to an object
+advice1 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/mba-advice1.csv",as.is=T,header=T,row.names=1))
+advice2 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/mba-advice2.csv",as.is=T,header=T,row.names=1))
+advice3 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/mba-advice3.csv",as.is=T,header=T,row.names=1))
+
+# Now, coerce them to be a network object.
+advice1.net <- as.network(advice1)
+advice2.net <- as.network(advice2)
+advice3.net <- as.network(advice3)
+
+# take a look at the properties of each network.
+summary(advice1.net, print.adj = FALSE)
+summary(advice2.net, print.adj = FALSE)
+summary(advice3.net, print.adj = FALSE)
+```
+
+*What do the summaries tell us about each network?*  
+
+***  
+
+Let's take a look at the plots of each network to see what patterns we can discern over time.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE, figure.align = "center", figure.height = 5, figure.width = 5}
+op <- par(mfrow=c(2,2), mai = c(0,0,0.7,0))
+set.seed(605)
+gplot(advice1.net, edge.col = "grey60", vertex.col="coral",label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
+title("Advice Network (t1)")
+set.seed(605)
+gplot(advice2.net, edge.col = "grey60", vertex.col="lightblue",label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
+title("Advice Network (t2)")
+gplot(advice3.net, edge.col = "grey60", vertex.col="lavender",label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
+title("Advice Network (t3)")
+plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
+text(x = 0.5, y = 0.5, paste("Plots of\n Advice Network\n among 75 MBAs"),cex = 3, col = "black")
+par(op)
+```
+
+*What do the plots show us about the evolution of the network over time?*  
+
+
+Let's force the individuals to "stay" in the same position in the plot and see how individual actors' indegree and outdegree change over time.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE, figure.align = "center", figure.height = 5, figure.width = 5}
+op <- par(mfrow=c(2,2), mai = c(0,0,0.7,0))
+set.seed(605)
+coords <- gplot(advice1.net, edge.col = "grey60", vertex.col="coral",label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
+title("Advice Network (t1)")
+set.seed(605)
+gplot(advice2.net, edge.col = "grey60", vertex.col="lightblue", coord = coords,label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
+title("Advice Network (t2)")
+gplot(advice3.net, edge.col = "grey60", vertex.col="lavender", coord = coords,label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
+title("Advice Network (t3)")
+plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
+text(x = 0.5, y = 0.5, paste("Plots of\n Advice Network\n among 75 MBAs"),cex = 3, col = "black")
+par(op)
+```
+
+*Take a look at a few specific nodes. What do the plots show us about the evolution of the network over time?*  
+
+***  
+
+Now, we want to think about modeling the evolution of this network over time. To do that, we need to look through the `RSiena` package.
+
+##**The `RSiena` package**  
+
+The `RSiena` package performs simulation-based estimation of stochastic actor-based models for longitudinal network data collected as panel data. Dependent variables can be single or multivariate networks, which can be directed, non-directed, or two-mode. There are also functions for testing parameters and checking goodness of fit.  
+
+If you have not already done so, install the package using `install.packages("RSiena")`. If you have not installed the `RSiena` package recently, make sure you update using the `update.packages("RSiena")` command.  
+
+*Note* that if you are using the MacOS, that `RSiena` will require the XQuartz software. Please download the XQuartz software at: https://www.xquartz.org/ before running `RSiena`.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Load the RSiena package.
+library(RSiena)
+
+# Take a look at the help.
+help(package="RSiena")
+```
+
+For an RSiena analysis, we have to build several objects. The objects will serve as variables:    
+
+* A data object to examine (using `sienaDependent()` and `sienaDataCreate()`).  
+
+* A set of effects to estimate (using `getEffects` and `includeEffects()`).  
+
+* A model object that will have the terms we want to estimate (using `sienaAlgorithmCreate` or `sienaModelCreate()`).  
+
+* Then, we estimate the model using `siena07()`.  
+
+###**Step 1: Building the object to analyze using the `sienaDependent()` and `sienaDataCreate()` functions**  
+
+First, we want to create an object that is an array of the networks that will be the **dependent** variable. To do this, we use the `sienaDependent()` function. To see how this function works, look at the help with `?sienaDependent`.  
+
+In our example, we will create an object called `advice` which is the three networks constructed as an `array`. The `array` will have dimensions *75 x 75 x 3*. That is, the number of individuals in each network represented over three time points. If, for example, we had a network with fifty individuals and four waves of data, then our array would be *50 x 50 x 4*. Think of the object we have created as a cube that has 75 rows and 75 columns and each slice of the cube is a cross-section of the network. 
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Take a look at the help.
+?sienaDependent
+
+# Build the network object to examine.
+advice <- sienaDependent(
+  array(                        # define that it is an array.
+    c(advice1,advice2,advice3), # define the three networks.
+    dim=c(75,75,3)              # 75 x 75 x 3 are the dimensions.
+    )
+  )
+
+# we see that advice is a one mode network, with 3 observations, and 75 actors.
+advice
+
+# advice is an object of class "sienaDependent"
+class(advice)
+```
+
+Now that we have created our dependent variable (i.e. `advice` which is an object of class `sienaDependent`), we can create an object for RSiena to examine. We do this using the `sienaDataCreate` function. To see how this function works, look at the help with `?sienaDataCreate`. This may seem excessive *now*, but when we examine more networks simultaneously, the program architecture will make more sense.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Take a look at the help.
+?sienaDataCreate
+
+# Now, build the object to analyze.
+advice.data <- sienaDataCreate(advice)
+
+advice.data
+
+# advice.data is of class "siena".
+class(advice.data)
+``` 
+
+###**Step 2: Defining the set of effects to estimate using the `getEffects()` function**  
+
+Now, we create an effects object for model specification using the `getEffects()` function. Basically, we are going to create an object with some effects, then as we continue to build our model, we can add or remove effects from that object. To see how this function works, look at the help with `?getEffects`.
+
+By default, the `getEffects` function will estimate the rate of change in each period (i.e. the **rate** function). In this example, we will see two rates estimated, the rate of change from t1:t2 (rate 1) and t2:t3 (rate 2). Also, the model automatically adds the *outdegree* and *reciprocity* terms as these are necessary for estimation.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Take a look at the help.
+?getEffects
+
+# Now, create the effects object.
+advice.effects <- getEffects(advice.data)
+```
+
+###**Step 3: Create the model using the `sienaAlgorithmCreate` and `sienaModelCreate()` functions**  
+
+Now that our **dependent** variable is defined (i.e. `advice.data`) and the effects we want to estimate on that object are defined (i.e. `advice.effects`), we can create a model object using the `sienaAlgorithmCreate()` or `sienaModelCreate()` functions. To see how these functions work, look at the help with `?sienaAlgorithmCreate` and `?sienaModelCreate`. These functions allow us to specify various properties of the estimation algorithm and the model.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Take a look at the help.
+?sienaAlgorithmCreate
+?sienaModelCreate
+
+# Create a model that has particulars about estimation, then we estimate the model.
+advice.model <- sienaModelCreate(projname = "Advice", useStdInits=TRUE, seed=605)
+advice.model
+```
+
+###**Taking Stock of the Steps (so far) and Checking Network Stability**  
+
+We have gone through three steps in detail. But, note that we really only have to run several lines of command to get us to where we are right now. That is, ready to estimate a model. Here are all the lines we needed to get to the estimating stage:
+
+```{r,echo=TRUE,eval=FALSE,message=FALSE,include=TRUE}
+advice         <- sienaDependent(array(c(advice1,advice2,advice3),dim=c(75,75,3)))
+advice.data    <- sienaDataCreate(advice)
+advice.effects <- getEffects(advice.data)
+advice.model   <- sienaModelCreate(projname = "Advice", useStdInits=TRUE, seed=605)
+```
+
+In addition, we need to check whether there is sufficient stability in our network prior to estimating a model. If there is a lot of instability (i.e. there are dramatic changes between cross-sections), then it may provide difficult to model the evolution of the network. We can get a sense of how much change there is by examining the *Jaccard index*, for more information see the [RSiena manual](http://www.stats.ox.ac.uk/~snijders/siena/RSiena_Manual.pdf). A general rule of thumb is that the values should be above 0.3. The `print01Report()` function will return this information as a text file. Let's take a look:
+
+```{r,echo=TRUE,eval=FALSE,message=FALSE,include=TRUE}
+?print01Report
+
+# the report will have the file extension .out.
+print01Report(advice.data, modelname = "Advice Example")
+```
+
+
+###**Step 4: Estimate the model using the `siena07` function**  
+
+Now we are ready to estimate the model! To do this, we pass to the `siena07()` function the model information, the data, and the effects. To see how this function works, look at the help with `?siena07`. Now, let's estimate our model.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Take a look at the help.
+?siena07
+
+# Estimate the model.
+advice.results <- siena07(
+	advice.model,           # the model estimation information.
+	data=advice.data,       # the data object we created above.
+	effects=advice.effects  # the effects object we created above.
+)
+```
+
+###**Interpreting the Output**  
+
+Let's take a look through the results by using the `summary()` function. 
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+summary(advice.results)
+```  
+
+The output shows the estimates for the **rate** function and the estimates for the **objective** function. For each coefficient, we see an estimate and a standard error.  
+
+For the **objective** function coefficients, we also see the *Convergence t-ratio* reported. **NOTE**: these do not represent conventional *t-ratios* in the sence of a *t*-statistic assessing the size of the parameter estimate. Rather, they represent tests of the lack of convergence for each estimate, so small values indicate good convergence. Absolute values less than 0.10 indicate excellent convergence and absolute values less than 0.15 indicate reasonable convergence. More information about these values can be found in the [RSiena manual](http://www.stats.ox.ac.uk/~snijders/siena/RSiena_Manual.pdf).  
+
+The **rate** estimates correspond to the estimated number of opportunities for change per actor for each period. Recall that the model is simulating *micro-steps*, and in each micro-step an individual is provided the opportunity to make a decision. The **rate** parameter estimate gives a sense of how many opportunities are provided to each individual. For example, the estimate for period 1 is `6.4262`, meaning that each actor had just over 6 opportunities to change a tie or maintain their current tie configuration.  
+
+The "Other parameters" section shows the **objective** estimates, or the **eval** estimates, which correspond to the relative attractiveness of a particular network state for each actor. Recall that individuals are given a choice about what to do. These estimates represent the extent to which individuals preferred a particular state. For example, the `eval outdegree` term is negative, suggesting that individuals prefer *not* to send ties. The `eval reciprocity` term is positive, indicating that individuals prefer to reciprocate ties. Note that this preference is for *maintaining* an existing reciprocated relationship, for *creating* a reciprocated relationship from an asymmetric relationship where alter has nominated ego (i.e. ego wants to reciprocate), and for *dissolving* an asymmetric relationship where alter did not nominated ego after ego nominated alter (i.e. alter didn't reciprocate). The significance of the effects can be evaluated in a manner similar to a regression coefficient by looking at the ratio of the estimate to the standard error (where a ratio of 1.96 indicates a *p*-value of *0.05*).  
+
+***  
+
+###**Step 5: Adding Terms to the Model**  
+
+When the effects object has been created, we can add to it using the `includeEffects()` function. This function allows us to take the existing effects object and add a specific term that we would like to estimate. To see how this function works, look at the help with `?includeEffects`.  To see the effects, use the `effectsDocumentation()` function to generate an html file that shows all of the effects. Or, these terms can be found in the [RSiena manual](http://www.stats.ox.ac.uk/~snijders/siena/RSiena_Manual.pdf).    
+
+Let's add the following effects to our model:  
+
+* an effect for a preference for transitivity (*i->j* is preferred if *i->k* and *k->j* exists). This effect is called `transTrip`.  
+
+* an effect for a preference for 3-cycle triads (*i->j* is preferred if *k->i* and *j->k* exists). This effect is called `cycle3`.  
+
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# use the includeEffects() function to add these terms.
+advice.effects <- includeEffects(advice.effects,transTrip) # the model term is "transTrip".
+advice.effects <- includeEffects(advice.effects,cycle3) # the model term is "cycle3"
+``` 
+
+Now that we have added new terms, we re-estimate the model.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+advice.results2 <- siena07(advice.model,data=advice.data,effects=advice.effects)
+summary(advice.results2)
+```  
+
+*What is the interpretation of the `transTrip` and `cycle3` estimates?*
+
+***  
+
+Let's add some additional effects to the model:  
+
+* An effect for seeking relationships with popular others (*i->j* is preferred if *k->j* exists. This effect is `inPop`.  
+
+* An effect for seeking relationships with active others (*i->j* is preferred if *j->k* exists). This effect is `outPop`.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# use the includeEffects() function to add these terms.
+advice.effects <- includeEffects(advice.effects,inPop) # the model term is inPop (see also inPopSqrt)
+advice.effects <- includeEffects(advice.effects,outPop) # the model term is outPop (see also outPopSqrt)
+``` 
+
+Now that we have added new terms, we re-estimate the model.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+advice.results3 <- siena07(advice.model,data=advice.data,effects=advice.effects)
+summary(advice.results3)
+```  
+
+*What is the interpretation of the `inPop` and `outPop` estimates?*
+
+
+***  
+
+####**Working with Covariates**  
+
+So far, we have specified terms that are primarily *structural* in the sense that they are concerned with endogenous network processes. However, we can also include covariates in the model to capture differential tie behavior based on the attributes of the actors.  
+
+In `RSiena`, covariates can be either:  
+
+* *Time-varying* in that the variable can vary across waves (e.g. smoking).  
+
+* *Constant* in that the variable does not change over time (e.g. sex).  
+
+Time-varying covariates are incorporated into the `sienaDataCreate()` function by defining them with the `varCovar()` function and constant covariates are incorporated using the `coCovar()` function.
+
+Let's take a look at how we incorporate actor covariate terms by using the **performance ratings** of each student conducted at each wave. Since the performance ratings were different at each wave, it is a "time-varying covariate". So, we need to use the `varCovar()` function. Also, since we are only observing changes from *t1* to *t2* (i.e. period 1) and *t2* to *t3*  (i.e. period 2), we only want the measurements taken at wave 1 and wave 2.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# call the data.
+performance.data <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/mba-performance.csv",as.is=TRUE,header=TRUE,row.names=1)) 
+
+# See the description of the varCovar() function.
+?varCovar
+
+# We have only take the wave 1 and 2 data, not wave 3 (because we don't observe changes during wave 3).
+performance <- varCovar(performance.data[,1:2]) 
+```
+
+Now that we have the performance data, let's rebuild the objects we want. Since the `performance` object is data used in our analysis, we need to redefine the object created by the `sienaDataCreate()` function. Also, since we will be creating a new data object for analysis, we need to redefine the effects we want to estimate using the `getEffects()` function.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# add the performance data and create a new object.
+a.p.data <- sienaDataCreate(advice, performance)
+a.p.data
+
+# We also need a new effects object.
+a.p.effects <- getEffects(a.p.data)
+
+# Let's use the terms we already had in the prior model.
+# Note: we can just include all the effects in one statement, not four lines.
+a.p.effects <- includeEffects(a.p.effects,transTrip,cycle3,inPop,outPop)
+```
+
+Note that the `includeEffects()` function includes the argument `include=` which can be used to remove terms. For example, say we estimate a model and want to remove the `cycle3` effect. We would use the following command: `includeEffects(a.p.effects,cycle3, include=FALSE)`. If we did that and wanted to add it back in, we could use: `includeEffects(a.p.effects,cycle3, include=TRUE)` (note that the `include=TRUE` argument is not necessary as the default is `TRUE` for this argument).  
+
+***  
+
+Now we want to include the effects of `performance` on tie behavior. For actor covariates, we call these *interaction terms* because the outdegree depends on a covariate.  
+
+The typical effects we might be interested in are:  
+
+* Individuals with a particular attribute are more likely to *send* ties, a *sender* effect. This effect is called `egoX`.  
+
+* Individuals with a particular attribute are more likely to *receive* ties, a *receiver* effect. This effect is called `alterX`.  
+
+* Individuals with a particular attribute are more likely to nominate others with the same or similar attribute, a *homophily* effect. This effect is called `sameX` or `simX`.  
+
+Let's take a look at how this looks in the syntax and what the effects mean.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Hypothesis: low performers need advice. 
+  # So, people who have higher performance are less likely to send ties.
+  # Should see a negative coefficient.
+a.p.effects <- includeEffects(a.p.effects,
+                              egoX, # sender effect.
+                              interaction1="performance" # outdegree depends on performance.
+                              )
+
+# Hypothesis: high performers are asked for advice. 
+  # So, people who have higher performance are more likely to receive ties.
+  # Should see a positive coefficient.
+a.p.effects <- includeEffects(a.p.effects,
+                              altX, # receiver effect.
+                              interaction1="performance" # indegree depends on performance.
+                              )
+
+# Hypotheses: people at the same performance level do not seek advice from each other. 
+  # This is a homophily effect.
+  # Since the variable is continuous, we should anticipate a positive effect to indicate homophily.
+	# NOTE: because the performance measure is not categorical, we use "simX", not "sameX".
+    # If our variable was categorical, we would use "sameX" and expect a positive coefficient.
+a.p.effects <- includeEffects(a.p.effects,simX,interaction1="performance")
+```
+
+Now that we have our effects object described, let's estimate the model. 
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# Set up the estimation.
+a.p.model <- sienaModelCreate(projname = "Advice & Performance", useStdInits=TRUE, seed=605)
+
+# Estimate the model.
+advice.results <- siena07(a.p.model,data=a.p.data,effects= a.p.effects)
+
+# Take a look at the output.
+summary(advice.results)
+```
+
+Now let's interpret the effects:  
+
+* For `eval performance ego` we see a negative coefficient, indicating that individuals with higher values on their performance rating were **less** likely to *send* ties.  
+
+* For `eval performance alter` we see a positive coefficient, indicating that individuals with higher values on their performance rating were **more** likely to *receive* ties.  
+
+* For `eval performance similarity` we see a positive coefficient, indicating that ego prefers sending ties to alters who are more similar to ego on the rating variable.  
+
+***
+
+####***Questions?***####
+
+```{r,echo=FALSE,eval=FALSE}
+#END OF LAB
+```

@@ -1,6 +1,6 @@
 ---
-title: "Homework 1 - HOMEWORK NAME - INSTRUCTIONS"
-date: "CRJ 605 Statistical Analysis of Networks"
+title: "Homework 1 - Introduction to Network Analysis - INSTRUCTIONS"
+date: "CRJ 605 Statistical Analysis of Network Data"
 output: 
   html_document:
     df_print: paged
@@ -21,7 +21,43 @@ text-align: justify}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-SEE HOMEWORK #2 FOR ALL THE DETAILS OF WHAT YOU NEED HERE!!!!
+# Introduction
+
+For the first homework, I would like you to construct a network. Think about a type of relationship that is interesting, important, etc. and what it connects. Whatever floats your boat. It can be a real example from your life, something fictitious, anything really. 
+
+**IMPORTANT**: *read through this entire assignment before deciding what you will choose*.
+
+## Part I
+
+*After making your decision, do the following*:
+
+### A. Describe the network 
+
+  1. Is the network one mode or multi-mode?
+  2. What do the points (i.e. nodes) represent? (note: if multiple modes, be sure to describe each mode)
+  3. What do the ties (i.e. edges) represent?
+  4. Are the ties simplex or multiplex? (note: if multiplex, be sure to describe each edge)
+  5. Are the ties undirected or directed? Binary/Weighted/Signed?
+  6. Why type of edge is it? (social relationship? Interactions? Flow?)
+  7. Why did you pick this network?
+    
+### B. Draw a picture of the network (by hand is fine)
+  
+### C. Draw the adjacency matrix for the network (by hand is fine)
+
+____  
+
+## Part II
+
+*After completing Part I, do the following*:
+
+### Choose a new network and repeat Part I
+
+
+## Instructions
+
+The assignment needs to be emailed to me by the due date of **DATE**.
+
 
 ____
 

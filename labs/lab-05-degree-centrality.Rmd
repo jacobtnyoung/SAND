@@ -1,0 +1,500 @@
+---
+title: "Lab 04-Degree Centrality and Centralization"
+date: "CRJ 605 Statistical Analysis of Networks"
+output: 
+  html_document:
+    df_print: paged
+    theme: lumen
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+    self_contained: true
+---
+
+```{r,echo=FALSE,eval=TRUE,message=FALSE}
+
+library( sna )
+library( devtools )
+library( UserNetR )
+library( network )
+
+```
+
+<br>
+
+*This lab examines degree centrality and centralization using the `degree()` and `centralization()` functions in the `sna` package.*
+
+<br>
+
+***
+
+### **Degree Centrality (Undirected Binary Graphs)**  
+
+In an undirected binary graph, *actor degree centrality* measures the extent to which a node connects to all other nodes in a network. In other words, the number of edges incident with a node. This is symbolized as: $d(n_i)$. For an undirected binary graph, the degree $d(n_i)$ is the row or column sum. If we have an object of `class(matrix)` in the workspace, we can use the `colSums()` and/or `rowSums()` functions to return this information.  
+
+First, let's set up our graph from the degree centrality lecture:  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# First, clear the workspace
+rm( list = ls() )
+
+# Then, build an object
+u.mat <- rbind(
+  c( 0,1,0,0,0 ),
+  c( 1,0,1,0,0 ),
+  c( 0,1,0,1,1 ),
+  c( 0,0,1,0,1 ),
+  c( 0,0,1,1,0 ) )
+
+# Assign the names to the object
+rownames( u.mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
+colnames( u.mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
+
+# Now, plot the graph (remember to load the sna package)
+# The quitely= argument tells R not to print out the info on the package
+library( sna, quietly=TRUE ) 
+
+# Let's set up the coordinates to force the nodes
+# to be in the same position throughout the lab
+set.seed( 605 )
+coords <- gplot( u.mat )
+
+# Plot the network
+gplot( 
+  u.mat, 
+  gmode="graph", 
+  arrowhead.cex=0.5, 
+  edge.col="grey40", 
+  label=rownames( u.mat ),
+  label.col="blue",
+  label.cex=1.2,
+  coord = coords
+  )
+
+```  
+
+Since the graph is undirected, we can print the degree centrality for each node as a vector using the `colSums()` or `rowSums()` functions:  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+colSums( u.mat )
+rowSums( u.mat )
+
+# We could also assign these to an object
+deg.u.mat <- colSums( u.mat )
+
+# Then, use that information in the plot
+# Use the vertex.cex= argument to pass the degree
+# This will make nodes with higher degree larger
+gplot(
+  u.mat,
+  gmode="graph", 
+  arrowhead.cex=0.5, 
+  edge.col="grey40", 
+  label=rownames( u.mat ),
+  label.col="blue",
+  label.cex=1.2,
+  vertex.cex = deg.u.mat,
+  coord = coords
+  )
+
+# Or, we could use the RColorBrewer package to shade the nodes
+
+# install.packages( "RColorBrewer" )
+library( RColorBrewer, quietly=TRUE )
+
+# use display.brewer.all() to see the pallettes.
+
+# Let's use the Blues pallette.
+col.deg  <- brewer.pal( length( unique( deg.u.mat ) ), "Blues")[deg.u.mat]
+
+# In this plot, what do darker shades mean?
+gplot(
+  u.mat, 
+  gmode="graph", 
+  arrowhead.cex=0.5, 
+  edge.col="grey40", 
+  label=rownames( u.mat ),
+  label.col="blue",
+  label.cex=1.2,
+  vertex.cex = deg.u.mat,
+  vertex.col = col.deg,
+  coord = coords
+  )
+
+```  
+
+#### **Standardized degree centrality, mean degree, and centralization**  
+Actor degree centrality not only reflects each node’s connectivity to other nodes but also depends on the size of the network, *g*. As a result, larger networks will have a higher maximum possible degree centrality values. This makes comparison across networks problematic. The solution is to take into account the number of nodes and the maximum possible nodes to which *i* could be connected, *g-1*.  
+
+Let's calculate the standardized centrality scores for our undirected graph:  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# unstandardized or raw centrality
+deg.u.mat <- colSums( u.mat )
+
+# to calculate g-1, we need to know the number of nodes in the graph 
+# this is the first dimension of the matrix
+g <- dim( u.mat )[1]
+
+# now, divide by g-1
+s.deg.u.mat <- deg.u.mat / ( g-1 )
+
+deg.u.mat
+s.deg.u.mat
+
+```
+
+We can also examine the *average* degree of the graph using 
+
+$$\frac{\sum_{i=1}^g d(n_i)}{g}$$
+or 
+
+$$\frac{2L}{g}$$, 
+
+where *L* is the number of edges in the graph:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+mean.deg <- sum( deg.u.mat ) / dim( u.mat )[1] 
+
+mean.deg
+
+# Note that we can also use the mean() function to return this information:
+mean( deg.u.mat )
+
+```  
+
+<br>
+
+We can also calculate how centralized the graph itself is. *Group degree centralization* measures the extent to which the actors in a social network differ from one another in their individual degree centralities. Following [Wasserman & Faust (1994)](https://www.cambridge.org/core/books/social-network-analysis/90030086891EB3491D096034684EFFB8), an index of *group degree centralization* can be calculated as: 
+
+$$C_D = \frac{\sum\limits_{i=1}^g [C_D(n^*) - C_D(n_i)]}{[(g-1)(g-2)]}$$
+
+for undirected graphs where $C_D(n^*)$ is the maximum degree in the graph. We can write out the components of the equation using the `max()` function:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# In separate pieces
+deviations <- max( deg.u.mat ) - deg.u.mat
+sum.deviations <- sum( deviations )
+numerator <- sum.deviations
+denominator <- ( g-1 )*( g-2 )
+group.deg.cent <- numerator/denominator
+
+group.deg.cent
+
+
+# Or, as a single equation.
+group.deg.cent <-( sum( ( ( max( deg.u.mat ) - deg.u.mat ) ) ) ) / ( ( g -1 )*( g - 2 ) )
+
+group.deg.cent
+ 
+```  
+
+***
+
+### **Degree Centrality (Directed Binary Graphs)**  
+
+In a directed binary graph, actor degree centrality can be broken down into *indegree* and *outdegree* centrality. Indegree, $C_I(n_i)$, measures the number of ties that *i* receives. For the sociomatrix $Xij$, the indegree for *i* is the **column** sum. Outdegree, $C_O(n_i)$, measures the number of ties that *i* sends. For the sociomatrix $Xij$, the outdegree for *i* is the **row** sum.   
+
+As before, if we have an object of `class(matrix)` in the workspace, we can use the `rowSums()` and `colSums()` functions. However, the `colSums()` function will return the *indegree* centrality for *i* and the `rowSums()` function will return the *outdegree* centrality for *i*.    
+
+First, let's set up our directed graph from the degree centrality lecture:  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+
+# First, clear the workspace
+rm( list = ls() )
+
+# Then, build the object
+d.mat <- rbind(
+  c( 0,1,0,0,0 ),
+  c( 0,0,1,0,0 ),
+  c( 0,0,0,1,1 ),
+  c( 0,0,1,0,1 ),
+  c( 0,0,1,1,0 ) )
+rownames( d.mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
+colnames( d.mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
+
+# Let's set up the coordinates to force the nodes
+# to be in the same position throughout the lab
+set.seed( 605 )
+
+# remove the old object named coords
+rm( coords )
+
+# set the new coordinates
+coords <- gplot( d.mat )
+
+# Now, plot the graph (remember to load the sna package)
+gplot(
+  d.mat, 
+  gmode="digraph",
+  arrowhead.cex=0.5, 
+  edge.col="grey40", 
+  label=rownames( d.mat ),
+  label.col="red",
+  label.cex=1.2,
+  coord = coords
+  )
+
+```
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE, fig.align="center"}
+
+# Let's look at the different centrality scores 
+# by assigning them to different objects
+ideg.d.mat <- colSums( d.mat )
+odeg.d.mat <- rowSums( d.mat )
+
+# Then, use that information in the plot
+# partition the plotting window using 
+# the par() function to show two plots
+# change the margins using the mar= argument
+par( 
+  mfrow=c( 1, 2 ), 
+  mar=c( 0.1, 0.5, 1, 0.1) 
+  )
+
+gplot(
+  d.mat, 
+  gmode="digraph", 
+  arrowhead.cex=0.5, 
+  edge.col="grey40", 
+  label=rownames( d.mat ),
+  label.col="red",
+  label.cex=0.8,
+  label.pos=1,
+  vertex.cex = ideg.d.mat+0.2,
+  main="Nodes sized by Indegree",
+  coord = coords
+  )
+
+gplot(
+  d.mat, 
+  gmode="digraph", 
+  arrowhead.cex=0.5, 
+  edge.col="grey40", 
+  label=rownames( d.mat ),
+  label.col="red",
+  label.cex=0.8,
+  label.pos=1,
+  vertex.cex = odeg.d.mat,
+  main="Nodes sized by Outdegree",
+  coord = coords
+  )
+
+# return plot partition to 1 pane
+par( mfrow=c( 1,1 ) )
+
+```
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+
+# Or, we could use the RColorBrewer package to shade the nodes
+library( RColorBrewer, quietly=TRUE )
+
+
+# create the objects
+col.ideg  <- brewer.pal( length( unique( ideg.d.mat ) ), "Greens")[ideg.d.mat]
+col.odeg  <- brewer.pal( length( unique( odeg.d.mat ) ), "Oranges")[odeg.d.mat]
+
+
+par( 
+  mfrow=c( 1, 2 ), 
+  mar=c( 0.1, 0.5, 1, 0.1) 
+  )
+
+gplot(
+  d.mat, 
+  gmode = "digraph", 
+  arrowhead.cex = 0.5, 
+  edge.col = "grey40", 
+  label = rownames( d.mat ),
+  label.col = "red",
+  label.cex = 0.8,
+  label.pos = 1,
+  vertex.cex = ideg.d.mat+0.2,
+  vertex.col = col.ideg,
+  main = "Nodes sized & shaded by Indegree",
+  coord = coords
+  )
+
+gplot(
+  d.mat, 
+  gmode = "digraph", 
+  arrowhead.cex = 0.5, 
+  edge.col = "grey40", 
+  label = rownames( d.mat ),
+  label.col = "red",
+  label.cex = 0.8,
+  label.pos = 1,
+  vertex.cex = odeg.d.mat,
+  vertex.col = col.odeg,
+  main = "Nodes sized & shaded by Outdegree",
+  coord = coords
+  )
+
+# return plot partition to 1 pane
+par( mfrow=c( 1,1 ) )
+
+```
+
+<br>
+
+#### **Standardized degree centrality, mean degree, and centralization**  
+
+Let's calculate the standardized centrality scores for our directed graph:  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# unstandardized or raw centrality
+ideg.d.mat <- colSums( d.mat )
+odeg.d.mat <- rowSums( d.mat )
+
+# to calculate g-1, we need to know the number of nodes in the graph
+# this is the first dimension of the matrix
+g <- dim( d.mat )[1]
+
+# now, divide by g-1
+s.i.deg.u.mat <- ideg.d.mat / ( g-1 )
+s.o.deg.u.mat <- odeg.d.mat / ( g-1 )
+```
+
+We can also examine the *average* degree of the graph using $\frac{\sum_{i=1}^g C_I(n_i)}{g} = \frac{\sum_{i=1}^g C_O(n_i)}{g}$ or $\frac{L}{g}$, where *L* is the number of edges in the graph:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+mean.i.deg <- sum( ideg.d.mat ) / dim( d.mat )[1] 
+mean.o.deg <- sum( odeg.d.mat ) / dim( d.mat )[1] 
+mean.i.deg
+mean.o.deg
+
+```  
+
+Again, following Wasserman & Faust (1994), an index of *group indegree/outdegree centralization* can be calculated as:  
+
+  $$ C_D = \frac{\sum\limits_{i=1}^g [C_D(n^*) - C_D(n_i)]}{[(g-1)^2]} $$  
+
+for undirected graphs where $C_D(n^*)$ is the maximum indegree/outdegree in the graph. We can write out the components of the equation using the `max()` function:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# In separate pieces
+deviations <- max( ideg.d.mat ) - ideg.d.mat
+sum.deviations <- sum( deviations )
+numerator <- sum.deviations
+denominator <- ( g-1 )*( g-1 )
+group.i.deg.cent <- numerator/denominator
+group.i.deg.cent
+
+deviations <- max( odeg.d.mat ) - odeg.d.mat
+sum.deviations <- sum( deviations )
+numerator <- sum.deviations
+denominator <- ( g-1 )*( g-1 )
+group.o.deg.cent <- numerator/denominator
+group.o.deg.cent
+
+
+# Or, as a single equation
+group.ideg.cent <-( sum( ( ( max( ideg.d.mat ) - ideg.d.mat ) ) ) ) / ( ( g -1 )*( g - 1) )
+group.odeg.cent <-( sum( ( ( max( odeg.d.mat ) - odeg.d.mat ) ) ) ) / ( ( g -1 )*( g - 1 ) )
+group.ideg.cent
+group.odeg.cent
+```
+
+
+***  
+
+### **Degree Centrality using the `sna` package**  
+Did that feel tedious? If no, go back and do it again :)  
+
+As you probably have guessed, there *are* functions in the `sna` package that calcuates degree centrality and graph centralization! These are the `degree()` and `centralization()` functions, respectively. Let's take a look at how these work.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+ 
+# load the library
+library( sna )
+
+# Build the objects to work with
+rm( list = ls() )
+
+u.mat <- rbind( 
+  c( 0,1,0,0,0 ),
+  c( 1,0,1,0,0 ), 
+  c( 0,1,0,1,1 ), 
+  c( 0,0,1,0,1 ), 
+  c( 0,0,1,1,0 )
+  )
+
+rownames( u.mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
+
+colnames( u.mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
+
+d.mat <- rbind(
+  c( 0,1,0,0,0 ),
+  c( 0,0,1,0,0 ), 
+  c( 0,0,0,1,1 ), 
+  c( 0,0,1,0,1 ), 
+  c( 0,0,1,1,0 )
+  )
+
+rownames( d.mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
+
+colnames( d.mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
+
+
+# First, let's look at degree
+?degree
+
+# degree for undirected graph
+deg <- degree( u.mat, gmode="graph" )
+
+# indegree for directed graph
+ideg <- degree( d.mat, gmode="digraph", cmode="indegree" )
+
+# outdegree for directed graph
+odeg <- degree( d.mat, gmode="digraph", cmode="outdegree" )
+
+# returns the combined centrality for each node
+deg.d <- degree( d.mat, gmode="digraph" )
+
+
+# Now, let's look at centralization
+?centralization
+
+# degree centralization for undirected graph
+cent.u <- centralization( u.mat, degree, mode="graph" )
+
+# indegree centralization for directed graph.
+i.cent.d <- centralization( d.mat, degree, mode="digraph", cmode="indegree" ) 
+
+# outdegree centralization for directed graph.
+o.cent.d <- centralization( d.mat, degree, mode="digraph", cmode="outdegree" )
+
+```  
+
+<br>
+
+*Now, wasn't that easier?*
+
+<br>
+
+***  
+
+#### ***Questions?***
+
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

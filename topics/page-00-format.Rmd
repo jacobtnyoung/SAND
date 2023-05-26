@@ -1,5 +1,6 @@
 ---
 title: Statistical Analysis of Network Data
+author: Jacob T.N. Young
 output: 
   html_document:
     theme: yeti

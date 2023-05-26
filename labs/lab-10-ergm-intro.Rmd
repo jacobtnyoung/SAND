@@ -1,0 +1,378 @@
+---
+title: "Lab 09-Introduction to Exponential Random Graph Models (ERGMs)"
+date: "CRJ 605 Statistical Analysis of Networks"
+output: 
+  html_document:
+    df_print: paged
+    theme: lumen
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+    self_contained: true
+---
+
+```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
+
+library( devtools )
+library( network )
+library( sna )
+library( UserNetR )
+
+```
+
+*This lab introduces some basics for working with exponential random graph models using the `ergm` package.*
+
+***
+
+## **Getting Started**  
+
+As discussed in the Introduction to Random Graph Models lecture, we are trying to build a model that accurately represents the processes that generated the observed network. Let's start by working with a network from the `UserNetR` package. If you have not already done so, you can download this package using the `install_github("DougLuke/UserNetR")` command. Note that the `install_github()` function is in the `devtools` package. 
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+
+# clear the workspace
+rm( list = ls() )
+
+# load the UserNetR package
+library( UserNetR )
+
+```
+
+If you use the `help(package="UserNetR")` command, you can see in the help page there are a number of datasets available for use. Let's take a look at the `Bali` network. This network shows the interactions among the Jemaah Islamiyah terrorist group that carried out the bombings in Bali in 2002. The object `Bali` is of class `network` and has 17 vertices and 126 edges. These data were originally collected and created by Stuart Koschade as part of his dissertation on the social network analysis of terrorist groups. The ties here represent contacts among the Bali terrorist cell. The dataset also includes an edge characteristic, IC, that measures the frequency and duration of the contact, where 1 indicates a weak relationship, and 5 indicates a strong relationship.
+
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# load the network packages so that we can work with the object.
+library(sna)
+library(network)
+
+# Look at the data.
+summary(Bali,print.adj = FALSE)
+```
+
+*What does the summary tell us about the network and the attributes?*  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# lets plot the data and see what it looks like.
+set.seed(605)
+gplot(Bali, usearrows = FALSE, edge.col = "grey40", vertex.col="lightblue")
+title("Interactions among the 17 members\n of the 2002 Bali terrorist network")
+```
+
+*Think about the structure here. What do you notice?*  
+
+*How might we go about incorporating this information into a model of the network?*  
+
+
+Recall that the exponential random graph model seeks to model the underlying processes that generated the observed network. Let's create a random graph with the same nodes, edges, and density as the `Bali` network and compare them by using the `rgraph()` function in the `sna` package:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+?rgraph
+
+# define a few terms.
+g <- dim(as.matrix(Bali))[1]
+l <- sum(as.matrix(Bali))/2
+den <- l / (g*(g-1)/2) 
+
+# generate the random graph.
+set.seed(605)
+random.graph <- rgraph(
+    g, # the number of nodes in the Bali network.
+    1, # we want just 1 random graph. 
+    tprob = den, # the density of the Bali network. 
+    mode = "graph" )
+random.net <- as.network(random.graph, directed = FALSE)
+
+# Now, take a look at both graphs.
+op <- par(mfrow=c(2,1), mai = c(0,0,0.7,0))
+set.seed(605)
+gplot(Bali, usearrows = FALSE, edge.col = "grey40", vertex.col="lightblue")
+title("Interactions among the 17 members\n of the 2002 Bali terrorist network")
+set.seed(605)
+gplot(random.net, usearrows = FALSE, edge.col = "grey40", vertex.col="lightgreen")
+title("Random network")
+par(op)
+```
+
+*How is the Bali network different from the random network?*  
+
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# take a look at the roles attribute in the help page.
+help(Bali)
+
+# lets create some colors for the roles.
+library(RColorBrewer)
+my.pal <- brewer.pal(length(unique(Bali%v%"role")),"Set2")
+role.col <- my.pal[as.factor(Bali%v%"role")]
+
+# lets plot the data and look at the various roles.
+set.seed(605)
+gplot(Bali, usearrows = FALSE, vertex.col = role.col, edge.col = "grey40")
+legend("topright", legend=c("Bomb Maker", "Command", "Ops Asst", "Suicide Bomber", "Team Lima"), col = my.pal, pch = 19, pt.cex=2)
+title("Interactions among the 17 members\n of the 2002 Bali terrorist network")
+```
+
+*Think about the structure again. What do you notice about roles?*  
+
+*How might we go about incorporating this information into a model of the network?*  
+
+
+### **The `ergm` package and the `ergm()` function**  
+
+The package `ergm` fits and simulates exponential random graph models. If you have not already done so, install the package using `install.packages("ergm")`.  If you have not installed the `ergm` package recently, make sure you update using the `update.packages("ergm")` command.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+# load the library and look at the help.
+library(ergm)
+help(package="ergm")
+```
+
+The `ergm()` function takes two arguments:  
+
+* an object of class `network` (the dependent variable)  
+
+* and some terms (i.e. network configurations)
+
+Thus, the model form looks like this: `model <- ergm(network ~ term)`. Recall from the Introduction to ERGMs lecture that the general expression of the model is:  
+
+$logit\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = \sum_{k=1}^\kappa \theta_k\delta_{z_k(y)}$  
+
+As with logistic regression, the logit transformation can be used to re-express the equation as the conditional probability of a tie:
+
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(\theta_1\delta_{z_1(y)+\theta_2\delta_{z_2}(y)...})$   
+
+Here, the coefficients are expressed as the conditional log-odds of a single actor pair. That is, how likely we are to see a tie between *i* and *j*, given some model terms. *So, what are those model terms or **network configurations**?*  
+
+We can view all of the network statistics that have been programmed by using the `?ergm.terms` command. You can also use the `(vignette("ergm-term-crossRef"))` command to show you a bit more info about the model terms.  
+
+### **Edge independence (Bernoulii/Simple Random graphs)**  
+
+The ERGM expresses the probability of observing a tie between nodes *i* and *j* given some terms (i.e. network configurations). The edge independence model of Erdos and Renyi (1959) uses a single term, the number of edges in the graph, to represent the probability of a tie:   
+
+$P(Y=y)=\Bigg(\frac{1}{c}\Bigg) exp \big\{\theta L(y) \big\}$  
+
+In the `ergm()` function, this term is `edges`. Let's take a look at this model:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+?edges
+
+# run the model.
+edge.indep.Bali <- ergm(Bali ~ edges) 
+
+# check out the summary
+summary(edge.indep.Bali)
+
+# note that the ergm() function creates an object of class ergm.
+class(edge.indep.Bali)
+names(edge.indep.Bali)
+
+```
+
+First, the summary shows the coefficent $\theta$ from the equation above. The value of -0.1473 indicates that the desnity of the network is below .5 or 50%. An `edges` term of 0 would represent 50% or 0.5 density.   
+
+In the general formulation of the ERGM, the $\delta$ represents the *change statistic*, or the change in the statistic of interest when an edge is added (i.e. $Y_{ij}$) goes from 0 to 1). The change statistic for the `edges` term is always 1, so we can think of the probability of a tie between *i* and *j* as the logit of the coefficients for the `edges` term. Specifically, we can use the calculation that is usual for a logistic regression to interpret the coefficient:  
+
+$\frac{1}{1 + e^{-(\theta_1X_1)}}$
+
+If we plug in the value of -0.1473 that is returned by the `ergm()` function, we get:  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(\theta_{edges} \times \delta_{edges})$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-0.1473 \times 1)$    
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = \frac{1}{1 + e^{-(-0.1473 \times 1)}} = 0.463$    
+
+*Does the value **0.463** look familiar?*  
+
+The value of 0.463 is returned by using the command `plogis()`.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+?plogis
+
+# we could write it out.
+plogis(-0.1473*1)
+
+# or, we could pull from the model.
+plogis(edge.indep.Bali$coef[1]*1)
+```
+
+### **Adding Nodal Covariates**  
+
+Recall the plot of the terrorist network based on the roles each actor was assigned. 
+
+```{r,echo=FALSE,eval=TRUE,message=FALSE,include=TRUE}
+# lets plot the data and look at the various roles.
+set.seed(605)
+gplot(Bali, usearrows = FALSE, vertex.col = role.col, edge.col = "grey40")
+legend("topright", legend=c("Bomb Maker", "Command", "Ops Asst", "Suicide Bomber", "Team Lima"), col = my.pal, pch = 19, pt.cex=2)
+title("Interactions among the 17 members\n of the 2002 Bali terrorist network")
+```
+
+So far, we have assumed that the probability of a tie is independent of role. We could relax this assumption and test two hypotheses:  
+
+* Nodes differ in their degree based on the role they played in the network.  
+
+* Nodes with the same role designation are more likely to share ties than nodes that are not in the same role designation (i.e. *homophily*).
+
+We can test these hypotheses using the `nodefactor` (for categorical attributes [for continuous attributes use `nodecov`]) and `nodematch` (for categorical attributes [for continuous attributes use `absdiff`]) terms. First, take a look at the description of the term:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+?nodefactor
+
+# Look at the attribute values.
+table(Bali %v% "role")
+
+# let's add the nodefactor term to our model.
+role1.Bali <- ergm(Bali ~ edges + nodefactor("role")) 
+summary(role1.Bali)
+```
+
+Note that the term adds one network statistic to the model for each categorical value of the variable we have passed. But, the first category is excluded as the reference category. The role `BM` (haha!) is excluded from the model, so `bomb maker` is the referent category. For the `nodefactor` term, positive values indicate that a node with that particular value of the attribute is *more likely* to have an edge, relative to the referent category. Alternativley, a negative value indicates that a node with that particular value of the attribute is *less likely* to have an edge, relative to the referent category. 
+
+Let's look at this for our example. Looking at the table we see:  
+
+* the term `nodefactor.role.CT` has a value of `0.743`, but is not significantly different from zero. This, the difference in degree for `BM` and `CT` roles is consistent with random variation.  
+* the term `nodefactor.role.OA` has a value of `-1.172`, indicating that individuals who are of the `OA` role are less likely to have edges, compared to bomb makers.  
+
+* the term `nodefactor.role.SB` has a value of `-1.116`, indicating that individuals who are of the `SB` role are less likely to have edges, compared to bomb makers.  
+
+* the term `nodefactor.role.TL` has a value of `-1.286`, indicating that individuals who are of the `TL` role are less likely to have edges, compared to bomb makers.  
+
+Recall that in the general formulation of the ERGM, the $\delta$ represents the *change statistic*, or the change in the statistic of interest when an edge is added (i.e. $Y_{ij}$) goes from 0 to 1). The change statistic for the `nodefactor` term is different from the `edges` term we saw above. If the predictor is categorical, the value of the change statistic is 0, 1 or 2. Specifically:  
+
+* If neither of the nodes have the characteristic of interest, the change statistic is 0.  
+
+* A value of 1 indicates that *one* of the nodes in the dyad has the characteristic.  
+
+* A value of 2 indicates that *both* of the nodes in the dyad have the characteristic.
+
+Again, let's use the calculation that is usual for a logistic regression to interpret the coefficient:  
+
+$\frac{1}{1 + e^{-(\theta_1X_1)}}$
+
+Using the coefficient of -1.1165, the predicted probability of a tie between **two** *suicide bombers* is:
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(\theta_{edges} \times \delta_{edges} + \theta_{role} \times \delta_{role})$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic((0.8520 \times 1) + (-1.1165 \times 2))$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(0.8520 + -2.233)$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-1.381) = 0.200$  
+
+The value of 0.200 is returned by using the command `plogis()`.  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+plogis(role1.Bali$coef[1]*1 + role1.Bali$coef[4]*2)
+```
+
+Note that this is a fairly small effect. That is, based on the model, nodes who are both *suicide bombers* have an 20% of being connected.  
+
+What is the probability of a tie between two nodes where only **one** is a *suicide bomber*?:  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(\theta_{edges} \times \delta_{edges} + \theta_{role} \times \delta_{role})$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic((0.8520 \times 1) + (-1.1165 \times 1))$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(0.8520 + -1.1165)$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-0.2645) = 0.434$  
+
+The value of 0.434 is returned by using the command `plogis()`.  
+
+Note that this is quite a change from having **two** *suicide bombers*. That is, based on the model, nodes where only one is a *suicide bomber* have a 43% chance of being connected. This difference in the probability of a tie shows you that *suicide bombers* are less connected to the network, relative to other role designations.  
+
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+plogis(role1.Bali$coef[1]*1 + role1.Bali$coef[4]*1)
+```
+
+Now let's look at a different hypothesis: Nodes with the same role designation are more likely to share ties than nodes that are not in the same role designation (i.e. *homophily*). We can test this using the `nodematch` term. But first, let's look at the *mixing* between each category value with the `mixingmatrix` function. This function returns homophilous ties in the diagonal and heterophilous ties in the off-diagonal.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+?mixingmatrix
+
+# Look at the attribute values.
+mixingmatrix(Bali,"role")
+```
+
+*Looking at the mixing matrix for **role**, what patterns do you see?*  
+
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+?nodematch
+
+# Homophily.
+role2.Bali <- ergm(Bali ~ edges + nodematch("role")) 
+summary(role2.Bali)
+```
+
+Note that the term adds one network statistic to the model for the variable. For the `nodematch` term, positive values indicate that for a pair of nodes with the **same** attribute value, an edge is *more likely*. Alternativley, a negative value indicats that for a pair of nodes with the **same** attribute value, an edge is *less likely*. Thus, positive coefficients indicate the presence of **homophily** and negative coefficients indicate the presense of **heterophily**.
+
+Let's work through our example to see the interpretation of the coefficient. Looking at the table we see:  
+
+* the term `nodematch.role` has a value of `2.3844`, indicating that ties are more likely among nodes with the same value for the variable **role**.  
+
+Recall that in the general formulation of the ERGM, the $\delta$ represents the *change statistic*, or the change in the statistic of interest when an edge is added (i.e. $Y_{ij}$) goes from 0 to 1). The change statistic for the `nodematch` term is similar to the `edges` term we saw above. If the predictor is categorical, the value of the change statistic is 0 or 1. Specifically:  
+
+* If *i* and *j* have the same value for a categorical covariate the change statistic is 1.  
+
+* If *i* and *j* **do not** have the same value for a categorical covariate the change statistic is 0.  
+
+Again, let's use the calculation that is usual for a logistic regression to interpret the coefficient:  
+
+$\frac{1}{1 + e^{-(\theta_1X_1)}}$
+
+Using the coefficient of 2.3844, the predicted probability of an edge between nodes with the **same** role designation is:
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic((\theta_{edges} \times \delta_{edges}( + (\theta_{role.homophily} \times \delta_{role.homophily}))$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-0.4873 \times 1 + 2.3844 \times 1)$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-0.4873 + 2.3844)$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(1.8971) = 0.869 $  
+
+The value of 0.869 is returned by using the command `plogis()`.  
+
+Note that this is a fairly large effect. That is, based on the model, nodes with the same role have an 86% chance of being connected.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+plogis(role2.Bali$coef[1]*1 + role2.Bali$coef[2]*1)
+```
+
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+?nodematch
+
+#Note that there are two forms of homophily: uniform homophily and differential homophily.
+
+# Uniform homophily.
+role2.Bali <- ergm(Bali ~ edges + nodematch("role")) 
+summary(role2.Bali)
+
+# Differential homophily.
+role3.Bali <- ergm(Bali ~ edges + nodematch("role", diff=TRUE)) # by adding the diff=TRUE argument, we ask for a statistic for each value of the attribute.
+summary(role3.Bali)
+
+# Yikes, very unstable estimates.
+```
+
+
+***  
+
+#### ***Questions?***
+
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

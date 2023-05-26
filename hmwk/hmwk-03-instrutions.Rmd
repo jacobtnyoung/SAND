@@ -1,0 +1,85 @@
+---
+title: "Homework 3 - Centrality - INSTRUCTIONS"
+date: "CRJ 605 Statistical Analysis of Network Data"
+output: 
+  html_document:
+    df_print: paged
+    theme: cosmo
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+    self_contained: true
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+The purpose of this assignment is to familiarize yourself with how networks are created and examined in *R*.  
+
+## Part I
+
+In homework #1 you created two networks and in homework #2 you plotted those networks. 
+
+I would like you to continue working with those networks for this assignment. With a slight modification. I want you to work with *directed* networks for this assignment. If your networks are already directed, your good to go! If not, convert the edges to directed ties.
+
+Then, for *each* network you created, do the following:  
+
+### Degree
+
+1. Calculate the indegree and outdegree for each actor.  
+2. Calculate the mean indegree and outdegree.  
+3. What is the interpretation of the mean?  
+4. Compare the two means. How do they differ (if at all)? What is the meaning of this difference?
+
+### Standardized Degree
+
+5. Calculate the **standardized** indegree and outdegree for each actor.  
+6. What is the interpretation of the mean?  
+7. Compare the two means. How do they differ (if at all)? What is the meaning of this difference?
+
+### Plotting
+
+8. Plot each network where the **size of the node** corresponds to the indegree or outdegree. You can use the unstandardized or standardized value.
+9. Are the similarities/differences you observed in the mean indegree/outdegree observable in the plot? Explain.
+
+### Degree Centralization
+
+10. Calculate the graph degree centralization for the unstandarized indegree and outdegree.  
+11. Interpret the graph degree centralization score for each network.
+12. Compare the two graph degree centralization scores. Are they similar/different? Explain what the similarity or difference means. 
+
+
+***  
+
+## Part II
+
+How them work with a network here. Take one two of the trust networks from WO-PINS. Have them then make some comparisons.
+
+
+# Instructions
+
+For this assignment, you will use the template NAME located LOCATION. 
+
+This assignment is **DUE** DATE.
+
+
+____
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
