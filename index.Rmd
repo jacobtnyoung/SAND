@@ -38,23 +38,33 @@ Lectures are provided in .pdf format. Labs are provided in .html format and RMar
 ## *Lecture Notes and Labs*  
 ____
 
-THIS NEEDS TO CONFORM TO THE HEADINGS IN THE SYLLABUS
 
 [Introduction to Network Analysis](topics/page-01-intro.html)
 
-[Network Data Structures and Sources of Network Data](topics/page-02-network-data.html)
+[Introduction to R, R Studio, and Data-Driven Documents](topics/page-02-r-markdown.html)
 
-[Getting Started with R and Network Visualization](topics/page-03-r-network-vis.html)
+[Network Data Structures and Network Data in R](topics/page-02-network-data.html)
 
-[Centrality](topics/page-04-centrality.html)
+[Network Description & Visualization](topics/page-04-description-visualization.html)
 
-[Cohesive Subgroups](topics/page-05-subgroups.html)
+[Centrality](topics/page-05-centrality.html)
 
-[Bipartite Graphs/Two-Mode Networks](topics/page-06-bipartite.html)
+[Cohesive Subgroups](topics/page-06-subgroups.html)
 
-[Exponential Random Graph Models (ERGMs)](topics/page-07-ergm.html)
+[Bipartite Graphs/Two-Mode Networks, Projection, and Weighted Graphs](topics/page-07-bipartite.html)
 
-[Stochastic Actor-Based Models (SABMs)](topics/page-08-sabm.html)
+[Exponential Random Graph Models (ERGMs)](topics/page-08-ergm.html)
+
+[Stochastic Actor-Based Models (SABMs)](topics/page-09-sabm.html)
+
+[Dynamic Network Visualization](topics/page-10-dynamic-visualization.html)
+
+[Dynamic Network Visualization](topics/page-11-stergms.html)
+
+[Sequential Temporal Exponential Random Graph Models (STERGMs)](topics/page-11-stergms.html)
+
+[Epidemic Modeling](topics/page-12-epidemics.html)
+
 
 <br>
 

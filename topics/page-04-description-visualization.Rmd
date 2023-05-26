@@ -1,0 +1,65 @@
+---
+title: Statistical Analysis of Network Data
+author: Jacob T.N. Young
+output: 
+  html_document:
+    theme: yeti
+    toc: false
+    toc_float: false
+    collapsed: false
+    smooth_scroll: false
+---
+
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set( echo = TRUE )
+```
+
+
+<br>
+
+
+## *Getting Started with R and Network Visualization*
+
+----
+
+<br>
+
+In this section of the course, we begin working with [R](http://cran.r-project.org/). We will focus on three goals:  
+
+  1. An introduction to [R](http://cran.r-project.org/) to familiarize users with [R](http://cran.r-project.org/).  
+  
+  2. An introduction to network analysis in [R](http://cran.r-project.org/) covers how network objects are created and manipulated using the [sna](https://cran.r-project.org/web/packages/sna/index.html) package.  
+  
+  3. Basic network visualization is reviewed using the [sna](https://cran.r-project.org/web/packages/sna/index.html) package.
+
+<br>
+
+
+#### Lecture Materials
+
+ + [Lab 01-Introduction to R](../labs/lab-01-r-intro.html)
+ 
+ + [Lab 02-Introduction to Networks in R](../labs/lab-02-nets-intro.html)
+ 
+ + [Lab 03-Basics of Network Visualization](../labs/lab-03-visualization-intro.html)
+ 
+ + Example networks used in labs ([undirected network](../data/lab_data/lab-02-undirected-example.csv)) ([directed network](../data/lab_data/lab-02-directed-example.csv))
+
+<br>
+
+____
+
+<br>
+
+#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>
+
+
+###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
