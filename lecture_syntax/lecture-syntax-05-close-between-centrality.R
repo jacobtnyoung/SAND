@@ -35,9 +35,9 @@ distances$gdist
 graph.a <- as.matrix(rbind(c(0,1,0),c(1,0,1),c(0,1,0)),byrow=TRUE,ncol=3)
 graph.b <- as.matrix(rbind(c(0,1,1,1),c(1,0,1,1),c(1,1,0,1),c(1,1,1,0)),byrow=TRUE,ncol=4)
 set.seed(605)
-gplot(graph.a, usearrows=FALSE, vertex.cex=3.2, vertex.col = c("lightblue","white","white"), edge.col="grey50",label=c("0.66","",""), label.pos=5, label.cex = 2.2)
+gplot(graph.a, usearrows=FALSE, vertex.cex=3.2, vertex.col = c("lightblue","white","white"), edge.col="grey50",label=c("0.33","",""), label.pos=5, label.cex = 2.2)
 set.seed(605)
-gplot(graph.b, usearrows=FALSE, vertex.cex=3.2, vertex.col = c("orange","white","white","white"), edge.col="grey50",label=c("0.99","","",""),label.pos=5, label.cex = 2.2)
+gplot(graph.b, usearrows=FALSE, vertex.cex=3.2, vertex.col = c("orange","white","white","white"), edge.col="grey50",label=c("0.33","","",""),label.pos=5, label.cex = 2.2)
 
 set.seed(605)
 gplot(graph.a, usearrows=FALSE, vertex.cex=3.2, vertex.col = c("lightblue","white","white"), edge.col="grey50",label=c("0.66","",""), label.pos=5, label.cex = 2.2)

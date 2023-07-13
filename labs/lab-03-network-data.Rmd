@@ -17,6 +17,13 @@ body {
 text-align: justify}
 </style>
 
+```{r, echo=FALSE}
+
+# set the defaults for the codechunks
+knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
+
+```
+
 
 ----
 
@@ -36,7 +43,7 @@ We can look at what these functions do by asking for help using the `help("` fun
 
 The help window describes the arguments that the function takes and also provides examples.
 
-```{r,echo=TRUE,eval=FALSE}
+```{r, eval=FALSE}
 
 # help for the matrix() function
 ?matrix
@@ -49,7 +56,7 @@ The help window describes the arguments that the function takes and also provide
 
 Now, let's create the data object:  
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 mat <- matrix(
   c(0,1,0,0,0,1,0,1,0,0,0,1,0,1,1,0,0,1,0,1,0,0,1,1,0),
@@ -67,7 +74,7 @@ We can see the object by just typing the object name: `mat`. *Note* that if the 
 
 For example:
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 junk1 <- matrix(c(1,2,3,4,5,6,7),nrow=2,byrow=TRUE) 
 
@@ -83,7 +90,7 @@ After we have created our object `mat`, we can examine the dimensions with the d
 
 We can also attach names to the rows and columns of the matrix by using the `rownames()` and `colnames()` functions.
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 # attach row names
 rownames( mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
@@ -106,7 +113,7 @@ This command reads as follows: for the object `mat`, return the value at row 1 c
 
 We can also call the values for an entire row or column. A single value is called a *scalar*. 
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 # this reads: return the first row of data
 mat[1,]
@@ -118,7 +125,7 @@ mat[,1]
 
 Since we have defined names for the rows and columns, we can use those as well.
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 # reference the ROW pertaining to Jen
 mat["Jen",]
@@ -129,7 +136,7 @@ mat[,"Jen"]
 ```
 
 *Note*: the following does not work because it needs a character, defined by the `""` symbols around the name.
-```{r,echo=TRUE,eval=FALSE}
+```{r, eval=FALSE}
 
 # returns an error because there is no OBJECT called Jen 
 mat[,Jen]
@@ -142,7 +149,7 @@ mat[,"Jen"]
 
 We can also call a series of values:
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 # return the first three ROWS of the object data
 mat[1:3,]
 
@@ -153,7 +160,7 @@ mat[,1:3]
 
 We can also call a group of values that are non-contiguous using the `c()` function:
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 # return the first and second ROWS of the object data
 mat[c(1,3),]
@@ -166,7 +173,7 @@ mat[,c(1,3)]
 
 We can also call a group of values that that do not contain specified values by putting a `-` (i.e. a minus sign) in front of the c function:
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 # return the object data without ROWS 1 and 3
 mat[-c(1,3),]
@@ -205,7 +212,7 @@ Now that the package is loaded, lets create a new object from our matrix that is
 
 Just like you can't perform calculations on a object that is of class `character` (e.g. a list of names), the functions in this page are designed to work with a `network` object.
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 # look at our object
 mat
@@ -228,7 +235,7 @@ Note that the network is treated as **directed**. By default, the function `as.n
  
 We need to change the input for the `directed=` argument because our network is **undirected**. In other words, `directed = FALSE`. This tells the function that the matrix we are entering is an undirected network. This is logical: is the object a directed network? False. Therefore, it is an undirected network.
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 # create a new object called net.u.correct
 net.u.correct <- as.network( 
@@ -246,7 +253,7 @@ The `summary()` function is a generic function that summarizes objects. We can u
 
 We could also enter the data as an edgelist using the `matrix.type = ` argument. By default, the function `as.network()` sets the argument `matrix.type =` to `adjacency`. For an edgelist, we would need to change the input for the `matrix.type =` argument to `edgelist`.  
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 # for example, lets make an edgelist called edge
 # it will be a matrix of 5 rows and we are reading off by row
@@ -285,7 +292,7 @@ summary( edge.net.u )
 ### **Working with *Directed*, Binary Networks**
 Now, let's work with the example of a directed, binary network. We will create an object that is the adjacency matrix.
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 # these were written in by row
 # so we want it to read by row, byrow=TRUE
@@ -302,7 +309,7 @@ mat.d
 
 Now, let's coerce it to be an object of class network.
 
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 net.d <- as.network( 
   mat.d,
@@ -314,7 +321,7 @@ summary( net.d )
 ```
 
 Just as before, we could also enter the data as an edgelist. Since we have directed relations, we have more edges. This is because reciprocated ties count twice. So, we have to tell the `matrix()` function that the matrix has 8 rows, instead of 5.
-```{r,echo=TRUE,eval=TRUE}
+```{r}
 
 # create the edgelist
 edge.d <- matrix(
@@ -351,12 +358,14 @@ rm( list = ls() )
 If we had a large network, these routines (i.e. using the `matrix()` function) would be tedious. Most of the time, we have a file that is an adjacency matrix or an edgelist that we can import.  
 The `read.csv()` function can be used to read in .csv files that are arranged in this way. Let's take a look at the help for this function: `?read.csv`.  
 
-We will use the **lab-02-undirected-example.csv** file from my website. To access the file, we can place the url in the `read.csv()` function. Here is the url: [https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv](https://github.com/jacobtnyoung/SAND/blob/main/data/lab_data/lab-02-undirected-example.csv).
+We will use the **lab-02-undirected-example.csv** file from my website. To access the file, we can place the url in the `read.csv()` function. 
+
+Here is the url: [https://github.com/jacobtnyoung/SAND/blob/main/data/data-undirected-example.csv](https://github.com/jacobtnyoung/SAND/blob/main/data/data-undirected-example.csv).
 
 ```{r, echo=TRUE, eval=FALSE, warning=FALSE}
 
 # define the path
-url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv"
+url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-undirected-example.csv"
 
 # define the data using the url object
 mat.u <- read.csv( url )
@@ -434,7 +443,7 @@ Then, set the directory where the file is using the `setwd()` function. You can 
 
 ```{r, echo=FALSE, eval=TRUE}
 
-url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv"
+url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-undirected-example.csv"
 
 net.d <- as.network( 
   as.matrix( 
@@ -455,7 +464,7 @@ Then, use `read.csv` as above:
 setwd(" PUT THE CORRECT PATH HERE")
 
 mat.d <- read.csv(
-  "lab-02-undirected-example.csv",
+  "data-undirected-example.csv",
   as.is=TRUE,
   header=TRUE,
   row.names=1
@@ -469,7 +478,7 @@ net.d <- as.network(
 
 ```  
 
-```{r, echo=TRUE, eval=TRUE}
+```{r}
 
 # now, print the object.
 net.d
