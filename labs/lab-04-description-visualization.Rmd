@@ -358,7 +358,7 @@ We are going to do this in a few steps:
 
   + First, load the adjacency matrix `data-PINS-power-w1-adj.csv` and create an object of class `network`.
   
-  + Second, load the file with Age and Race `data-PINS-power-w1-age-race.csv` and assign each attribute to the network object.
+  + Second, load the file with Age and Race `data-PINS-age-race-w1-attr.csv` and assign each attribute to the network object.
   
 
 ```{r}
@@ -379,7 +379,7 @@ PI.net <- network( PI.mat, directed = TRUE )
 
 # define the attributes object
 PI.attrs <- read.csv( 
-    "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-PINS-power-w1-adj.csv",
+    "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-PINS-age-race-w1-attr.csv",
     as.is = TRUE,
     header = TRUE 
     )
