@@ -17,9 +17,18 @@ body {
 text-align: justify}
 </style>
 
+```{r, echo=FALSE}
+
+# set the defaults for the codechunks
+knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
+
+```
+
+<br>
 
 CONTENT
 ____
+
 
 <br>
 
@@ -27,6 +36,5 @@ ____
 
 <br>
 <br>
-
 
 ###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

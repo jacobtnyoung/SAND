@@ -12,6 +12,19 @@ output:
     self_contained: true
 ---
 
+<style>
+body {
+text-align: justify}
+</style>
+
+```{r, echo=FALSE}
+
+# set the defaults for the codechunks
+knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
+
+```
+
+
 *This lab goes through some basics of visualizing networks using the `gplot()` function in the `sna` package. We also look at some approaches to building plots. *
 
 ***
@@ -48,7 +61,7 @@ Next, let's get the `UserNetR` package from [Douglas Luke's GitHub page](https:/
   + Finally, load the library `library( UserNetR )`  
 
 
-```{r,echo=FALSE,eval=TRUE,message=FALSE}
+```{r,echo=FALSE, eval=TRUE, message=FALSE}
 
 library( sna )
 library( devtools )
@@ -59,7 +72,7 @@ library( UserNetR )
 Now, let's take a look at the `Moreno` network (see `help( Moreno, package = UserNetR )`. These data are contained in a sociogram constructed by [Jacob Moreno](https://en.wikipedia.org/wiki/Jacob_L._Moreno), and published in the New York Times in 1933 (see Moreno, J. L. 1934. *Who shall survive? A new approach to the problem of human interrelations*. Nervous and mental disease monograph series, no. 58. Washington, DC: Nervous and Mental Disease Publishing Co. for a more extensive discussion).  
 
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 # Note that we ask the summary() function to not print out the adjacency matrix.
 summary( Moreno, print.adj = FALSE )
@@ -77,7 +90,7 @@ gplot( Moreno, mode = "fruchtermanreingold" )
 ##### *How do these plots differ in their ability to highlight the aesthetics mentioned above for relations among individuals?*
 
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 # Let's plot them together for comparison.
 
@@ -111,7 +124,7 @@ To do so, we use the `vertex.col=` argument with the vertex attribute *gender*. 
 * or use the shorthand for this with `network object %v% atttribute`, like `Moreno %v% "gender"`.
 
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 op <- par( mar = rep( 2, 4 ), mfrow = c( 1, 2 ) )
 
@@ -157,10 +170,10 @@ Let's take a look at some of the visualization capabilities of `gplot()`. Let's 
 To see the various functionality of the function, let's work with the example of an undirected network from [lab 02](https://jacobtnyoung.github.io/SAND/labs/lab-02-nets-intro.html). 
 
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 # define the path
-url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv"
+url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-undirected-example.csv"
 
 # define the object
 mat.u <- as.matrix(
@@ -185,7 +198,7 @@ summary( net.u )
 net.u <- as.network( 
   as.matrix( 
     read.csv( 
-      "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-02-undirected-example.csv", 
+      "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-undirected-example.csv", 
       as.is = TRUE, 
       header = TRUE, 
       row.names = 1 
@@ -200,7 +213,7 @@ summary( net.u )
 
 Now that we have the object built, we can plot it.
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 gplot( net.u )
 
@@ -217,7 +230,7 @@ The `gplot()` function has a number of arguments that can be used to work try an
 
 For example, we can add labels to the vertices using the `network.vertex.names()` function.
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 gplot(
   net.u, 
@@ -265,7 +278,7 @@ There is a LOT of functionality to the `gplot()` function. See the arguements in
 ### **Adjusting Plot Layout**  
 When a layout is generated, the results can be saved for later reuse using the `coord=` argument.
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 # Set the seed for the random number generator 
 # so we can always get the same plot layout.
@@ -295,7 +308,7 @@ gplot(
 
 *But*, suppose the default settings are insufficient and we want to make a few small changes. The `interactive=` argument allows for tweaking.
 
-```{r,echo=TRUE,eval=FALSE,message=FALSE}
+```{r, eval=FALSE}
 
 # First, set up the coordinates you want.
 coords <- gplot(
@@ -318,7 +331,7 @@ gplot(
 
 There is also the option to do three-dimensional visualization with `gplot3d()`, which requires the rgl package. Let's take a look at this by first installing the `rgl` package using `install.packages( "rgl" )` and then loading the library with `library( rgl )`. Then, we can look at the `gplot3d()` function using help: `?gplot3d`. *Note* that the `rgl` packages requires the program XQuartz if you are using a Mac. It can be downloaded from: https://www.xquartz.org/.
 
-```{r,echo=FALSE,eval=FALSE,message=FALSE}
+```{r, echo=FALSE, eval=FALSE}
 
 library( rgl )
 
@@ -326,7 +339,7 @@ library( rgl )
 
 ```  
 
-```{r,echo=TRUE,eval=FALSE,message=FALSE}
+```{r, eval=FALSE}
 
 gplot3d(
   net.u, 
@@ -337,48 +350,77 @@ gplot3d(
 
 ***
 
-### **Class data example**  
-Now let's take a look at the class data to continue working with the `gplot()` function. First, load the .RData file from my website.
-
-```{r, echo=TRUE, eval=FALSE, message=FALSE}
-# First, clear the workspace.
-rm(list = ls())
-
-# Now, load the file.
-#load(url("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_class_survey_data_w1.rdata"))
-
-#Take a look at the object.
-ls()
-
-```
-
-There is the non-network data:  
-
-* `class.data.w1`
+### **PINS Example**  
+Now let's take a look at the PINS data to continue working with the `gplot()` function. We will use the power/influence network.
 
 
-And there are three networks:  
+We are going to do this in a few steps:
 
-* `spend.time.net` the Spent Time With network  
+  + First, load the adjacency matrix `data-PINS-power-w1-adj.csv` and create an object of class `network`.
+  
+  + Second, load the file with Age and Race `data-PINS-power-w1-age-race.csv` and assign each attribute to the network object.
+  
 
-* `talk.course.net` the Talked about the Course network  
+```{r}
 
-* `trust.net` the Trust with Damaging information network  
+# define the adjacency matrix
+PI.mat <- as.matrix(
+  read.csv( 
+    "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-PINS-power-w1-adj.csv",
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1
+    )
+  )
 
-For each network, the survey data have been attached to the objects as vertex attributes. Also, each network object the two other networks have been attached as edge attributes. We can see this by using the `summary()` function.  
+# create an object of class network
+PI.net <- network( PI.mat, directed = TRUE )
 
-Let's work with the `spend.time.net` object. This is the network for whether ego spends time with alter outside of class.
 
-```{r, echo=TRUE, eval=FALSE, message=FALSE}
-summary(spend.time.net, print.adj=FALSE)
+# define the attributes object
+PI.attrs <- read.csv( 
+    "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-PINS-power-w1-adj.csv",
+    as.is = TRUE,
+    header = TRUE 
+    )
+
+# assign the attributes to the network
+PI.net %v% "Age" <- PI.attrs[,1]
+PI.net %v% "Race" <- PI.attrs[,2]
+
 ```  
 
-#### *What does the summary of this network tell us?*  
+Note that we used a shorthand notation: `%v%`. This is an assignment operation that tells R to assign something to the network. Specifically, `%v%` indicates the assignment to a vertex, hence the *v*.  
 
-We can look at the various vertex data by using the shorthand `network %v% "attribute"`. For example:  
+The operate *also* let's us pull a specific attribute. We can look at the various vertex data by using the shorthand `network %v% "attribute"`. For example:  
 
-* `spend.time.net %v% "Sleept1"` shows the response categories to the question, *last week, how many hours of sleep did you get per night (on average)?*  
-* `spend.time.net %e% "talk.course.net"` shows the edges for the `talk.course.net` mapped to the edges for the `spend.time.net`.  
+* `PI.net %v% "Age"` shows the age variable.
+
+* `PI.net %v% "Race"` shows the race variable.
+
+Note that we can also reference edges (i.e. `%e%`) if a network has an assigned edge. For example, we could pull the information network and assign that to the power influence network:
+
+```{r}
+
+# define the adjacency matrix
+INFO.mat <- as.matrix(
+  read.csv( 
+    "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-PINS-info-w1-adj.csv",
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1
+    )
+  )
+
+# assign the matrix as an edge attribute
+PI.net %e% "info" <- INFO.mat
+
+```  
+
+  
+HERE WITH GOING THROUGH!!!
+
+
 
 Then, use that info in a plot. For example: 
 
