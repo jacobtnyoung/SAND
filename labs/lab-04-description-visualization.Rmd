@@ -417,47 +417,83 @@ PI.net %e% "info" <- INFO.mat
 
 ```  
 
+Think about what we did on the last line. For the power influence edges, we assigned `INFO.mat` as an attribute. This represents whether a power/influence tie was **also** an informatin network tie.
+
+Now, we can use that information in our plot.
   
-HERE WITH GOING THROUGH!!!
+For example: 
 
+```{r}
 
+gplot( PI.net,
+       arrowhead.cex=0.5,
+       vertex.cex = PI.net %v% "Age" )
 
-Then, use that info in a plot. For example: 
-
-```{r, echo=TRUE, eval=FALSE, message=FALSE}
-gplot(spend.time.net,vertex.cex=spend.time.net %v% "Sleept1") #size the nodes by the amount of sleep.
-#Yike!  
 ```
 
+YIKES!!! What is wrong?
+
 The problem is that we need to rescale the vertex attribute so that the nodes are not too big. Let's build a function to do that and then execute the `gplot()` function:
-```{r, echo=TRUE, eval=FALSE, message=FALSE}
-rescale <- function(nchar,low,high){
-  min_d <- min(nchar)
-  max_d <- max(nchar)
-  rscl  <- ((high-low)*(nchar-min_d)) / (max_d-min_d)+low
+
+```{r}
+
+rescale <- function( nchar, low, high ){
+  min_d <- min( nchar )
+  max_d <- max( nchar )
+  rscl  <- ( ( high - low )*( nchar - min_d ) ) / ( max_d - min_d ) + low
   rscl
 }
 
-#Now, use the function we created to rescale the vertex attribute.
-gplot(spend.time.net,vertex.cex=rescale(spend.time.net %v% "Sleept1", 0.5, 1.5),arrowhead.cex=0.5) 
-# that looks better!
 ```
 
-```{r,echo=TRUE,eval=FALSE,message=FALSE,interval=FALSE}
-set.seed( 605 )
-coords <- gplot( spend.time.net )
-``` 
+Now, use the function we created to rescale the vertex attribute
 
-```{r, echo=TRUE, eval=FALSE, message=FALSE}
-#Now, let's add additional information to the plot:
-gplot(spend.time.net,arrowhead.cex=0.5, coord=coords, label.cex=0.75,
-        main="Spend Time Network", # add a title.
-        vertex.col= spend.time.net %v% "KnowNett1", # color nodes based on prior knowledge of networks.
-        vertex.cex=rescale(spend.time.net %v% "Sleept1", 0.5, 1.5), # size the nodes by time sleep.
-        vertex.sides=(spend.time.net %v% "GenTrustt1")+2, #trust is the sides (note the addition of 2).
-        label=spend.time.net %v% "vertex.names", #label the nodes.
-        sub="Nodes colored by knowledge of networks\n Nodes sized by time sleeping\n Nodes shaped by trust (square is cant be trusted)"
-      ) 
+```{r}
+
+gplot( PI.net, 
+       arrowhead.cex=0.5,
+       vertex.cex = rescale( PI.net %v% "Age", 0.5, 1.5 ) )
+
+```
+
+That looks better. Let's drop the isolates to help with the visualization. 
+
+```{r}
+
+gplot( PI.net,
+       displayisolates = FALSE,
+       arrowhead.cex=0.5,
+       vertex.cex = rescale( PI.net %v% "Age", 0.5, 1.5 ) )
+
+```
+
+How about we color the edges based on whether there was a information network tie.
+
+```{r}
+
+gplot( PI.net,
+       edge.col = PI.net %e% "info" + 1,
+       displayisolates = FALSE,
+       arrowhead.cex=0.5,
+       vertex.cex = rescale( PI.net %v% "Age", 0.5, 1.5 ) )
+
+```
+
+As we build layers, we can get a fairly useful graphic that tells us a lot of information:
+
+```{r}
+
+gplot( PI.net,
+       main="PINS Power/Influence Network", # add a title
+       vertex.col = PI.net %e% "Race", # color the nodes by the Race variable
+       edge.col = PI.net %e% "info" + 1, # color the edges by the information network attribute
+       displayisolates = FALSE, # don't display the isolated cases
+       arrowhead.cex=0.5, # augment the size of the arrowheads
+       vertex.cex = rescale( PI.net %v% "Age", 0.5, 1.5 ), # size the nodes by the Age variable
+       # add a subtitle
+       sub="Nodes colored by Race, \n edges colored by Info net \n nodes sized by Age"
+       )
+
 ```
 
 ***
