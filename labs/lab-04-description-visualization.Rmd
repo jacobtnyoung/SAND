@@ -173,7 +173,7 @@ To see the various functionality of the function, let's work with the example of
 ```{r}
 
 # define the path
-url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-undirected-example.csv"
+url <- "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-undirected-example.csv"
 
 # define the object
 mat.u <- as.matrix(
@@ -366,7 +366,7 @@ We are going to do this in a few steps:
 # define the adjacency matrix
 PI.mat <- as.matrix(
   read.csv( 
-    "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-PINS-power-w1-adj.csv",
+    "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-PINS-power-w1-adj.csv",
     as.is = TRUE,
     header = TRUE,
     row.names = 1
@@ -379,7 +379,7 @@ PI.net <- network( PI.mat, directed = TRUE )
 
 # define the attributes object
 PI.attrs <- read.csv( 
-    "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-PINS-age-race-w1-attr.csv",
+    "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-PINS-age-race-w1-attr.csv",
     as.is = TRUE,
     header = TRUE 
     )
@@ -405,7 +405,7 @@ Note that we can also reference edges (i.e. `%e%`) if a network has an assigned 
 # define the adjacency matrix
 INFO.mat <- as.matrix(
   read.csv( 
-    "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-PINS-info-w1-adj.csv",
+    "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-PINS-info-w1-adj.csv",
     as.is = TRUE,
     header = TRUE,
     row.names = 1

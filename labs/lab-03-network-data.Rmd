@@ -358,14 +358,14 @@ rm( list = ls() )
 If we had a large network, these routines (i.e. using the `matrix()` function) would be tedious. Most of the time, we have a file that is an adjacency matrix or an edgelist that we can import.  
 The `read.csv()` function can be used to read in .csv files that are arranged in this way. Let's take a look at the help for this function: `?read.csv`.  
 
-We will use the **lab-02-undirected-example.csv** file from my website. To access the file, we can place the url in the `read.csv()` function. 
+We will use the **data-undirected-example.csv** file from my website. To access the file, we can place the url in the `read.csv()` function. 
 
-Here is the url: [https://github.com/jacobtnyoung/SAND/blob/main/data/data-undirected-example.csv](https://github.com/jacobtnyoung/SAND/blob/main/data/data-undirected-example.csv).
+Here is the url: [https://github.com/jacobtnyoung/sna-textbook/blob/main/data/data-undirected-example.csv](https://github.com/jacobtnyoung/sna-textbook/blob/main/data/data-undirected-example.csv).
 
 ```{r, echo=TRUE, eval=FALSE, warning=FALSE}
 
 # define the path
-url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-undirected-example.csv"
+url <- "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-undirected-example.csv"
 
 # define the data using the url object
 mat.u <- read.csv( url )
@@ -443,7 +443,7 @@ Then, set the directory where the file is using the `setwd()` function. You can 
 
 ```{r, echo=FALSE, eval=TRUE}
 
-url <- "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-undirected-example.csv"
+url <- "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-undirected-example.csv"
 
 net.d <- as.network( 
   as.matrix( 
