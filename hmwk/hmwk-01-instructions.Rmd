@@ -23,9 +23,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
-For the first homework, I would like you to construct a network. Think about a type of relationship that is interesting, important, etc. and what it connects. Whatever floats your boat. It can be a real example from your life, something fictitious, anything really. 
+For the first lab, I would like you to construct a network. Think about a type of relationship that is interesting, important, etc. and what it connects. Whatever floats your boat. It can be a real example from your life, something fictitious, anything really. 
 
-**IMPORTANT**: *read through this entire assignment before deciding what you will choose*.
+**IMPORTANT**: *read through the instructions completely before deciding what you will choose*.
 
 ## Part I
 
@@ -53,17 +53,25 @@ ____
 
 ### Choose a new network and repeat Part I
 
+____
 
-## Instructions
+# How to Submit
 
-The assignment needs to be emailed to me by the due date of **DATE**.
+Upload a `.pdf` or `.docx` file to the appropriate link for this assignment on the Canvas page for this course.
 
+# DUE Date
+
+This assignment is DUE on 1/24.
 
 ____
 
 <br>
 
-##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+<p align="center"> [Back to SAND main page](https://jacobtnyoung.github.io/SAND/) </p>
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 <br>

@@ -23,20 +23,19 @@ knitr::opts_chunk$set( echo = TRUE )
 ## *Introduction to Network Analysis*  
 ____
 
-The introductory lecture covers the basics of network analysis: what it is, why we do it, etc. 
-
-The learning goals of this lecture are to:   
-
-  1) understand the difference between individual vs. network approaches to research   
-  2) introduce basic data elements in network analysis
-  3) introduce network data collection
+This week introduces you to the to basics of network analysis. In lecture, we will cover what network analysis is, why we do it, and what it looks like, broadly.
 
 <br>
-
 
 #### Lecture Materials
 
  + [Introduction lecture](../lectures/lecture-01-introduction.pdf) 
+
+<br>
+
+#### Homework Materials
+
+ + [Homework 1 Instructions](../hmwk/hmwk-01-instructions.html)
  
 <br>
 
