@@ -19,25 +19,18 @@ knitr::opts_chunk$set( echo = TRUE )
 
 <br>
 
-## Statistical Analysis of Network Data
+## *Course Overview*
 
 This course provides a survey of the various tools used when analyzing networks. The overarching goal of the course is that, upon completion, students will be capable of developing research questions from a network perspective and incorporating network-based tools in their own research. The course is designed to be primarily methodological, dedicating the majority of the time to working through the mechanics of network-based tools. Students will also gain experience with [R](https://cran.r-project.org/), a commonly used software program for network data management, analysis, and visualization. We will also work in [RStudio](https://www.rstudio.com/).  
 
+<br>
 
-Even if you are not taking the course, feel free to browse the lecture notes and labs. As always, I welcome any [feedback](https://github.com/jacobtnyoung/SAND/issues)!
+#### [**Course Syllabus**](CRJ-605-Networks-SYLLABUS.pdf)
 
 <br>
 
-*File Formats*  
-
-Lectures are provided in .pdf format. Labs are provided in .html format. The .html files can be opened by first downloading the file and then opened using any web browser. 
-
-<br>
-
-
-## *Lecture Notes and Labs*  
+## *Course Outline*  
 ____
-
 
 [Introduction to Network Analysis](topics/page-01-intro.html)
 
@@ -63,7 +56,7 @@ ____
 
 <br>
 
-#### *Help*
+### *Help*
 
 If you need help on the assignments, be sure to visit the [HELP! page](topics/page-99-help.html)!
 
