@@ -29,6 +29,7 @@ The learning goals of this lecture are to:
 
   1) understand the difference between individual vs. network approaches to research   
   2) introduce basic data elements in network analysis
+  3) introduce network data collection
 
 <br>
 
@@ -37,11 +38,17 @@ The learning goals of this lecture are to:
 
  + [Introduction lecture](../lectures/lecture-01-introduction.pdf) 
  
- + [R script for Introduction lecture](../lecture_syntax/lecture-syntax-01-introduction.R)
-
 <br>
 
 ____
+
+<br>
+
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
+
+<br>
 
 <br>
 

@@ -21,7 +21,7 @@ knitr::opts_chunk$set( echo = TRUE )
 
 ## Statistical Analysis of Network Data
 
-This course provides a survey of the various tools used when analyzing networks. The overarching goal of the course is that, upon completion, students will be capable of developing research questions from a network perspective and incorporating network-based tools in their own research. The course is designed to be primarily methodological, dedicating the majority of the time to working through the mechanics of network-based tools. Students will also gain experience with [R](https://cran.r-project.org/), a commonly used software program for network data management, analysis, and visualization.  
+This course provides a survey of the various tools used when analyzing networks. The overarching goal of the course is that, upon completion, students will be capable of developing research questions from a network perspective and incorporating network-based tools in their own research. The course is designed to be primarily methodological, dedicating the majority of the time to working through the mechanics of network-based tools. Students will also gain experience with [R](https://cran.r-project.org/), a commonly used software program for network data management, analysis, and visualization. We will also work in [RStudio](https://www.rstudio.com/).  
 
 
 Even if you are not taking the course, feel free to browse the lecture notes and labs. As always, I welcome any [feedback](https://github.com/jacobtnyoung/SAND/issues)!
@@ -30,7 +30,7 @@ Even if you are not taking the course, feel free to browse the lecture notes and
 
 *File Formats*  
 
-Lectures are provided in .pdf format. Labs are provided in .html format and RMarkdown (.Rmd) format. The .html files can be opened by first downloading the file and then opening it using any web browser. The .Rmd files can be opened in any web browser, but require [RStudio](https://www.rstudio.com/) to [knit](https://cran.r-project.org/web/packages/knitr/index.html).  
+Lectures are provided in .pdf format. Labs are provided in .html format. The .html files can be opened by first downloading the file and then opened using any web browser. 
 
 <br>
 
@@ -41,15 +41,13 @@ ____
 
 [Introduction to Network Analysis](topics/page-01-intro.html)
 
-[Introduction to R, R Studio, and Data-Driven Documents](topics/page-02-r-markdown.html)
+[Introduction to R/RStudio, Data-Driven Documents, and Github Issues](topics/page-02-r-markdown.html)
 
-[Network Data Structures and Network Data in R](topics/page-02-network-data.html)
+[Network Data Structures & Network Data in R](topics/page-02-network-data.html)
 
 [Network Description & Visualization](topics/page-04-description-visualization.html)
 
-[Centrality](topics/page-05-centrality.html)
-
-[Cohesive Subgroups](topics/page-06-subgroups.html)
+[Network Position: Degree, Closeness, & Betweenness Centrality](topics/page-05-centrality.html)
 
 [Bipartite Graphs/Two-Mode Networks, Projection, and Weighted Graphs](topics/page-07-bipartite.html)
 
@@ -59,11 +57,15 @@ ____
 
 [Dynamic Network Visualization](topics/page-10-dynamic-visualization.html)
 
-[Dynamic Network Visualization](topics/page-11-stergms.html)
-
 [Sequential Temporal Exponential Random Graph Models (STERGMs)](topics/page-11-stergms.html)
 
 [Epidemic Modeling](topics/page-12-epidemics.html)
+
+<br>
+
+#### *Help*
+
+If you need help on the assignments, be sure to visit the [HELP! page](topics/page-99-help.html)!
 
 
 <br>
@@ -72,7 +74,7 @@ ____
 
 <br>
 
-#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 <br>
