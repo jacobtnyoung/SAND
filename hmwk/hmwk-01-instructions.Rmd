@@ -45,7 +45,7 @@ For the first lab, I would like you to construct a network. Think about a type o
   
 ### C. Draw the adjacency matrix for the network (by hand is fine)
 
-____  
+<br>
 
 ## Part II
 
@@ -53,15 +53,13 @@ ____
 
 ### Choose a new network and repeat Part I
 
-____
+<br>
 
-# How to Submit
+## Submission and Due Date
 
-Upload a `.pdf` or `.docx` file to the appropriate link for this assignment on the Canvas page for this course.
+A physical copy of the assignment must be turned in during class on the corresponding due date. This assignment is *DUE* on **1/24**.
 
-# DUE Date
-
-This assignment is DUE on 1/24.
+<br>
 
 ____
 
