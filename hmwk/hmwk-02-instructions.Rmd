@@ -21,6 +21,13 @@ text-align: justify}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+
+CHECK THE TEMPLATE FOR THE INSTRUCTIONS FORMAT!!!
+
+
+
+
 # Introduction
 
 The purpose of this assignment is to familiarize yourself with how networks are created and examined in *R*.  

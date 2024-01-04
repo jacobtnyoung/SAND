@@ -17,13 +17,35 @@ body {
 text-align: justify}
 </style>
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
 
 CONTENT
+
+## Part 
+
+CONTENT
+
+<br>
+
+## Submission and Due Date
+
+A physical copy of the assignment must be turned in during class on the corresponding due date. This assignment is *DUE* on **?/?**.
+
+<br>
+
 ____
 
 <br>
 
-##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+<p align="center"> [Back to SAND main page](https://jacobtnyoung.github.io/SAND/) </p>
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 <br>
