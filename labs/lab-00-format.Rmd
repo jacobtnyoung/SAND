@@ -27,14 +27,19 @@ knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
 <br>
 
 CONTENT
+
 ____
 
-
 <br>
 
-##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
 
 <br>
 <br>
 
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
+#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>

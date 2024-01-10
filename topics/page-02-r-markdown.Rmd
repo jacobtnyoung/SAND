@@ -19,36 +19,21 @@ text-align: justify}
 knitr::opts_chunk$set( echo = TRUE )
 ```
 
+<br>
+
+## *Introduction to R/RStudio, Data-Driven Documents, and Github Issues*  
+____
+
+This week introduces R and RStudio. We also cover Data-Driven Documents using RMarkdown. Finally, we will cover how to use Github Issues for questions in this course.
 
 <br>
 
+#### Lab Materials
 
-## *Getting Started with R and Network Visualization*
-
-----
-
-<br>
-
-In this section of the course, we begin working with [R](http://cran.r-project.org/). We will focus on three goals:  
-
-  1. An introduction to [R](http://cran.r-project.org/) to familiarize users with [R](http://cran.r-project.org/).  
-  
-  2. An introduction to network analysis in [R](http://cran.r-project.org/) covers how network objects are created and manipulated using the [sna](https://cran.r-project.org/web/packages/sna/index.html) package.  
-  
-  3. Basic network visualization is reviewed using the [sna](https://cran.r-project.org/web/packages/sna/index.html) package.
-
-<br>
-
-
-#### Lecture Materials
-
- + [Lab 01-Introduction to R](../labs/lab-01-r-intro.html)
+ + [Lab 1 - Getting Started with R](../labs/lab-01-r-intro.html)  
  
- + [Lab 02-Introduction to Networks in R](../labs/lab-02-nets-intro.html)
+ + [Lab 2 - Introduction to Data-Driven Documents and Github Issues](../labs/lab-02-rmarkdown.html)  
  
- + [Lab 03-Basics of Network Visualization](../labs/lab-03-visualization-intro.html)
- 
- + Example networks used in labs ([undirected network](../data/lab_data/lab-02-undirected-example.csv)) ([directed network](../data/lab_data/lab-02-directed-example.csv))
 
 <br>
 
@@ -56,10 +41,15 @@ ____
 
 <br>
 
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
+
+<br>
+
+<br>
+
 #### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 <br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

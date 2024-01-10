@@ -36,10 +36,14 @@ ____
 
 <br>
 
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
+
+<br>
+<br>
+
 #### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 <br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
