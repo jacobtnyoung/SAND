@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
-For the first lab, I would like you to construct a network. Think about a type of relationship that is interesting, important, etc. and what it connects. Whatever floats your boat. It can be a real example from your life, something fictitious, anything really. 
+For the first homework, I would like you to construct a network. Think about a type of relationship that is interesting, important, etc. and what it connects. Whatever floats your boat. It can be a real example from your life, something fictitious, anything really. 
 
 **IMPORTANT**: *read through the instructions completely before deciding what you will choose*.
 
@@ -43,8 +43,6 @@ For the first lab, I would like you to construct a network. Think about a type o
     
 ### B. Draw a picture of the network (by hand is fine)
   
-### C. Draw the adjacency matrix for the network (by hand is fine)
-
 <br>
 
 ## Part II
