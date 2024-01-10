@@ -71,6 +71,3 @@ ____
 
 <br>
 <br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
