@@ -159,7 +159,20 @@ To post a new issue for this course, use this link:
 
 
 <br>
+
+____
+
 <br>
 
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
 
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
+<br>
+
+<br>
+
+#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>
