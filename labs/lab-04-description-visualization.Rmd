@@ -1,5 +1,5 @@
 ---
-title: "Lab 03 - Basics of Network Visualization"
+title: "Lab 4 - Basics of Network Visualization"
 date: "CRJ 605 Statistical Analysis of Networks"
 output: 
   html_document:
@@ -14,7 +14,7 @@ output:
 
 <style>
 body {
-text-align: justify}
+text-align: left}
 </style>
 
 ```{r, echo=FALSE}
