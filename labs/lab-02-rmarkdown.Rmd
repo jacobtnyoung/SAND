@@ -313,6 +313,3 @@ Let's navigate to the [HELP! page](https://jacobtnyoung.github.io/SAND/topics/pa
 
 <br>
 <br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

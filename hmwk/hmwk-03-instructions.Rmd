@@ -22,8 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-CHECK THE TEMPLATE FOR THE INSTRUCTIONS FORMAT!!!
-
+SEE HOMEWORK 2 FOR HOW THIS SHOULD BE SET UP!!!
 
 
 

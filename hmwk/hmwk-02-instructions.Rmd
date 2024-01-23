@@ -1,5 +1,5 @@
 ---
-title: "Homework 2 - Network Visualization - INSTRUCTIONS"
+title: "Homework 2 - Network Data Structures & Network Visualization - INSTRUCTIONS"
 date: "CRJ 605 Statistical Analysis of Network Data"
 output: 
   html_document:
@@ -14,53 +14,71 @@ output:
 
 <style>
 body {
-text-align: justify}
+text-align: left}
 </style>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
-
-CHECK THE TEMPLATE FOR THE INSTRUCTIONS FORMAT!!!
-
-
-
-
 # Introduction
 
-The purpose of this assignment is to familiarize yourself with how networks are created and examined in *R*.  
+The purpose of this lab is to familiarize yourself with how networks are created and visualized in *R*.  
 
-## Part I
+<br>
 
-In homework #1 you created two networks. I would like you to continue working with those networks for this assignment.
+In [Homework 1](../hmwk/lab-01-instructions.html) you created two networks. I would like you to continue working with those networks for *this* homework. Please review [Lab 3 - Introduction to Networks in R](../labs/lab-03-network-data.html) and [Lab 4 - Basics of Network Visualization](../labs/lab-04-description-visualization.html) prior to beginning this lab.  
+
+Two **IMPORTANT** points:  
+
+  + If you created a bipartite (i.e. two-mode) network in [Homework 1](../hmwk/lab-01-instructions.html) for either network, you will need to restructure the network to be unipartite for this assignment. But, this is a simple task! All you have to do is figure out which node set you want to connect and create direct connections between them. For example, if Jon and Julio both attended a Wu-Tang Clan concern, then the bipartite graph is: Jon-Event-Julio. That is, Jon and Julio are connected by the event. To make this unipartite, just remove the event such that you simply have: Jon-Julio.   
+  
+  + If you review the instructions below and you feel like your network is not appropriate for the assignment and need to create a different example...that is fine! We will use these networks throughout the course, so I want to make sure you have something you can work with consistently.
+
+Make sense? If you have questions before you begin, just post an [issue](https://github.com/jacobtnyoung/SAND/issues/new) to the course help page.
+
+<br>
 
 For *each* network you created, do the following:  
 
-1. Import the network into *R* and create an object of class `network`.    
-2. Plot the network using the `gplot()` function.    
-3. Modify the plot using at least three arguments in the `gplot()` function.  
+1. Create an adjacency matrix of the network and save it as a .csv file.
+2. Import the network into *R* using the `read.csv()` function **or** create the network using the `matrix()` function.
+3. Create an object of class `network`. 
+4. Plot the network using the `gplot()` function.    
+5. Modify the plot using at least three arguments in the `gplot()` function.  
 
-## Part II
+<br>
 
-How them work with a network here. Take one two of the trust networks from WO-PINS. Have them then make some comparisons.
+## Using the Template, Knitting, and Submitting
 
-# Instructions
+For this homework, you will use a .Rmd template I have created. Download the [template for this homework](../labs/templates/hmwk-02-template.zip?raw=true) prior to beginning the lab. For all the homework assignments, be sure to show both the solution for your code and write out your answers in the body text (were relevant). When you have completed your assignment, click the "Knit" button to render your `.RMD` file into a `.HTML` report. 
 
-For this assignment, you will use the template NAME located LOCATION. 
+A physical copy of the assignment must be turned in during class on the corresponding due date. This assignment is *DUE* on **2/7**.
 
-This assignment is **DUE** DATE.
+<br>
 
+### Common Knitting Issues
+
+`.RMD` files are knit into `.HTML` and other formats procedural, or line-by-line.
+
+* An error in code when knitting will halt the process; error messages will tell you the specific line with the error
+* Certain functions like `install.packages()` or `setwd()` are bound to cause errors in knitting 
+* Altering a dataset or variable in one chunk will affect their use in all later chunks
+* If an object is "not found", make sure it was created or loaded with `library()` in a previous chunk
+
+**If All Else Fails:** If you cannot determine and fix the errors in a code chunk that's preventing you from knitting your document, add `eval = FALSE` inside the brackets of `{r}` at the beginning of a chunk to ensure that R does not attempt to evaluate it, that is: `{r eval = FALSE}`. This will prevent an erroneous chunk of code from halting the knitting process.  
+
+<br>
 
 ____
 
 <br>
 
-##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues) page. Thanks!
+<p align="center"> [Back to SAND main page](https://jacobtnyoung.github.io/SAND/) </p>
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 <br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

@@ -12,7 +12,7 @@ output:
 
 <style>
 body {
-text-align: justify}
+text-align: left}
 </style>
 
 ```{r setup, include=FALSE}
@@ -21,24 +21,39 @@ knitr::opts_chunk$set( echo = TRUE )
 
 <br>
 
-## *Network Data Structures and Sources of Network Data*
+## *Network Data Structures & Network Data in R*
+
 ____
 
-These lectures cover the basics of using matrices to represent networks. Fundamental concepts of graph theory are also introduced. Also, various sources of network data are discussed. Special attention is given to the [Prison Inmate Network Study (PINS)](http://justicecenter.psu.edu/research/projects/%20prison-inmate-networks-study-pins) and the [Boston Special Youth Project](https://jacobtnyoung.github.io/SYP-Networks/) (SYP) Affiliation data.
+This week, we will first cover the basics of using matrices to represent networks. You will be introduced to the fundamental concepts of graph theory. We will then work through how these data structures are created as objects in R. This week will also assign Homework 2 and provides a template to aid in completing the assignment.
 
 <br>
 
-#### Lecture Materials  
+#### Lecture & Lab Materials  
 
-  + [Data Structures lecture](../lectures/lecture-02-data-structures.pdf)  
+  + [Network Data Structures lecture](../lectures/lecture-02-data-structures.pdf)  
   
-  + [Sources of Data lecture](../lectures/lecture-03-data-sources.pdf)  
-  
-  + [R script for Data Structures lecture](../lecture_syntax/lecture-syntax-02-data-structures.R)
+  + [Introduction to Networks in R lab](../labs/lab-03-network-data.html)  
 
 <br>
 
+#### Homework Materials  
+
+  + [Homework 2 instructions](../hmwk/hmwk-02-instructions.html)  
+  
+  + [Homework 2 template](../labs/templates/hmwk-02-template.zip?raw=true)  
+  
+<br>
+
 ____
+
+<br>
+
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
+
+<br>
 
 <br>
 
@@ -46,6 +61,3 @@ ____
 
 <br>
 <br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

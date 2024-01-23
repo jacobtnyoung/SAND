@@ -34,15 +34,15 @@ ____
 
 [Introduction to Network Analysis](topics/page-01-intro.html)
 
-[Introduction to R/RStudio, Data-Driven Documents, and Github Issues](topics/page-02-r-markdown.html)
+[Introduction to R/RStudio, Data-Driven Documents, & Github Issues](topics/page-02-r-markdown.html)
 
-[Network Data Structures & Network Data in R](topics/page-02-network-data.html)
+[Network Data Structures & Network Data in R](topics/page-03-network-data.html)
 
 [Network Description & Visualization](topics/page-04-description-visualization.html)
 
 [Network Position: Degree, Closeness, & Betweenness Centrality](topics/page-05-centrality.html)
 
-[Bipartite Graphs/Two-Mode Networks, Projection, and Weighted Graphs](topics/page-07-bipartite.html)
+[Bipartite Graphs/Two-Mode Networks, Projection, & Weighted Graphs](topics/page-07-bipartite.html)
 
 [Exponential Random Graph Models (ERGMs)](topics/page-08-ergm.html)
 

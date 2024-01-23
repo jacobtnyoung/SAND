@@ -12,7 +12,7 @@ output:
 
 <style>
 body {
-text-align: justify}
+text-align: left}
 </style>
 
 ```{r setup, include=FALSE}
@@ -22,6 +22,7 @@ knitr::opts_chunk$set( echo = TRUE )
 <br>
 
 ## *Introduction to R/RStudio, Data-Driven Documents, and Github Issues*  
+
 ____
 
 This week introduces R and RStudio. We also cover Data-Driven Documents using RMarkdown. Finally, we will cover how to use Github Issues for questions in this course.
