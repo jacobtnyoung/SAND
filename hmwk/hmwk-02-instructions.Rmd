@@ -21,6 +21,8 @@ text-align: left}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+----
+
 # Introduction
 
 The purpose of this lab is to familiarize yourself with how networks are created and visualized in *R*.  

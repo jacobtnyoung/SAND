@@ -41,7 +41,7 @@ This week, we will first cover the basics of using matrices to represent network
 
   + [Homework 2 instructions](../hmwk/hmwk-02-instructions.html)  
   
-  + [Homework 2 template](../labs/templates/hmwk-02-template.zip?raw=true)  
+  + [Homework 2 template](../hmwk/templates/hmwk-02-template.zip?raw=true)  
   
 <br>
 

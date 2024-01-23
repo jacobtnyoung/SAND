@@ -21,6 +21,8 @@ text-align: left}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+----
+
 # Introduction
 
 For the first homework, I would like you to construct a network. Think about a type of relationship that is interesting, important, etc. and what it connects. Whatever floats your boat. It can be a real example from your life, something fictitious, anything really. 
