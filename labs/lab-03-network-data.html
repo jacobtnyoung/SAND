@@ -2958,8 +2958,8 @@ code chunks can be copied and pasted directly into R. As you work
 through this lab, follow along in R by coping and pasting the R code and
 seeing it work on your end.</p>
 <p><br></p>
-<div id="working-with-matrices" class="section level3">
-<h3><strong>Working with matrices</strong></h3>
+<div id="working-with-matrices" class="section level1">
+<h1><strong>Working with matrices</strong></h1>
 <p>First, clear the workspace. To do so, we use the following
 statement:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">rm</span>( <span class="at">list =</span> <span class="fu">ls</span>() )</span></code></pre></div>
@@ -3123,8 +3123,8 @@ better is to practice. Feel free to work back through the section above
 to get better at this basic skill we will use a LOT in this course.</p>
 <p><br></p>
 </div>
-<div id="exploring-the-network-package" class="section level3">
-<h3><strong>Exploring the <code>network</code> package</strong></h3>
+<div id="exploring-the-network-package" class="section level1">
+<h1><strong>Exploring the <code>network</code> package</strong></h1>
 <p>Now that we have our object <code>mat</code> is created, let’s
 manipulate it into a network and a graph. To do this, we can use the
 <code>network</code> package. <code>network</code> is a package
@@ -3144,10 +3144,9 @@ respect to the package itself use the <code>help()</code> function, but
 tell R we want help on the particular package:
 <code>help( package=&quot;network&quot; )</code></p>
 <p><br></p>
-</div>
-<div id="working-with-unidirected-binary-networks" class="section level3">
-<h3><strong>Working with <em>Unidirected</em>, Binary
-Networks</strong></h3>
+<div id="working-with-unidirected-binary-networks" class="section level2">
+<h2><strong>Working with <em>Unidirected</em>, Binary
+Networks</strong></h2>
 <p>Now that the package is loaded, lets create a new object from our
 matrix that is a network. In R lingo, we will use the
 <code>network()</code> function to create an object that is of
@@ -3328,9 +3327,9 @@ input for the <code>matrix.type =</code> argument to
 ## Tom    1   1   0    0   0</code></pre>
 <p><br></p>
 </div>
-<div id="working-with-directed-binary-networks" class="section level3">
-<h3><strong>Working with <em>Directed</em>, Binary
-Networks</strong></h3>
+<div id="working-with-directed-binary-networks" class="section level2">
+<h2><strong>Working with <em>Directed</em>, Binary
+Networks</strong></h2>
 <p>Now, let’s work with the example of a directed, binary network. We
 will create an object that is the adjacency matrix.</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="co"># these were written in by row</span></span>
@@ -3452,8 +3451,8 @@ reciprocated ties count twice. So, we have to tell the
 ## No edge attributes</code></pre>
 <p><br></p>
 </div>
-<div id="importing-network-data" class="section level3">
-<h3><strong>Importing Network data</strong></h3>
+<div id="importing-network-data" class="section level2">
+<h2><strong>Importing Network data</strong></h2>
 <p>If we had a large network, these routines (i.e. using the
 <code>matrix()</code> function) would be tedious. Most of the time, we
 have a file that is an adjacency matrix or an edgelist that we can
@@ -3576,14 +3575,15 @@ machine.</p>
 ## No edge attributes</code></pre>
 <p><br></p>
 </div>
+</div>
 <div id="summary" class="section level1">
 <h1><strong>Summary</strong></h1>
 <p>Why are you learning this? As you can probably guess, we are going to
 be working with matrices and objects of class <code>network</code> a LOT
 in this course!</p>
 <hr />
-<div id="questions" class="section level4">
-<h4><strong><em>Questions?</em></strong></h4>
+<div id="questions" class="section level3">
+<h3><strong><em>Questions?</em></strong></h3>
 <p><br></p>
 <div id="please-report-any-needed-corrections-to-the-issues-page.-thanks" class="section level5">
 <h5><strong><em>Please</em></strong> report any needed corrections to

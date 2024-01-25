@@ -35,7 +35,7 @@ A note on the labs. Each lab in this course will contain R code which is in the 
 
 <br>
 
-### **Working with matrices**    
+# **Working with matrices**    
 
 First, clear the workspace. To do so, we use the following statement:
 
@@ -213,7 +213,7 @@ Got it? If yes, then GREAT! If no, hang in there: you got this! If you are a bit
 
 <br>
 
-### **Exploring the `network` package**  
+# **Exploring the `network` package**  
 Now that we have our object `mat` is created, let's manipulate it into a network and a graph. To do this, we can use the `network` package. `network` is a package containing tools to create and modify network objects created by [Carter Butts](http://erzuli.ss.uci.edu/~buttsc/). See the [network page](http://cran.r-project.org/web/packages/network/index.html) for an overview of package functionality.
 
 First, we need to install the package using: `install.packages( "network" )`.
@@ -237,7 +237,7 @@ To get a list of the contents of the package, as for help with respect to the pa
   
 <br>
 
-### **Working with *Unidirected*, Binary Networks**  
+## **Working with *Unidirected*, Binary Networks**  
 Now that the package is loaded, lets create a new object from our matrix that is a network. In R lingo, we will use the `network()` function to create an object that is of *class* `network`. To use some of the functions, it has to be a specific class. 
 
 Just like you can't perform calculations on a object that is of class `character` (e.g. a list of names), the functions in this page are designed to work with a `network` object.
@@ -324,7 +324,7 @@ summary( edge.net.u )
   
 <br>
 
-### **Working with *Directed*, Binary Networks**
+## **Working with *Directed*, Binary Networks**
 Now, let's work with the example of a directed, binary network. We will create an object that is the adjacency matrix.
 
 ```{r}
@@ -385,7 +385,7 @@ summary( edge.d.net,
   
 <br>
 
-### **Importing Network data**
+## **Importing Network data**
 ```{r,echo=FALSE,eval=TRUE}
 
 # clear the workspace
@@ -536,7 +536,7 @@ Why are you learning this? As you can probably guess, we are going to be working
 
 ----
 
-#### ***Questions?***
+### ***Questions?***
 
 <br>
 
