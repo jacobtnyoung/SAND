@@ -1,5 +1,5 @@
 ---
-title: "Lab 4 - Basics of Network Visualization"
+title: "Lab 4 - Basics of Network Visualization in R"
 date: "CRJ 605 Statistical Analysis of Networks"
 output: 
   html_document:
@@ -25,32 +25,65 @@ knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
 ```
 
 
-*This lab goes through some basics of visualizing networks using the `gplot()` function in the `sna` package. We also look at some approaches to building plots. *
+----
 
-***
+<br>
 
-### **Network Visualization**    
+Let's be honest, network analysis is awesome. Where does that awesomeness come from? One sure reason is visualization! There is nothing like an beautiful network visualization that conveys lots of information and is aesthetically pleasing. Right?     
+
+Not convinced? Examine the plot below. Without me giving you any information about this figure (which is from James Moody and Peter Mucha's paper, [*Portrait of Political Party Polarization*](https://www.cambridge.org/core/journals/network-science/article/portrait-of-political-party-polarization1/F4D2FC8C75B3A160CE68BC3A4A4F6736#article)), what does it tell you? 
+
+```{r, fig.cap = "", out.width = "60%", echo=FALSE, fig.align="center"}
+knitr::include_graphics( "../assets/images/moody-mucha-polarization.png" )
+```
+
+<br>
+
+What about this one showing political blogs? (from David Lazer and colleagues paper [*Computational Social Science*](https://www.science.org/doi/10.1126/science.1167742)). What does the visualization "say" or "tell you"?
+
+```{r, fig.cap = "", out.width = "40%", echo=FALSE, fig.align="center"}
+knitr::include_graphics( "../assets/images/lazer-etal-blogs.pgn" )
+```
+
+<br>
+
+In this tutorial, you will be introduced to the basics of visualizing networks using the `gplot()` function in the `sna` package. We will also look at some approaches to building plots to help guide you in honing your SNA toolkit.
+
+*Why are you learning this?* I want you to be able to render really cool networks, obviously. But, I also want you to learn how to embrace this visualization tool to convey information to audiences that might not be able to digest a table or some other data description medium. Let's get to work yall!
+
+<br>
+
+----
+
+# **Network Visualization**    
 
 One of the great features of working with network data is the ability to ***see*** the data through visualization. Visualizing the structure of a network is helpful for discerning patterns that might be of interest. 
 
-Douglas Luke's (2015: 47) *A User's Guide to Network Analysis* provides several guidelines, or aesthetic principles, for what makes a graphical layout of a network easy to understand and interpret. These are:  
+Douglas Luke's (2015: 47) [*A User's Guide to Network Analysis*](https://link.springer.com/book/10.1007/978-3-319-23883-8) provides several guidelines, or aesthetic principles, for what makes a graphical layout of a network easy to understand and interpret. These are:  
 
-* Minimize edge crossings.  
+  + Minimize edge crossings  
 
-* Maximize the symmetry of the layout of nodes.  
+  + Maximize the symmetry of the layout of nodes  
 
-* Minimize the variability of the edge lengths.  
+  + Minimize the variability of the edge lengths  
 
-* Maximize the angle between edges when they cross or join nodes.  
+  + Maximize the angle between edges when they cross or join nodes  
 
-* Minimize the total space used for the network display.  
+  + Minimize the total space used for the network display  
 
+Think about each of these suggestions. Why do they aid in visualizing the network? How do they assist in avoiding conveying information that is **not** really there? Ponder these questions for a bit...
 
-Let's look at the example he uses as an illustration by working with the `gplot()` function in the `sna` package.  
+<br>
 
-First, we need to install the `sna` package using `install.packages( "sna" )` and load the library using `library( sna )`. Remember, if you have already installed a package then you do not need to use the `install.packages()` function. But, if you have not installed the package in a while, you should use `update.packages()` to incorporate any changes that have been made to the page.
+## **Getting Started**
 
-Next, let's get the `UserNetR` package from [Douglas Luke's GitHub page](https://github.com/DougLuke/UserNetR). Since this package is not on the CRAN package repository, we need to install it from Github. We do this in four steps:  
+Now that you have a sense of what a good visualization should try to do, let's look at the example Luke uses as an illustration by working with the `gplot()` function in the `sna` package. 
+
+First, we need to install the `sna` package using `install.packages( "sna" )` and load the library using `library( sna )`. 
+
+Remember, if you have already installed a package then you do not need to use the `install.packages()` function. But, if you have not installed the package in a while, you should use `update.packages()` to incorporate any changes that have been made to the page.
+
+Next, let's get the `UserNetR` package from [Douglas Luke's GitHub page](https://github.com/DougLuke/UserNetR). Since this package is not on the CRAN package repository, we need to install it directly from Github. We do this in four steps:  
 
   + First, install the devtools package using `install.packages( "devtools" )`
   
@@ -60,6 +93,29 @@ Next, let's get the `UserNetR` package from [Douglas Luke's GitHub page](https:/
   
   + Finally, load the library `library( UserNetR )`  
 
+<br>
+
+Altogether, that looks something like this:
+
+```{r,echo=TRUE, eval=FALSE}
+
+# install the packages
+install.packages( "sna" )
+install.packages( "devtools" )
+
+# call the libraries
+library( sna )
+library( devtools )
+
+# install from Github
+install_github( "DougLuke/UserNetR" )
+
+# call that library
+library( UserNetR )
+
+```
+
+<br>
 
 ```{r,echo=FALSE, eval=TRUE, message=FALSE}
 
@@ -69,8 +125,9 @@ library( UserNetR )
 
 ```
 
-Now, let's take a look at the `Moreno` network (see `help( Moreno, package = UserNetR )`. These data are contained in a sociogram constructed by [Jacob Moreno](https://en.wikipedia.org/wiki/Jacob_L._Moreno), and published in the New York Times in 1933 (see Moreno, J. L. 1934. *Who shall survive? A new approach to the problem of human interrelations*. Nervous and mental disease monograph series, no. 58. Washington, DC: Nervous and Mental Disease Publishing Co. for a more extensive discussion).  
+<br>
 
+Now, let's take a look at the `Moreno` network (see `help( Moreno, package = UserNetR )`. These data are contained in a sociogram constructed by [Jacob Moreno](https://en.wikipedia.org/wiki/Jacob_L._Moreno), and published in the New York Times in 1933 (see Moreno, J. L. 1934. *Who shall survive? A new approach to the problem of human interrelations*. Nervous and mental disease monograph series, no. 58. Washington, DC: Nervous and Mental Disease Publishing Co. for a more extensive discussion).  
 
 ```{r}
 
@@ -87,17 +144,20 @@ gplot( Moreno, mode = "fruchtermanreingold" )
 
 ```
 
-##### *How do these plots differ in their ability to highlight the aesthetics mentioned above for relations among individuals?*
+<br>
 
+Think back to the aesthetic elements we discussed above. How do these two plots differ in how well they convey the **same** information? Which one is better? Why is it better?
+
+<br>
+
+To think about these questions, let's plot the two layouts together. To do this we will use the `par()` function. This allows us to partition the plotting region.
 
 ```{r}
-
-# Let's plot them together for comparison.
 
 # First, we define the plot layout window.
 op <- par( 
   mar = rep( 2, 4 ), # set the margins
-  mfrow = c( 1, 2 )  # se the dimensions
+  mfrow = c( 1, 2 )  # set the dimensions
   )
 
 # plot the circle layout (add the main() argument for a title)
@@ -108,21 +168,27 @@ gplot( Moreno, mode = "fruchtermanreingold", main = "Plotted using a spring algo
 
 ```
 
-
 ```{r,echo=FALSE,eval=TRUE,message=FALSE}
 
 par( op )
 
 ```  
 
+<br>
+
+Again, think about our questions: How do these two plots differ in how well they convey the **same** information? Which one is better? Why is it better?
+
+<br>
+
+### Adding attributes
+
 If we add information about gender, we can see a bit more that is revealed by the spring algorithm.
 
 To do so, we use the `vertex.col=` argument with the vertex attribute *gender*. To do so, we need to access the vertex attribute. We can do this with:  
 
-* the `get.vertex.attribute()` function in the `sna` package. Use `library( sna )` and specify the attribute we want, like `get.vertex.attribute( Moreno,  "gender" )`. *What does this command return?*  
+  + the `get.vertex.attribute()` function in the `sna` package. Use `library( sna )` and specify the attribute we want, like `get.vertex.attribute( Moreno,  "gender" )`
   
-* or use the shorthand for this with `network object %v% atttribute`, like `Moreno %v% "gender"`.
-
+  + or use the shorthand for this with `network object %v% atttribute`, like `Moreno %v% "gender"`
 
 ```{r}
 
@@ -159,20 +225,25 @@ par( op )
 
 ```  
 
-##### *What is the primary story that the plot tells? Does a particular layout help us see that better?*
+<br>
 
+What is the primary story that the plot tells? Does a particular layout help us see that better?
 
-***
+<br>
 
-### **Working with the `gplot()` function**  
+Ok, that was a lot. Let's work our way back through the mechanics of building a plot to better get a sense of what we are doing.
+
+<br>
+
+# **Working with the `gplot()` function**  
 Let's take a look at some of the visualization capabilities of `gplot()`. Let's start by looking at the function's help page: `?gplot`.
 
-To see the various functionality of the function, let's work with the example of an undirected network from [lab 02](https://jacobtnyoung.github.io/SAND/labs/lab-02-nets-intro.html). 
+To see the various functionality of the function, let's work with the example of an undirected network from [Lab 3 - Introduction to Networks in R](https://jacobtnyoung.github.io/SAND/labs/lab-03-network-data.html). 
 
 
 ```{r}
 
-# define the path
+# define the path where the data are
 url <- "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-undirected-example.csv"
 
 # define the object
@@ -198,7 +269,7 @@ summary( net.u )
 net.u <- as.network( 
   as.matrix( 
     read.csv( 
-      "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/data-undirected-example.csv", 
+      "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-undirected-example.csv", 
       as.is = TRUE, 
       header = TRUE, 
       row.names = 1 
@@ -211,6 +282,8 @@ summary( net.u )
 
 ```
 
+<br>
+
 Now that we have the object built, we can plot it.
 
 ```{r}
@@ -219,11 +292,13 @@ gplot( net.u )
 
 ```
 
-***Note***: that this shows arrows. That is because `gplot()` assumes a directed network. We can see this in the help menu, `?gplot`, where is shows that for the type of network, the `gmode=` argument defaults to a directed graph. To fix this we can either:  
+Hold on, this plot shows arrows. But this network is undirected. What gives?  
 
-* manually turn off the display of arrows using the `usearrows=` argument, `gplot( net.u, usearrows = FALSE )`.  
+That is because `gplot()` assumes a directed network. We can see this in the help menu, `?gplot`, where is shows that for the type of network, the `gmode=` argument defaults to a directed graph. To fix this we can either:  
 
-* or indicate that the object to be plotted is a undirected graph or graph, `gplot( net.u, gmode = "graph" )`.  
+  + manually turn off the display of arrows using the `usearrows=` argument, `gplot( net.u, usearrows = FALSE )`  
+
+  + or indicate that the object to be plotted is a undirected graph or graph, `gplot( net.u, gmode = "graph" )`  
 
 
 The `gplot()` function has a number of arguments that can be used to work try and better display the information contained in the network.
@@ -244,12 +319,15 @@ Alternatively, we could add in a string of names for the label:
 
   +  `gplot( net.u, gmode = "graph",  label = c( "Jen", "Tom", "Bob", "Leaf", "Jim" ) )`
   
+<br>
+
 Or we could read them in as an object:  
 
   +  `names <- c( "Jen", "Tom", "Bob", "Leaf", "Jim" )` 
   
   +  add to the plot using `gplot( net.u, gmode = "graph", label = names )`  
 
+<br>
 
 A great feature of R is that we can tune the graphing parameters. Here are several examples: 
 
@@ -273,9 +351,9 @@ A great feature of R is that we can tune the graphing parameters. Here are sever
 
 There is a LOT of functionality to the `gplot()` function. See the arguements in the help file: `?gplot`. I would encourage you to take some time to look through it and play around with the various features.  
 
-***
+<br>
 
-### **Adjusting Plot Layout**  
+## **Adjusting Plot Layout**  
 When a layout is generated, the results can be saved for later reuse using the `coord=` argument.
 
 ```{r}
@@ -294,7 +372,7 @@ coords <- gplot(
 # Show the vertex coordinates.
 coords
 
-# Saved (or a priori) layouts can be used via the coord= argument:
+# Saved layouts can be used via the coord= argument:
 gplot(
   net.u, 
   gmode = "graph",
@@ -304,7 +382,9 @@ gplot(
 
 ```  
 
-*Why do this?* The placement of the nodes shift when we call the `gplot()` function just due to the operation of the algorithm. This is useful if we want to show different aspects of the plot. Note that we can have different layouts of the nodes. If we like a particular one, we can save the coordinates. 
+<br>
+
+Cool but, *why do this?* The placement of the nodes shift when we call the `gplot()` function just due to the operation of the algorithm. Controlling where nodes are plotted in the 2-dimensional space is useful if we want to show different aspects of the plot. Note that we can have different layouts of the nodes. If we like a particular one, we can save the coordinates. 
 
 *But*, suppose the default settings are insufficient and we want to make a few small changes. The `interactive=` argument allows for tweaking.
 
@@ -319,6 +399,14 @@ coords <- gplot(
   interactive=TRUE 
   )
 
+```
+
+<br>
+
+When this renders on your system, move a few of the nodes around. Then, after you close the window it will save the coordinates.
+
+```{r, eval=FALSE}
+
 # Then, use these in the plot.
 gplot( 
   net.u, 
@@ -329,36 +417,107 @@ gplot(
 
 ```
 
-There is also the option to do three-dimensional visualization with `gplot3d()`, which requires the rgl package. Let's take a look at this by first installing the `rgl` package using `install.packages( "rgl" )` and then loading the library with `library( rgl )`. Then, we can look at the `gplot3d()` function using help: `?gplot3d`. *Note* that the `rgl` packages requires the program XQuartz if you are using a Mac. It can be downloaded from: https://www.xquartz.org/.
+<br>
 
-```{r, echo=FALSE, eval=FALSE}
+# **A Layering Approach**
 
-library( rgl )
+As we have seen, we can start with a basic plot and add information. Creating graphics in this way is referred to as *layering* because we are stacking additional layers of elements on top of each other.  
 
-?gplot3d
+Take a look at this series of plots: 
+
+
+```{r, fig.height=3, fig.align="center", eval=TRUE, echo=FALSE }
+
+# define the adjacency matrix
+PI.mat <- as.matrix(
+  read.csv( 
+    "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-PINS-power-w1-adj.csv",
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1
+    )
+  )
+
+# create an object of class network
+PI.net <- network( PI.mat, directed = TRUE )
+
+# define the attributes object
+PI.attrs <- read.csv( 
+    "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-PINS-w1-age-race-attributes.csv",
+    as.is = TRUE,
+    header = TRUE 
+    )
+
+# assign the attributes to the network
+PI.net %v% "Age" <- PI.attrs[,1]
+PI.net %v% "Race" <- PI.attrs[,2]
+
+# define the rescale function
+rescale <- function( nchar, low, high ){
+  min_d <- min( nchar )
+  max_d <- max( nchar )
+  rscl  <- ( ( high - low )*( nchar - min_d ) ) / ( max_d - min_d ) + low
+  rscl
+}
+
+# tweak the margins to cut some whitespace
+par( mfrow = c( 1,3 ),
+     mar = c( 0.1,0.1,0.1,0.1 ) 
+     )
+
+# now execute the plots
+set.seed( 605 )
+gplot( PI.net, 
+       displayisolates = FALSE,
+       arrowhead.cex=0.5,
+       vertex.cex = rescale( PI.net %v% "Age", 0.5, 1.5 ),
+       #vertex.col = PI.net %v% "Race" + 2,
+       #edge.col = "#888483"
+       )
+
+set.seed( 605 )
+gplot( PI.net, 
+       displayisolates = FALSE,
+       arrowhead.cex=0.5,
+       vertex.cex = rescale( PI.net %v% "Age", 0.5, 1.5 ),
+       vertex.col = PI.net %v% "Race" + 2,
+       #edge.col = "#888483"
+       )
+
+set.seed( 605 )
+gplot( PI.net, 
+       displayisolates = FALSE,
+       arrowhead.cex=0.5,
+       vertex.cex = rescale( PI.net %v% "Age", 0.5, 1.5 ),
+       vertex.col = PI.net %v% "Race" + 2,
+       edge.col = "#888483"
+       )
 
 ```  
 
-```{r, eval=FALSE}
+The plot uses several layers of information:  
 
-gplot3d(
-  net.u, 
-  label = network.vertex.names( net.u )
-  )
+  + the size of the nodes (`vertex.cex`)
+  + the color of the nodes (`vertex.col`)
+  + the color of the edges (`edge.col`)
 
-```
+<br>
 
-***
+As we create a plot, we want to think about what information we should convey and how best to convey that information (i.e. colors?, shapes?, size?, all of the above?)
 
-### **PINS Example**  
-Now let's take a look at the PINS data to continue working with the `gplot()` function. We will use the power/influence network.
+<br>
 
+## **Plotting the Power/Influence Network from the Prison Inmate Networks Study (PINS)**  
+
+The [*Prison Inmate Networks Study (PINS)*](https://cjrc.la.psu.edu/research/) examines the social networks of prison inmates in a state correctional institution. The study was unique in that it was the first in nearly a century to collect sociometric data in a prison. The researchers collected data on several types of networks. 
+
+Let's plot the *power and influence network*, which was created by asking individuals whom they believed was "powerful and influential" on the unit. We will continue working with the `gplot()` function.
 
 We are going to do this in a few steps:
 
-  + First, load the adjacency matrix `data-PINS-power-w1-adj.csv` and create an object of class `network`.
+  + First, load the adjacency matrix, `data-PINS-power-w1-adj.csv`, and create an object of class `network`.
   
-  + Second, load the file with Age and Race `data-PINS-age-race-w1-attr.csv` and assign each attribute to the network object.
+  + Second, load the file with Age and Race attributes, `data-PINS-w1-age-race-attributes.csv`, and assign each attribute to the network object.
   
 
 ```{r}
@@ -379,7 +538,7 @@ PI.net <- network( PI.mat, directed = TRUE )
 
 # define the attributes object
 PI.attrs <- read.csv( 
-    "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-PINS-age-race-w1-attr.csv",
+    "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-PINS-w1-age-race-attributes.csv",
     as.is = TRUE,
     header = TRUE 
     )
@@ -390,13 +549,27 @@ PI.net %v% "Race" <- PI.attrs[,2]
 
 ```  
 
+<br>
+
 Note that we used a shorthand notation: `%v%`. This is an assignment operation that tells R to assign something to the network. Specifically, `%v%` indicates the assignment to a vertex, hence the *v*.  
 
 The operate *also* let's us pull a specific attribute. We can look at the various vertex data by using the shorthand `network %v% "attribute"`. For example:  
 
-* `PI.net %v% "Age"` shows the age variable.
+  + `PI.net %v% "Age"` shows the age variable.
 
-* `PI.net %v% "Race"` shows the race variable.
+  + `PI.net %v% "Race"` shows the race variable.
+
+```{r}
+
+# look at the values for age
+PI.net %v% "Age" <- PI.attrs[,1]
+
+# look at the values for race
+PI.net %v% "Race" <- PI.attrs[,2]
+
+```  
+
+<br>
 
 Note that we can also reference edges (i.e. `%e%`) if a network has an assigned edge. For example, we could pull the information network and assign that to the power influence network:
 
@@ -417,11 +590,11 @@ PI.net %e% "info" <- INFO.mat
 
 ```  
 
-Think about what we did on the last line. For the power influence edges, we assigned `INFO.mat` as an attribute. This represents whether a power/influence tie was **also** an informatin network tie.
+<br>
 
-Now, we can use that information in our plot.
-  
-For example: 
+Think about what we did on the last line. For the power influence edges, we assigned `INFO.mat` as an attribute. This represents whether a power/influence tie was ***also*** an information network tie.
+
+Now, we can use that information in our plot. For example: 
 
 ```{r}
 
@@ -430,6 +603,8 @@ gplot( PI.net,
        vertex.cex = PI.net %v% "Age" )
 
 ```
+
+<br>
 
 YIKES!!! What is wrong?
 
@@ -446,19 +621,42 @@ rescale <- function( nchar, low, high ){
 
 ```
 
-Now, use the function we created to rescale the vertex attribute
+<br>
+
+Now, use the function we created to rescale the vertex attribute:
 
 ```{r}
 
+# now execute the plot
 gplot( PI.net, 
        arrowhead.cex=0.5,
        vertex.cex = rescale( PI.net %v% "Age", 0.5, 1.5 ) )
 
 ```
 
+<br>
+
+Note that the plot above has a lot of "whitespace" due to the margins. We can adjust this using the `par()` function.
+
+```{r}
+
+# tweak the margins to cut some whitespace
+par( mar = c( 0.1,0.1,0.1,0.1 ) )
+
+# now execute the plot
+gplot( PI.net, 
+       arrowhead.cex=0.5,
+       vertex.cex = rescale( PI.net %v% "Age", 0.5, 1.5 ) )
+
+```
+
+<br>
+
 That looks better. Let's drop the isolates to help with the visualization. 
 
 ```{r}
+
+par( mar = c( 0.1,0.1,0.1,0.1 ) )
 
 gplot( PI.net,
        displayisolates = FALSE,
@@ -467,9 +665,13 @@ gplot( PI.net,
 
 ```
 
+<br>
+
 How about we color the edges based on whether there was a information network tie.
 
 ```{r}
+
+par( mar = c( 0.1,0.1,0.1,0.1 ) )
 
 gplot( PI.net,
        edge.col = PI.net %e% "info" + 1,
@@ -479,27 +681,71 @@ gplot( PI.net,
 
 ```
 
+<br>
+
 As we build layers, we can get a fairly useful graphic that tells us a lot of information:
 
 ```{r}
 
+par( mar = c( 5,0.1,3,0.1 ) )
+
 gplot( PI.net,
        main="PINS Power/Influence Network", # add a title
        vertex.col = PI.net %e% "Race", # color the nodes by the Race variable
-       edge.col = PI.net %e% "info" + 1, # color the edges by the information network attribute
+       edge.col = PI.net %e% "info" + 2, # color the edges by the information network attribute
        displayisolates = FALSE, # don't display the isolated cases
        arrowhead.cex=0.5, # augment the size of the arrowheads
        vertex.cex = rescale( PI.net %v% "Age", 0.5, 1.5 ), # size the nodes by the Age variable
-       # add a subtitle
-       sub="Nodes colored by Race, \n edges colored by Info net \n nodes sized by Age"
+       sub="Nodes colored by Race, \n edges colored by Info net \n nodes sized by Age" # add a subtitle
        )
 
 ```
 
-***
+<br>
 
-#### ***Questions?***
+## **Alternative Packages**
 
+`gplot()` is not the only option for network visualization. In fact, there are MANY functions written for plotting networks. An alternative to `gplot()` is [`ggraph()`](https://ggraph.data-imaginist.com/). `ggraph()` is an extension of the `ggplot2()` package which is designed for layout-based development of visualizations. That is, rather than editing arguments within a function, the `ggplot2()` grammar adds layers to a plot by calling those different layers. 
+
+```{r, echo=FALSE, eval=TRUE}
+
+library( ggraph )
+library( tidygraph )
+
+graph <- as_tbl_graph(highschool) |> 
+    mutate(Popularity = centrality_degree(mode = 'in'))
+
+ggraph(graph, layout = 'kk') + 
+    geom_edge_fan(aes(alpha = after_stat(index)), show.legend = FALSE) + 
+    geom_node_point(aes(size = Popularity)) + 
+    facet_edges(~year) + 
+    theme_graph(foreground = 'steelblue', fg_text_colour = 'white')
+
+```
+
+The main piece of code that creates the plot is:
+
+```r
+
+ggraph(graph, layout = 'kk') + 
+    geom_edge_fan(aes(alpha = after_stat(index)), show.legend = FALSE) + 
+    geom_node_point(aes(size = Popularity)) + 
+    facet_edges(~year) + 
+    theme_graph(foreground = 'steelblue', fg_text_colour = 'white')
+
+```
+
+As you can see, there are calls to different layers that build the visualization. I would encourage you, if you have the time, to tinker with `ggraph()` as well. We will stick to `gplot()` for this course due to the class of objects we will be using. `ggraph()` requires objects from a different network package, `igraph()`, so we will avoid going down the road of switching between packages.
+
+----
+
+# **Wrapping up...**
+
+There is nothing like an beautiful network visualization that conveys lots of information and is aesthetically pleasing. Now you know how to get there! As you have seen, there is a ton of flexibility. I would encourage you to spend some time tinkering with the various arguments for the `gplot()` function to get a feel for what it can do.
+
+<br>
+
+### ***Questions?***
 
 <br>
 
@@ -507,6 +753,3 @@ gplot( PI.net,
 
 <br>
 <br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
