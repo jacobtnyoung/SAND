@@ -47,7 +47,7 @@ knitr::include_graphics( "../assets/images/lazer-etal-blogs.pgn" )
 
 <br>
 
-In this tutorial, you will be introduced to the basics of visualizing networks using the `gplot()` function in the `sna` package. We will also look at some approaches to building plots to help guide you in honing your SNA toolkit.
+In this lab, you will be introduced to the basics of visualizing networks using the `gplot()` function in the `sna` package. We will also look at some approaches to building plots to help guide you in honing your SNA toolkit.
 
 *Why are you learning this?* I want you to be able to render really cool networks, obviously. But, I also want you to learn how to embrace this visualization tool to convey information to audiences that might not be able to digest a table or some other data description medium. Let's get to work yall!
 
