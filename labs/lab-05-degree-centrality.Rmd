@@ -1,5 +1,5 @@
 ---
-title: "Lab 04-Degree Centrality and Centralization"
+title: "Lab 5 - Degree Centrality and Centralization in R"
 date: "CRJ 605 Statistical Analysis of Networks"
 output: 
   html_document:
@@ -12,30 +12,45 @@ output:
     self_contained: true
 ---
 
-```{r,echo=FALSE,eval=TRUE,message=FALSE}
+<style>
+body {
+text-align: left}
+</style>
 
-library( sna )
-library( devtools )
-library( UserNetR )
-library( network )
+```{r, echo=FALSE}
+
+# set the defaults for the codechunks
+knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
 
 ```
 
+
+```{r,echo=FALSE}
+
+library( sna )     # for sna functions
+library( network ) # for workign with network objects
+
+```
+
+----
+
 <br>
 
-*This lab examines degree centrality and centralization using the `degree()` and `centralization()` functions in the `sna` package.*
+How do we know whether a node is important in a network? As was discussed in the lecture on [Degree Centrality](), one of the most popular concepts in network analysis is *centrality*. That is, important nodes are those who are central. Also, we can compare networks by examining how they differ (or are similar) based on the distribution of centrality scores. In this lab, we will examine how to calculate degree centrality and centralization scores in R using the `degree()` and `centralization()` functions in the `sna` package.
+
+**Why are you learning this?** Centrality scores are a common metric used in many network analysis projects. Being able to calculate these scores is an important tool for your skill set as a social network analyst!
 
 <br>
 
-***
+----
 
-### **Degree Centrality (Undirected Binary Graphs)**  
+# **Degree Centrality (Undirected Binary Graphs)**  
 
 In an undirected binary graph, *actor degree centrality* measures the extent to which a node connects to all other nodes in a network. In other words, the number of edges incident with a node. This is symbolized as: $d(n_i)$. For an undirected binary graph, the degree $d(n_i)$ is the row or column sum. If we have an object of `class(matrix)` in the workspace, we can use the `colSums()` and/or `rowSums()` functions to return this information.  
 
 First, let's set up our graph from the degree centrality lecture:  
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 # First, clear the workspace
 rm( list = ls() )
@@ -77,7 +92,7 @@ gplot(
 
 Since the graph is undirected, we can print the degree centrality for each node as a vector using the `colSums()` or `rowSums()` functions:  
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 colSums( u.mat )
 rowSums( u.mat )
@@ -85,9 +100,14 @@ rowSums( u.mat )
 # We could also assign these to an object
 deg.u.mat <- colSums( u.mat )
 
-# Then, use that information in the plot
-# Use the vertex.cex= argument to pass the degree
-# This will make nodes with higher degree larger
+```
+
+<br>
+
+Then, we can use that information in the plot by passing the degree object to the `vertex.cex=` argument. This will make nodes with higher degree larger.
+
+```{r}
+
 gplot(
   u.mat,
   gmode="graph", 
@@ -96,11 +116,19 @@ gplot(
   label=rownames( u.mat ),
   label.col="blue",
   label.cex=1.2,
-  vertex.cex = deg.u.mat,
+  vertex.cex = deg.u.mat, #HERE: we added the object to size the plot
   coord = coords
   )
 
-# Or, we could use the RColorBrewer package to shade the nodes
+```
+
+<br>
+
+Another approach is to shade the nodes. Rather than just the size, we might want to have nodes with larger degree to be darker (or lighter) to better visualize differences in degree. To do this, we could use the `RColorBrewer` package to shade the nodes.
+
+<br>
+
+```{r}
 
 # install.packages( "RColorBrewer" )
 library( RColorBrewer, quietly=TRUE )
@@ -126,12 +154,13 @@ gplot(
 
 ```  
 
-#### **Standardized degree centrality, mean degree, and centralization**  
+## **Standardized degree centrality, mean degree, and centralization**  
+
 Actor degree centrality not only reflects each node’s connectivity to other nodes but also depends on the size of the network, *g*. As a result, larger networks will have a higher maximum possible degree centrality values. This makes comparison across networks problematic. The solution is to take into account the number of nodes and the maximum possible nodes to which *i* could be connected, *g-1*.  
 
 Let's calculate the standardized centrality scores for our undirected graph:  
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 # unstandardized or raw centrality
 deg.u.mat <- colSums( u.mat )
@@ -153,11 +182,11 @@ We can also examine the *average* degree of the graph using
 $$\frac{\sum_{i=1}^g d(n_i)}{g}$$
 or 
 
-$$\frac{2L}{g}$$, 
+$$\frac{2L}{g}$$ 
 
 where *L* is the number of edges in the graph:
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 mean.deg <- sum( deg.u.mat ) / dim( u.mat )[1] 
 
@@ -176,7 +205,7 @@ $$C_D = \frac{\sum\limits_{i=1}^g [C_D(n^*) - C_D(n_i)]}{[(g-1)(g-2)]}$$
 
 for undirected graphs where $C_D(n^*)$ is the maximum degree in the graph. We can write out the components of the equation using the `max()` function:
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 # In separate pieces
 deviations <- max( deg.u.mat ) - deg.u.mat
@@ -195,9 +224,9 @@ group.deg.cent
  
 ```  
 
-***
+<br>
 
-### **Degree Centrality (Directed Binary Graphs)**  
+# **Degree Centrality (Directed Binary Graphs)**  
 
 In a directed binary graph, actor degree centrality can be broken down into *indegree* and *outdegree* centrality. Indegree, $C_I(n_i)$, measures the number of ties that *i* receives. For the sociomatrix $Xij$, the indegree for *i* is the **column** sum. Outdegree, $C_O(n_i)$, measures the number of ties that *i* sends. For the sociomatrix $Xij$, the outdegree for *i* is the **row** sum.   
 
@@ -205,7 +234,7 @@ As before, if we have an object of `class(matrix)` in the workspace, we can use 
 
 First, let's set up our directed graph from the degree centrality lecture:  
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+```{r}
 
 # First, clear the workspace
 rm( list = ls() )
@@ -244,20 +273,28 @@ gplot(
 
 ```
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE, fig.align="center"}
+```{r}
 
 # Let's look at the different centrality scores 
 # by assigning them to different objects
 ideg.d.mat <- colSums( d.mat )
 odeg.d.mat <- rowSums( d.mat )
 
-# Then, use that information in the plot
-# partition the plotting window using 
-# the par() function to show two plots
-# change the margins using the mar= argument
+# print them out to examine them
+ideg.d.mat
+odeg.d.mat
+
+```
+
+<br>
+
+Now, let's work this  information in the plot. We will want to partition the plotting window using the `par()` function to show two plots and we want to change the margins using the `mar=` argument. Use `?par` and/or `?mar` to view the help on how these work.
+
+```{r, fig.align="center"}
+
 par( 
   mfrow=c( 1, 2 ), 
-  mar=c( 0.1, 0.5, 1, 0.1) 
+  mar=c( 0.1, 0.5, 4, 0.1) 
   )
 
 gplot(
@@ -288,25 +325,27 @@ gplot(
   coord = coords
   )
 
-# return plot partition to 1 pane
-par( mfrow=c( 1,1 ) )
-
 ```
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,warning=FALSE}
+<br>
 
-# Or, we could use the RColorBrewer package to shade the nodes
-library( RColorBrewer, quietly=TRUE )
+Note the difference. Which nodes are more central in terms of *indegree*? What about *outdegree*?
 
+<br>
+
+Again, let's use the `RColorBrewer` package to help with shading.
+
+<br>
+
+```{r, fig.align="center"}
 
 # create the objects
 col.ideg  <- brewer.pal( length( unique( ideg.d.mat ) ), "Greens")[ideg.d.mat]
 col.odeg  <- brewer.pal( length( unique( odeg.d.mat ) ), "Oranges")[odeg.d.mat]
 
-
 par( 
   mfrow=c( 1, 2 ), 
-  mar=c( 0.1, 0.5, 1, 0.1) 
+  mar=c( 0.1, 0.5, 4, 0.1) 
   )
 
 gplot(
@@ -320,7 +359,7 @@ gplot(
   label.pos = 1,
   vertex.cex = ideg.d.mat+0.2,
   vertex.col = col.ideg,
-  main = "Nodes sized & shaded by Indegree",
+  main = "Nodes sized &\n shaded by Indegree",
   coord = coords
   )
 
@@ -335,22 +374,19 @@ gplot(
   label.pos = 1,
   vertex.cex = odeg.d.mat,
   vertex.col = col.odeg,
-  main = "Nodes sized & shaded by Outdegree",
+  main = "Nodes sized &\n shaded by Outdegree",
   coord = coords
   )
-
-# return plot partition to 1 pane
-par( mfrow=c( 1,1 ) )
 
 ```
 
 <br>
 
-#### **Standardized degree centrality, mean degree, and centralization**  
+## **Standardized degree centrality, mean degree, and centralization**  
 
 Let's calculate the standardized centrality scores for our directed graph:  
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 # unstandardized or raw centrality
 ideg.d.mat <- colSums( d.mat )
@@ -363,18 +399,27 @@ g <- dim( d.mat )[1]
 # now, divide by g-1
 s.i.deg.u.mat <- ideg.d.mat / ( g-1 )
 s.o.deg.u.mat <- odeg.d.mat / ( g-1 )
+
 ```
+
+<br>
 
 We can also examine the *average* degree of the graph using $\frac{\sum_{i=1}^g C_I(n_i)}{g} = \frac{\sum_{i=1}^g C_O(n_i)}{g}$ or $\frac{L}{g}$, where *L* is the number of edges in the graph:
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 mean.i.deg <- sum( ideg.d.mat ) / dim( d.mat )[1] 
 mean.o.deg <- sum( odeg.d.mat ) / dim( d.mat )[1] 
 mean.i.deg
 mean.o.deg
 
+# we could also use the mean() function
+mean( ideg.d.mat )
+mean( odeg.d.mat )
+
 ```  
+
+<br>
 
 Again, following Wasserman & Faust (1994), an index of *group indegree/outdegree centralization* can be calculated as:  
 
@@ -382,7 +427,7 @@ Again, following Wasserman & Faust (1994), an index of *group indegree/outdegree
 
 for undirected graphs where $C_D(n^*)$ is the maximum indegree/outdegree in the graph. We can write out the components of the equation using the `max()` function:
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
 
 # In separate pieces
 deviations <- max( ideg.d.mat ) - ideg.d.mat
@@ -405,17 +450,20 @@ group.ideg.cent <-( sum( ( ( max( ideg.d.mat ) - ideg.d.mat ) ) ) ) / ( ( g -1 )
 group.odeg.cent <-( sum( ( ( max( odeg.d.mat ) - odeg.d.mat ) ) ) ) / ( ( g -1 )*( g - 1 ) )
 group.ideg.cent
 group.odeg.cent
+
 ```
 
+What do the centralization scores tell us, conceptually?
 
-***  
+<br>
 
-### **Degree Centrality using the `sna` package**  
+# **Degree Centrality using the `sna` package**  
+
 Did that feel tedious? If no, go back and do it again :)  
 
-As you probably have guessed, there *are* functions in the `sna` package that calcuates degree centrality and graph centralization! These are the `degree()` and `centralization()` functions, respectively. Let's take a look at how these work.
+As you probably have guessed, there *are* functions in the `sna` package that calculate degree centrality and graph centralization! In the `sna` package, these are the `degree()` and `centralization()` functions, respectively. Let's take a look at how these work.
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE}
+```{r}
  
 # load the library
 library( sna )
@@ -484,10 +532,248 @@ o.cent.d <- centralization( d.mat, degree, mode="digraph", cmode="outdegree" )
 
 <br>
 
-***  
+# **Degree Centrality in PINS *Get Along With* and *Power/Influence* Networks**  
 
-#### ***Questions?***
+The [*Prison Inmate Networks Study (PINS)*](https://cjrc.la.psu.edu/research/) examines the social networks of prison inmates in a state correctional institution. The study was unique in that it was the first in nearly a century to collection sociometric data in a prison. The researchers collected data on several types of networks. There are two we want to look at here:
 
+  * The *get along with network* was created by asking individuals whom they "get along with" on the unit. We can think of this as "friends" in a prison setting. (People don't really have "friends" in prison, but there are people they "get along with")
+  
+  * The *power and influence network* was created by asking individuals whom they believed was "powerful and influential" on the unit.
+
+Let's examine the degree centrality scores for both of these networks. These data are available in the [SNA Textbook](https://jacobtnyoung.github.io/sna-textbook/index.html) [data]() folder.
+
+<br>
+
+## *Get Along With* Network (Undirected Network)
+
+For the *get along with* network, individuals could have asymmetric nominations. That is, *i* could nominate *j* and *j* didn't necessarily nominate *i*. But, we are going to **symmetrize** the network by only taking ties for which ***both*** *i* and *j* indicated that the get along with the other person. This will give us an undirected network.
+ 
+```{r}
+
+# set the location for the file
+loc <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-PINS-getalong-w1-adj.csv"
+
+# read in the .csv file
+gaMat <- as.matrix(
+  read.csv( 
+    loc,
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1 
+    )
+  )
+
+# use the symmetrize() function to create an undirected matrix
+gaMatU <- symmetrize( gaMat, rule = "strong" )
+
+# create the network object
+gaNetU <- as.network( gaMatU, directed = FALSE )
+
+```
+
+<br>
+
+Now we have created an undirected network where ties represent "get along with" nominations from both individuals. Let's calculate the degree centrality scores, the centralization score, and then use the degree centrality scores to size our nodes in a plot using the `vertex.cex()` argument in the `gplot()` function.
+
+<br>
+
+```{r, fig.show="hide"}
+
+# Set the coordinates
+set.seed( 605 )
+coords <- gplot( gaNetU )
+
+```
+
+Now lets build the objects and the plot:
+
+```{r}
+
+# get the degrees.
+gaNetDeg <- degree( gaNetU, gmode="graph" )
+
+# now the centralization score.
+gaNetDegCent <- centralization( gaNetU, degree, mode="graph" )
+
+# Now, take a look at the plot.
+gplot( 
+  gaNetU, 
+  gmode = "graph",
+  edge.col="grey40", 
+  vertex.col="#3250a8",
+  vertex.cex = gaNetDeg,
+  coord = coords,
+  main = "PINS Get\n Along With Network (Undirected)",
+  sub = "node sized by degree centrality"
+  )
+
+```
+
+Woops! Let's try that again AFTER rescaling the degree. We can use the `rescale()` function to do this.
+
+```{r}
+
+# define the rescale function
+rescale <- function( nchar, low, high ){
+  min_d <- min( nchar )
+  max_d <- max( nchar )
+  rscl  <- ( ( high - low )*( nchar - min_d ) ) / ( max_d - min_d ) + low
+  rscl
+}
+
+```
+
+Now we can plot it after adding in the `rescale()` function to `gplot()`:
+
+```{r, fig.align="center"}
+
+# Now, take a look at the plot.
+gplot( 
+  gaNetU, 
+  gmode = "graph",
+  edge.col="grey40", 
+  vertex.col="#3250a8",
+  vertex.cex = rescale( gaNetDeg, 0.2, 4 ),
+  coord = coords,
+  main = "PINS Get\n Along With Network (Undirected)",
+  sub = "node sized by degree centrality"
+  )
+
+```
+
+<br>
+
+Almost there! Let's drop the isolates to help with the size:
+
+```{r, fig.align="center"}
+
+# Now, take a look at the plot.
+gplot( 
+  gaNetU, 
+  gmode = "graph",
+  edge.col="grey40", 
+  vertex.col="#3250a8",
+  vertex.cex = rescale( gaNetDeg, 0.2, 4 ),
+  displayisolates = FALSE,
+  coord = coords,
+  main = "PINS Get\n Along With Network (Undirected)",
+  sub = "node sized by degree centrality"
+  )
+
+```
+
+<br>
+
+A few questions:  
+
+  + What do we see in the plot?  
+  + What does the degree centralization score of `r round( centralization( gaNetU, degree, mode="graph" ), 2 )` indicate?  
+
+<br>
+
+## Power and Influence Network (Directed Network)
+
+For the *power and influence* network, individuals could have asymmetric nominations. That is, *i* could nominate *j* and *j* didn't necessarily nominate *i*. We will keep this asymmetry so that we can treat the network as directed.
+
+```{r,echo=TRUE, eval=TRUE, message=FALSE}
+
+# set the location for the file
+loc <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-PINS-power-w1-adj.csv"
+
+# read in the .csv file
+piMat <- as.matrix(
+  read.csv( 
+    loc,
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1 
+    )
+  )
+
+# create the network object
+piNetD <- as.network( piMat, directed = TRUE )
+
+```
+
+<br>
+
+Now we have created an undirected network where ties represent "get along with" nominations from both individuals. Let's calculate the degree centrality scores, the centralization score, and then use the degree centrality scores to size our nodes in a plot using the `vertex.cex()` argument in the `gplot()` function.
+
+<br>
+
+
+```{r, fig.show="hide"}
+
+# Set the coordinates
+set.seed( 605 )
+coords2 <- gplot( piNetD )
+
+```
+
+<br>
+
+```{r}
+
+# get the degrees.
+piNetiDeg <- degree( piNetD, gmode="digraph", cmode = "indegree" )
+piNetoDeg <- degree( piNetD, gmode="digraph", cmode = "outdegree" )
+
+# now the centralization scores.
+piNetiDegCent <- centralization( piNetD, degree, mode="digraph", cmode = "indegree" )
+piNetoDegCent <- centralization( piNetD, degree, mode="digraph", cmode = "outdegree" )
+
+```
+
+```{r, fig.align="center"}
+
+par( mfrow=c( 1, 2 ) )
+
+gplot( 
+  piNetD, 
+  gmode = "digraph",
+  edge.col="grey40", 
+  vertex.col="#693859",
+  vertex.cex = rescale( piNetiDeg, 0.2, 4 ),
+  displayisolates = FALSE,
+  coord = coords2,
+  main = "PINS Power/Influnece\n Network (Directed)",
+  sub = "node sized by indegree centrality"
+  )
+
+gplot( 
+  piNetD, 
+  gmode = "digraph",
+  edge.col="grey40", 
+  vertex.col="#2b868c",
+  vertex.cex = rescale( piNetoDeg, 0.2, 4 ),
+  displayisolates = FALSE,
+  coord = coords2,
+  main = "PINS Power/Influnece\n Network (Directed)",
+  sub = "node sized by outdegree centrality"
+  )
+
+
+```
+
+<br>
+
+A few questions:  
+
+  + What do we see in the plot?  
+  + What does the indegree centralization score of `r round( centralization( piNetD, degree, mode="digraph", cmode = "indegree" ), 2 )` indicate?  
+  + What does the outdegree centralization score of `r round( centralization( piNetD, degree, mode="digraph", cmode = "outdegree" ), 2 )` indicate?
+
+<br>
+
+----
+
+# **Wrapping up...**
+
+Centrality scores are a common metric used in many network analysis projects. In this lab, we examined how to calculate *degree* centrality and centralization scores in R using the `degree()` and `centralization()` functions in the `sna` package.
+
+<br>
+
+### ***Questions?***
 
 <br>
 
@@ -495,6 +781,3 @@ o.cent.d <- centralization( d.mat, degree, mode="digraph", cmode="outdegree" )
 
 <br>
 <br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

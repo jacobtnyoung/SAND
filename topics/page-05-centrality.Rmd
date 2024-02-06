@@ -26,45 +26,34 @@ knitr::opts_chunk$set( echo = TRUE )
 
 ----
 
-<br>
-
-This lecture provides an introduction to centrality measures for individual nodes as well as centralization measures for graphs. In particular, the following centrality measures are described:  
-
-  + Degree  
-  
-  + Closeness  
-  
-  + Betweenness
-  
-The accompanying labs provide an overview of these measures using the [sna](https://cran.r-project.org/web/packages/sna/index.html) package in [R](http://cran.r-project.org/). In addition, a problem set (with solutions) is provided to work through the material covered.
+How do we know whether a node is important in a network? How can we compare the structure of different networks? These are key questions in network analysis and this week we will start to think about how we describe networks. One of the most popular concepts in network analysis is centrality. That is, important nodes are those who are central. Also, we can compare networks by examining how they differ (or are similar) based on the distribution of centrality scores. This section introduces the concept of centrality, focusing specifically on three different operatinalizatons: degree, closeness, and betweenness.
 
 <br>
 
-#### Lecture Materials  
+#### Lecture & Lab Materials  
+
+  + [Degree Centrality lecture](../lectures/lecture-04-degree-centrality.pdf)  
+  + [Closeness Centrality lecture]()  
+  + [Betweenness Centrality lecture]()  
 
 <br>
 
-  + **Degree Centrality**
-  
-    + [Degree Centrality lecture](../lectures/lecture-04-degree-centrality.pdf) 
-  
-    + [R script for Degree Centrality lecture](../lecture_syntax/lecture-syntax-04-degree-centrality.R)
-  
-    + [Lab 04-Degree Centrality and Centralization ](../labs/lab-04-degree-centrality.html)
-  
-    + Degree Centrality problem set [instructions]() and [solutions]()
-  
-  <br>
+  + [Degree Centrality and Centralization in R lab](../labs/lab-05-degree-centrality.html)  
+  + [Closeness Centrality and Centralization in R lab]()  
+  + [Betweenness Centrality and Centralization in R lab]()  
 
-  + **Closeness & Betweeness Centrality**
+<br>
+
+#### Homework Materials  
+
+  + [Homework 3 instructions](../hmwk/hmwk-03-instructions.html)  
+  + [Homework 3 template](../hmwk/templates/hmwk-03-template.zip?raw=true)  
   
-    + [Closeness & Betweenness Centrality lecture](../lectures/lecture-05-close-between-centrality.pdf)
-    
-    + [R script for Closeness & Betweenness Centrality lecture](../lecture_syntax/lecture-syntax-05-close-between-centrality.R)
-  
-    + [Lab 05-Closeness & Betweenness Centrality/Centralization](../labs/lab-05-close-between-centrality.html)  
-  
-    + Betweenness Centrality problem set [instructions]() and [solutions]() (Rmd)
+<br>
+
+____
+
+
 
 <br>
 
@@ -72,10 +61,15 @@ ____
 
 <br>
 
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
+
+<br>
+
+<br>
+
 #### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 <br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

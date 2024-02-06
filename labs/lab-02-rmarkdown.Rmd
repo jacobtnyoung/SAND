@@ -1,5 +1,5 @@
 ---
-title: "Lab 02 - Introduction to Data-Driven Documents and Github Issues"
+title: "Lab 2 - Introduction to Data-Driven Documents and Github Issues"
 date: "CRJ 605 Statistical Analysis of Network Data"
 output: 
   html_document:
