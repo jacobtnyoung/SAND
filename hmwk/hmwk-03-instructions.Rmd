@@ -44,12 +44,10 @@ For the `LondonGangNet` network, do the following:
 2. Calculate and report the standardized degree, closeness, and betweenness centrality scores for each actor.  
 3. Calculate and report the mean (unstandardized) degree, closeness, and betweenness centrality scores.
 4. Interpret each mean centrality score.
-5. Compare the differences for the three mean centrality scores.
-6. Calculate the graph centralization for degree, closeness, and betweenness centrality.  
-7. Interpret each graph centralization score.
-8. Compare the differences for the three graph centralization scores.
-9. Plot the network three times using the `gplot()` function where each plot sizes the nodes by the centrality score (i.e. a plot for degree centrality, a plot for closeness centrality, and a plot for betweenness centrality).
-10. Examine the plots. Describe how the differences you noted between the centrality measures above are seen in the plots.
+5. Calculate the graph centralization for degree, closeness, and betweenness centrality.  
+6. Interpret each graph centralization score.
+7. Plot the network three times using the `gplot()` function where each plot sizes the nodes by the centrality score (i.e. a plot for degree centrality, a plot for closeness centrality, and a plot for betweenness centrality).
+8. Examine the plots. Describe how the differences you noted between the centrality measures above are seen in the plots.
 
 <br>
 
@@ -61,16 +59,14 @@ For this part of the homework you will use data from [Mangia Natarajan's study](
 
 For the `CocaineDealingNet` network, do the following:  
 
-1. Calculate the indegree, outdegree, closeness, and betweenness centrality scores for each actor.  
-2. Calculate the standardized indegree, outdegree, closeness, and betweenness centrality scores for each actor.  
-3. Calculate the mean (unstandardized) indegree, outdegree, closeness, and betweenness centrality score.
+1. Calculate and report the indegree, outdegree, closeness, and betweenness centrality scores for each actor.  
+2. Calculate and report the standardized indegree, outdegree, closeness, and betweenness centrality scores for each actor.  
+3. Calculate and report the mean (unstandardized) indegree, outdegree, closeness, and betweenness centrality score.
 4. Interpret each mean centrality score.
-5. Compare the differences for the four mean centrality scores.
-6. Calculate the graph centralization for indegree, outdegree, closeness, and betweenness centrality.  
-7. Interpret each graph centralization score.
-8. Compare the differences for the four graph centralization scores.
-9. Plot the network four times using the `gplot()` function where each plot sizes the nodes by the centrality score (i.e. a plot for indegree centrality, a plot for outdegree centrality, a plot for closeness centrality, and a plot for betweenness centrality).
-10. Examine the plots. Describe how the differences you noted between the centrality measures above are seen in the plots.
+5. Calculate the graph centralization for indegree, outdegree, closeness, and betweenness centrality.  
+6. Interpret each graph centralization score.
+7. Plot the network four times using the `gplot()` function where each plot sizes the nodes by the centrality score (i.e. a plot for indegree centrality, a plot for outdegree centrality, a plot for closeness centrality, and a plot for betweenness centrality).
+8. Examine the plots. Describe how the differences you noted between the centrality measures above are seen in the plots.
 
 <br>
 
