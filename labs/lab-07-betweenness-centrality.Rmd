@@ -1,17 +1,16 @@
 ---
-title: "Tutorial 07 - Betweenness Centrality and Centralization in R"
-date: "CRJ 507 Social Network Analysis"
+title: "Lab 7 - Betweenness Centrality and Centralization in R"
+date: "CRJ 605 Statistical Analysis of Networks"
 output: 
   html_document:
     df_print: paged
-    theme: united
+    theme: lumen
     highlight: haddock
     toc: yes
     toc_float: yes
     code_fold: show
     self_contained: true
 ---
-
 
 <style>
 body {
@@ -25,30 +24,33 @@ knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
 
 ```
 
-<br>
 
-How do we know whether a node is important in a network? As we saw in [Chapter 5: Degree Centrality](https://jacobtnyoung.github.io/sna-textbook/ch-05-centrality-degree.html) of the textbook, *degree* centrality, or the count of edges incident on a node, is a frequently used operationalization. Also, in [Chapter 6: Closeness Centrality](https://jacobtnyoung.github.io/sna-textbook/ch-06-centrality-closeness.html) we reviewed an alternative conceptualization, *closeness*, where important nodes are those who are "close" to other nodes in the network. Finally, in [Chapter 7: Betweenness Centrality](https://jacobtnyoung.github.io/sna-textbook/ch-07-centrality-betweenness.html) we reviewed an alternative conceptualization, *betweenness*, where important nodes are those who are "between" other nodes such that nodes have to go "between" them to reach other nodes. In this tutorial, we will examine how to calculate betweenness centrality and centralization scores in R using the `betweenness()` and `centralization()` functions in the `sna` package.
+```{r,echo=FALSE}
 
-Why are you learning this? Centrality scores are a common metric used in many network analysis projects. Being able to calculate these scores is an important tool for your skill set as a social network analyst!
+# libraries needed
 
-A note on the tutorials. Each tutorial in this course will contain R code which is in the “code chunks” you see below. There is also regular text. The R code chunks can be copied and pasted directly into R. As you work through this tutorial, follow along in R by coping and pasting the R code and seeing it work on your end.
-
-<br>
-
-```{r, echo=FALSE, eval=TRUE, message=FALSE, warning=FALSE}
-
-# Load the libraries you need to render the .html file
-
-library( sna )
-library( network )
+library( sna )     # for sna functions
+library( network ) # for working with network objects
 
 ```
 
+----
+
 <br>
 
-### **Betweenness Centrality (Undirected Binary Graphs)**  
+How do we know whether a node is important in a network? As was discussed at the beginning of the lecture on [Degree Centrality](), one of the most popular concepts in network analysis is *centrality*. In that lecture, we covered how centrality can be measured by the number of edges incident on a node. Then, in the lecture on [Closeness Centrality](), we discussed an alternative conceptualization, *closeness*, where important nodes are those who are "close" to other nodes in the network. Finally, in the [Betweenness Centrality]() lecture we covered a final conceptualization, *betweenness*, where important nodes are those that occupy positions between other nodes.
 
-So far in the course, we have seen how centrality can be conceptualized as having a high number of ties (i.e. *degree* centrality) or being close to others in the network (i.e. *closeness* centrality). We can also conceptualize centrality as a node that lies on a particular path between other nodes. *Betweenness* centrality is based on the number of shortest paths between *j* and *k* that actor *i* resides on.  
+In this lab, we will examine how to calculate betweenness centrality and centralization scores in R using the `betweenness()` and `centralization()` functions in the `sna` package.
+
+**Why are you learning this?** Centrality scores are a common metric used in many network analysis projects. Being able to calculate these scores and compare them is an important tool for your skill set as a social network analyst!
+
+----
+
+<br>
+
+# **Betweenness Centrality (Undirected Binary Graphs)**  
+
+*Betweenness* centrality is based on the number of shortest paths between *j* and *k* that actor *i* resides on.  
 
 Betweenness centrality is calculated as: 
 
@@ -63,6 +65,8 @@ $$C'_B(n_i) = \frac{\sum\limits_{j<k} g_{jk}(n_i) / g_{jk}}{[(g-1)(g-2)/2]}$$
 The difference here is that we are dividing by $(g-1)(g-2)/2$ which is the number of pairs of actors not including *i*.  
 
 <br>
+
+## **Using the `sna` Package**  
 
 Let's go ahead and set up a simple matrix and see how we use can calculate betweenness centrality using the `betweenness()` function in the `sna` package:  
 
@@ -145,13 +149,11 @@ In this plot, we see that **Tom** and *Bob* both have scores of 3 and 4, respect
 
 <br>
 
-### **Centralization**
+## **Betweenness Centralization**    
 
-#### **Betweenness Centralization**    
+We can also summarize the entire network, in terms of betweenness. *Group betweenness centralization* tells us how much variation there is in the betweenness scores. As we saw in the lectures for [degree centrality]() and [closeness centrality](), this measure is bound between 0 and 1 where a value of 0 indicates complete uniformity across nodes in their centrality scores and a value of 1 indicates that one node has the highest possible centrality score, and all others are at the minimum.    
 
-We can also summarize the entire network, in terms of betweenness. *Group betweenness centralization* tells us how much variation there is in the betweenness scores. As with [degree centrality]() and [closeness centrality](), this measure is bound between 0 and 1 where a value of 0 indicates complete uniformity across nodes in their centrality scores and a value of 1 indicates that one node has the highest possible centrality score, and all others are at the minimum.    
-
-This is calculated as: 
+For betweenness centrality, this is calculated as: 
 
 $$C_B = \frac{\sum\limits_{i=1}^g[C'_B(n^*)-C'_B(n_i)]}{(g-1)}$$  
 
@@ -173,9 +175,15 @@ centralization( u.mat, betweenness, mode="graph" )
 
 <br>
 
-### **Betweenness Centrality for Directed Graphs**  
+# **Betweenness Centrality (Directed Binary Graphs)**  
 
-As with undirected graphs, we can calculate betweenness centrality scores for directed graphs. 
+As with undirected graphs, we can calculate betweenness centrality scores for directed graphs. In a directed binary graph, betweenness centrality has the same interpretation, but it takes into account the directional nature of the graph.
+
+For example, consider two scenarios:  
+  + Suppose Laura sends a tie to Miguel and he sends a tie to Bruce (i.e. Laura -> Miguel -> Bruce). Here, Miguel is between Laura and Bruce and has a betweeness score of 1.
+  + Now suppose Laura sends a tie to Miguel and Bruce sends a tie to Miguel (i.e. Laura -> Miguel <- Bruce). *Is Miguel between Laura and Bruce now?*
+
+Let's take a look at this using the network from the [Betweenness Centrality]() lecture.
 
 ```{r,echo=TRUE,eval=TRUE,message=FALSE}
 
@@ -207,7 +215,7 @@ g <- dim( d.mat )[1]
 betweenness( d.mat,gmode="digraph" )
 
 # standardized
-betweenness( d.mat, gmode="digraph" ) / (((g-1)*(g-2))/2)
+betweenness( d.mat, gmode="digraph" ) / ( ( ( g-1 ) * ( g-2 ) ) / 2 )
 
 ```
 
@@ -268,11 +276,11 @@ Bonus question: *Which one is larger? What does the difference in the values mea
 
 <br>
 
-### **Centrality in PINS Get Along With Network**  
+# **Betweenness Centrality in PINS Get Along With Network**  
 
-In [Tutorial 6 - Closeness Centrality and Centralization in R](), we worked through the [*Prison Inmate Networks Study (PINS)*](https://cjrc.la.psu.edu/research/) networks. Specifically, we worked with two:
+The [*Prison Inmate Networks Study (PINS)*](https://cjrc.la.psu.edu/research/) examines the social networks of prison inmates in a state correctional institution. The study was unique in that it was the first in nearly a century to collection sociometric data in a prison. The researchers collected data on several types of networks. There are two we want to look at here:
 
-  * The *get along with network* was created by asking individuals whom they "get along with" on the unit. We can think of this as "friends" in a prison setting.
+  * The *get along with network* was created by asking individuals whom they "get along with" on the unit. We can think of this as "friends" in a prison setting. (People don't really have "friends" in prison, but there are people they "get along with")
   
   * The *power and influence network* was created by asking individuals whom they believed was "powerful and influential" on the unit.
 
@@ -280,7 +288,7 @@ Let's examine the betweenness centrality scores for both of these networks. Thes
 
 <br>
 
-#### Get Along with Network (Undirected Network)
+## Get Along with Network (Undirected Network)
 
 For the *get along with* network, individuals could have asymmetric nominations. That is, *i* could nominate *j* and *j* didn't necessarily nominate *i*. But, we are going to **symmetrize** the network by only taking ties for which ***both*** *i* and *j* indicated that the get along with the other person. This will give us an undirected network.
  
@@ -351,7 +359,7 @@ max ( betweenness( gaMatU, gmode="graph" ) )
 
 The largest betweenness centrality score is `r max ( betweenness( gaMatU, gmode="graph" ) )`, so the plot is using this value. What we need is to adjust the centrality scores so that they are not so large. Fortunately, there is a simple function we can write to do this.
 
-Let's write a function, that we will call `rescale()` that rescales a set of values to be within a range that we descire. Then, we can use that in our plot:
+Let's use the `rescale()` function to adjust the node sizes in our plot:
 
 ```{r,echo=TRUE, eval=TRUE, message=FALSE}
 
@@ -375,7 +383,7 @@ gplot(
   gmode = "graph",
   edge.col="grey40", 
   vertex.col="#ba491c",
-  vertex.cex = rescale( betweenness( gaMatU, gmode="graph" ), 0.5, 1.5 ),
+  vertex.cex = rescale( betweenness( gaMatU, gmode="graph" ), 0.5, 2.5 ),
   main = "Get\n Along With Network (Undirected)",
   sub = "node sized by betweenness centrality"
   )
@@ -384,7 +392,7 @@ gplot(
 
 <br>
 
-Much better. Yet, it is still a bit difficult to see the differences due to the number of isolates (i.e. nodes without any edges). Let's remove them using the `displayisolates =` arguement. We will set it to `FALSE` to not display nodes that are isolates.
+Much better. Yet, it is still a bit difficult to see the differences due to the number of isolates (i.e. nodes without any edges). Let's remove them using the `displayisolates =` argument. We will set it to `FALSE` to not display nodes that are isolates.
 
 ```{r}
 
@@ -393,7 +401,7 @@ gplot(
   gmode = "graph",
   edge.col="grey40", 
   vertex.col="#ba491c",
-  vertex.cex = rescale( betweenness( gaMatU, gmode="graph" ), 0.5, 1.5 ),
+  vertex.cex = rescale( betweenness( gaMatU, gmode="graph" ), 0.5, 2.5 ),
   main = "Get\n Along With Network (Undirected)",
   sub = "node sized by betweenness centrality",
   displayisolates = FALSE # here we set it to FALSE, TRUE is the default
@@ -415,7 +423,7 @@ centralization( gaMatU, betweenness, mode="graph" )
 
 <br>
 
-#### Power and Influence Network (Directed Network)
+## Power and Influence Network (Directed Network)
 
 For the *power and influence* network, individuals could have asymmetric nominations. That is, *i* could nominate *j* and *j* didn't necessarily nominate *i*. We will keep this asymmetry so that we can treat the network as directed.
  
@@ -464,7 +472,7 @@ gplot(
   gmode = "digraph",
   edge.col="grey40", 
   vertex.col="#0b7344",
-  vertex.cex = rescale( betweenness( piMat, gmode="digraph" ), 0.5, 1.5 ),
+  vertex.cex = rescale( betweenness( piMat, gmode="digraph" ), 0.5, 2.5 ),
   arrowhead.cex = 0.5,
   main = "Power/Influence Network (Directed)",
   sub = "node sized by betweenness centrality"
@@ -483,7 +491,7 @@ gplot(
   gmode = "digraph",
   edge.col="grey40", 
   vertex.col="#0b7344",
-  vertex.cex = rescale( betweenness( piMat, gmode="digraph" ), 0.5, 1.5 ),
+  vertex.cex = rescale( betweenness( piMat, gmode="digraph" ), 0.5, 2.5 ),
   arrowhead.cex = 0.5,
   main = "Power/Influence Network (Directed)",
   sub = "node sized by betweenness centrality",
@@ -504,21 +512,26 @@ centralization( piMat, betweenness, mode="digraph" )
 
 <br>
 
-*What does the centralization score of `r round( centralization( piMat, betweenness, mode="digraph" ) , 4 )` tell us?*
+A few questions:  
+
+  + What do we see in the plot?  
+  + What does the closeness centralization score of `r round( centralization( piMat, betweenness, mode="digraph" ), 4 )` indicate?  
 
 <br>
 
-### What's next?
+----
 
-Your ready for [Lab 4: Closeness/Betweenness Centrality](https://watts-college.github.io/crj-507-spring-2024/labs/lab-04-instructions.html)!
+# **Wrapping up...**
 
-<br>
-
-____
+Centrality scores are a common metric used in many network analysis projects. In this lab, we examined how to calculate *betweenness* centrality and centralization scores in R using the `betweenness()` and `centralization()` functions in the `sna` package.
 
 <br>
 
-##### ***Please*** report any needed corrections to the [Issues](https://github.com/Watts-College/crj-507-spring-2024/issues/new) page. Thanks!
+### ***Questions?***
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 <br>

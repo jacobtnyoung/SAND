@@ -3216,11 +3216,11 @@ unstandardized closeness, we can just divide the result returned by
 <p>We can also summarize the entire network, in terms of how close nodes
 are to each other. <em>Group closeness centralization</em> tells us how
 much variation there is in the closeness scores. As we saw in the lab
-for <a href>degree centrality</a> centrality, this measure is bound
-between 0 and 1 where a value of 0 indicates complete uniformity across
-nodes in there centrality scores and a value of 1 indicates that one
-node has the highest possible centrality score, and all others are at
-the minimum.</p>
+for <a href>degree centrality</a>, this measure is bound between 0
+and 1 where a value of 0 indicates complete uniformity across nodes in
+there centrality scores and a value of 1 indicates that one node has the
+highest possible centrality score, and all others are at the
+minimum.</p>
 <p><br></p>
 <p>This is calculated as: <span class="math inline">\(C_C =
 \frac{\sum\limits_{i=1}^g[C&#39;_C(n^*)-C&#39;_C(n_i)]}{[(g-2)(g-1)]/(2g-3)}\)</span>.</p>
@@ -3306,7 +3306,7 @@ on.</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="co"># unstandardized closeness</span></span>
 <span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a><span class="dv">1</span><span class="sc">/</span><span class="fu">rowSums</span>( geodesics ) </span></code></pre></div>
 <pre><code>## [1] 0.1111111 0.2000000 0.5000000 0.5000000 0.5000000</code></pre>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="co"># standardized closeness.</span></span>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="co"># standardized closeness</span></span>
 <span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a>( <span class="dv">1</span><span class="sc">/</span><span class="fu">rowSums</span>( geodesics ) ) <span class="sc">*</span> ( g <span class="sc">-</span> <span class="dv">1</span> )</span></code></pre></div>
 <pre><code>## [1] 0.4444444 0.8000000 2.0000000 2.0000000 2.0000000</code></pre>
 <p><br></p>
@@ -3340,8 +3340,9 @@ graphs. Yet, score can be computed using the
 <p><br></p>
 </div>
 </div>
-<div id="centrality-in-pins-get-along-with-network" class="section level1">
-<h1><strong>Centrality in PINS Get Along With Network</strong></h1>
+<div id="closeness-centrality-in-pins-get-along-with-network" class="section level1">
+<h1><strong>Closeness Centrality in PINS Get Along With
+Network</strong></h1>
 <p>The <a href="https://cjrc.la.psu.edu/research/"><em>Prison Inmate
 Networks Study (PINS)</em></a> examines the social networks of prison
 inmates in a state correctional institution. The study was unique in

@@ -282,7 +282,7 @@ closeness( u.mat,gmode="graph" ) / ( g-1 )
 
 ## **Closeness Centralization**  
 
-We can also summarize the entire network, in terms of how close nodes are to each other. *Group closeness centralization* tells us how much variation there is in the closeness scores. As we saw in the lab for [degree centrality]() centrality, this measure is bound between 0 and 1 where a value of 0 indicates complete uniformity across nodes in there centrality scores and a value of 1 indicates that one node has the highest possible centrality score, and all others are at the minimum.  
+We can also summarize the entire network, in terms of how close nodes are to each other. *Group closeness centralization* tells us how much variation there is in the closeness scores. As we saw in the lab for [degree centrality](), this measure is bound between 0 and 1 where a value of 0 indicates complete uniformity across nodes in there centrality scores and a value of 1 indicates that one node has the highest possible centrality score, and all others are at the minimum.  
 
 <br>
 
@@ -417,7 +417,7 @@ centralization( d.mat, closeness, mode="digraph" )
 
 <br>
 
-# **Centrality in PINS Get Along With Network**  
+# **Closeness Centrality in PINS Get Along With Network**  
 
 The [*Prison Inmate Networks Study (PINS)*](https://cjrc.la.psu.edu/research/) examines the social networks of prison inmates in a state correctional institution. The study was unique in that it was the first in nearly a century to collection sociometric data in a prison. The researchers collected data on several types of networks. There are two we want to look at here:
 
