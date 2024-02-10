@@ -1,0 +1,524 @@
+---
+title: "Tutorial 07 - Betweenness Centrality and Centralization in R"
+date: "CRJ 507 Social Network Analysis"
+output: 
+  html_document:
+    df_print: paged
+    theme: united
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+    self_contained: true
+---
+
+
+<style>
+body {
+text-align: left}
+</style>
+
+```{r, echo=FALSE}
+
+# set the defaults for the codechunks
+knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
+
+```
+
+<br>
+
+How do we know whether a node is important in a network? As we saw in [Chapter 5: Degree Centrality](https://jacobtnyoung.github.io/sna-textbook/ch-05-centrality-degree.html) of the textbook, *degree* centrality, or the count of edges incident on a node, is a frequently used operationalization. Also, in [Chapter 6: Closeness Centrality](https://jacobtnyoung.github.io/sna-textbook/ch-06-centrality-closeness.html) we reviewed an alternative conceptualization, *closeness*, where important nodes are those who are "close" to other nodes in the network. Finally, in [Chapter 7: Betweenness Centrality](https://jacobtnyoung.github.io/sna-textbook/ch-07-centrality-betweenness.html) we reviewed an alternative conceptualization, *betweenness*, where important nodes are those who are "between" other nodes such that nodes have to go "between" them to reach other nodes. In this tutorial, we will examine how to calculate betweenness centrality and centralization scores in R using the `betweenness()` and `centralization()` functions in the `sna` package.
+
+Why are you learning this? Centrality scores are a common metric used in many network analysis projects. Being able to calculate these scores is an important tool for your skill set as a social network analyst!
+
+A note on the tutorials. Each tutorial in this course will contain R code which is in the “code chunks” you see below. There is also regular text. The R code chunks can be copied and pasted directly into R. As you work through this tutorial, follow along in R by coping and pasting the R code and seeing it work on your end.
+
+<br>
+
+```{r, echo=FALSE, eval=TRUE, message=FALSE, warning=FALSE}
+
+# Load the libraries you need to render the .html file
+
+library( sna )
+library( network )
+
+```
+
+<br>
+
+### **Betweenness Centrality (Undirected Binary Graphs)**  
+
+So far in the course, we have seen how centrality can be conceptualized as having a high number of ties (i.e. *degree* centrality) or being close to others in the network (i.e. *closeness* centrality). We can also conceptualize centrality as a node that lies on a particular path between other nodes. *Betweenness* centrality is based on the number of shortest paths between *j* and *k* that actor *i* resides on.  
+
+Betweenness centrality is calculated as: 
+
+$$C_B(n_i) = \sum\limits_{j<k} g_{jk}(n_i) / g_{jk}$$  
+
+Where $g_{jk}$ represents the number of geodesics linking *j* to *k* and $g_{jk}(n_i)$ is the number of geodesics linking *j* and *k* that contain *i*. So, betweenness centrality is the ratio of the geodesics between *j* and *k* that contain *i* to the geodesics between *j* and *k* that **do not** contain *i*.  
+
+The *standardized* betweenness centrality score is calculated by: 
+
+$$C'_B(n_i) = \frac{\sum\limits_{j<k} g_{jk}(n_i) / g_{jk}}{[(g-1)(g-2)/2]}$$
+
+The difference here is that we are dividing by $(g-1)(g-2)/2$ which is the number of pairs of actors not including *i*.  
+
+<br>
+
+Let's go ahead and set up a simple matrix and see how we use can calculate betweenness centrality using the `betweenness()` function in the `sna` package:  
+
+<br>
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# set up the matrix
+u.mat <- rbind(
+  c( 0,1,0,0,0 ),
+  c( 1,0,1,0,0 ),
+  c( 0,1,0,1,1 ),
+  c( 0,0,1,0,1 ),
+  c( 0,0,1,1,0 ))
+
+# now set the names
+mat.names <- c( "Jen","Tom","Bob","Leaf","Jim" )
+rownames( u.mat ) <- mat.names
+colnames( u.mat ) <- mat.names
+
+# define the number of nodes in the graph
+g <- dim( u.mat )[1]
+
+```  
+
+<br>
+
+Now, let's take a look at the `betweenness()` function:  
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+?betweenness
+
+# raw
+betweenness( u.mat,gmode="graph" )
+
+# standardized
+betweenness( u.mat,gmode="graph" ) / ( ( ( g-1 ) * ( g-2 ) ) / 2 )
+
+```  
+
+<br>
+
+Now, let's plot the graph so we can visualize what the betweenness score is showing. To make it easier to see, let's add the betweenness centrality info to the labels and size the nodes by betweenness centrality. That will make it easier to visualize.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# create an object that is the scores
+node.betweenness <- betweenness( u.mat,gmode="graph" )
+
+# create a vector of labels that combines the name with the betweeness scores
+# use the paste() function to put characters and numbers together
+names.between <- paste( 
+  mat.names, # the names of the vertices
+  ", ", # add a comma to separate name from degree
+  round( node.betweenness, 0 ), # add the rounded distance
+  sep = "" ) # remove the space between the two inputs 
+
+# set the seed to reproduce the same layout
+set.seed( 507 )
+
+# render the plot
+gplot( 
+  u.mat,
+  gmode = "graph",
+  label = names.between,
+  label.cex = 0.6,
+  vertex.col = "lightblue"
+  )
+
+```  
+
+<br>
+
+In this plot, we see that **Tom** and *Bob* both have scores of 3 and 4, respectively, whereas *Jen*, *Leaf*, and *Jim* have scores of 0. Why do *Jen*, *Leaf*, and *Jim* have scores of 0? Because nobody has to go "between" them to reach other nodes. 
+
+<br>
+
+----
+
+<br>
+
+### **Centralization**
+
+#### **Betweenness Centralization**    
+
+We can also summarize the entire network, in terms of betweenness. *Group betweenness centralization* tells us how much variation there is in the betweenness scores. As with [degree centrality]() and [closeness centrality](), this measure is bound between 0 and 1 where a value of 0 indicates complete uniformity across nodes in their centrality scores and a value of 1 indicates that one node has the highest possible centrality score, and all others are at the minimum.    
+
+This is calculated as: 
+
+$$C_B = \frac{\sum\limits_{i=1}^g[C'_B(n^*)-C'_B(n_i)]}{(g-1)}$$  
+
+Where $C'_B(n^*)$ is the maximum or largest standardized betweenness centrality score. To calculate the group betweenness centrality, we can use the `centralization()` function in `sna` and specify `betweenness` in the `FUN` argument.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+?centralization
+
+centralization( u.mat, betweenness, mode="graph" )
+
+```
+
+*What does the centralization score of `r round( centralization( u.mat, betweenness, mode="graph" ), 2 )` tell us?*
+
+<br>
+
+----
+
+<br>
+
+### **Betweenness Centrality for Directed Graphs**  
+
+As with undirected graphs, we can calculate betweenness centrality scores for directed graphs. 
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# build the matrix
+d.mat <- rbind(
+  c(0,1,0,0,0),
+  c(0,0,1,0,0),
+  c(0,0,0,1,1),
+  c(0,0,1,0,1),
+  c(0,0,1,1,0)
+  )
+
+# attach the names
+rownames( d.mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
+colnames( d.mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
+
+```
+
+Now, let's use the same code we used above to calculate the betweenness centrality scores. Note, however, that we have to change the `gmode=` argument in the `betweenness()` and `centralization()` functions to be `digraph` since the graph is directed and we want to include the information on directionality in the calculations (recall that for undirected graphs we use `graph`).
+
+<br>
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# define the number of nodes in the graph for our calculation
+g <- dim( d.mat )[1]
+
+# unstandardized
+betweenness( d.mat,gmode="digraph" )
+
+# standardized
+betweenness( d.mat, gmode="digraph" ) / (((g-1)*(g-2))/2)
+
+```
+
+<br>
+
+Let's plot this to better visualize the scores:
+
+<br>
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# create an object that is the scores
+node.betweenness <- betweenness( d.mat,gmode="digraph" )
+
+# create a vector of labels that combines the name with the betweeness scores
+# use the paste() function to put characters and numbers together
+names.between <- paste( 
+  mat.names, # the names of the vertices
+  ", ", # add a comma to separate name from degree
+  round( node.betweenness, 0 ), # add the rounded distance
+  sep = "" ) # remove the space between the two inputs 
+
+# set the seed to reproduce the same layout
+set.seed( 507 )
+
+# render the plot
+gplot( 
+  d.mat,
+  gmode = "digraph",
+  label = names.between,
+  label.cex = 0.6,
+  arrowhead.cex = 0.5,
+  vertex.col = "#2e5087"
+  )
+
+```  
+
+Finally, let's examine the betweenness centralization score:
+
+<br>
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# Group Betweenness Centralization.
+centralization( d.mat, betweenness, mode="digraph" ) 
+
+```
+
+*What does the centralization score of `r round( centralization( d.mat, betweenness, mode="digraph" ), 2 )` tell us?*
+
+Compare the centralization score of `r round( centralization( u.mat, betweenness, mode="graph" ), 2 )` for the undirected graph above and the centralization score of `r round( centralization( d.mat, betweenness, mode="digraph" ), 2 )` for the directed graph we just calculated.
+
+Bonus question: *Which one is larger? What does the difference in the values mean in terms of how betweenness scores are distributed in the graph?*
+
+<br>
+
+----
+
+<br>
+
+### **Centrality in PINS Get Along With Network**  
+
+In [Tutorial 6 - Closeness Centrality and Centralization in R](), we worked through the [*Prison Inmate Networks Study (PINS)*](https://cjrc.la.psu.edu/research/) networks. Specifically, we worked with two:
+
+  * The *get along with network* was created by asking individuals whom they "get along with" on the unit. We can think of this as "friends" in a prison setting.
+  
+  * The *power and influence network* was created by asking individuals whom they believed was "powerful and influential" on the unit.
+
+Let's examine the betweenness centrality scores for both of these networks. These data are available in the [SNA Textbook](https://jacobtnyoung.github.io/sna-textbook/index.html) [data]() folder.
+
+<br>
+
+#### Get Along with Network (Undirected Network)
+
+For the *get along with* network, individuals could have asymmetric nominations. That is, *i* could nominate *j* and *j* didn't necessarily nominate *i*. But, we are going to **symmetrize** the network by only taking ties for which ***both*** *i* and *j* indicated that the get along with the other person. This will give us an undirected network.
+ 
+```{r,echo=TRUE, eval=TRUE, message=FALSE}
+
+# set the location for the file
+loc <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-PINS-getalong-w1-adj.csv"
+
+# read in the .csv file
+gaMat <- as.matrix(
+  read.csv( 
+    loc,
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1 
+    )
+  )
+
+# use the symmetrize() function to create an undirected matrix
+gaMatU <- symmetrize( gaMat, rule = "strong" )
+
+```
+
+<br>
+
+Now, let's calculate our betweenness scores:
+
+```{r,echo=TRUE, eval=TRUE, message=FALSE}
+
+# define the number of nodes in the graph for our calculation
+g <- dim( gaMatU )[1]
+
+# unstandardized
+betweenness( gaMatU, gmode="graph" )
+
+# standardized
+betweenness( gaMatU, gmode="graph" ) / ( ( ( g-1 ) * ( g-2 ) ) / 2 )
+
+```
+
+<br>
+
+Let's create a plot that has the nodes sized by their betweenness centrality score.
+
+```{r,echo=TRUE, eval=TRUE, message=FALSE}
+
+gplot( 
+  gaMatU, 
+  gmode = "graph",
+  edge.col="grey40", 
+  vertex.col="#ba491c",
+  vertex.cex = betweenness( gaMatU, gmode="graph" ),
+  main = "Get Along With Network (Undirected)",
+  sub = "node sized by betweenness centrality"
+  )
+
+```
+
+<br>
+
+**Wait**? *Something isn't right*...All I see is a blob of color. This is because the size of the nodes in the plot are HUGE! We can see this by using the `max()` function:
+
+```{r,echo=TRUE, eval=TRUE, message=FALSE}
+
+max ( betweenness( gaMatU, gmode="graph" ) )
+
+```
+
+The largest betweenness centrality score is `r max ( betweenness( gaMatU, gmode="graph" ) )`, so the plot is using this value. What we need is to adjust the centrality scores so that they are not so large. Fortunately, there is a simple function we can write to do this.
+
+Let's write a function, that we will call `rescale()` that rescales a set of values to be within a range that we descire. Then, we can use that in our plot:
+
+```{r,echo=TRUE, eval=TRUE, message=FALSE}
+
+rescale <- function( nchar, low, high ){
+  min_d <- min( nchar )
+  max_d <- max( nchar )
+  rscl  <- ( ( high - low )*( nchar - min_d ) ) / ( max_d - min_d ) + low
+  rscl
+}
+
+```
+
+<br>
+
+Now, use the function we created to rescale the size of the nodes:
+
+```{r}
+
+gplot( 
+  gaMatU, 
+  gmode = "graph",
+  edge.col="grey40", 
+  vertex.col="#ba491c",
+  vertex.cex = rescale( betweenness( gaMatU, gmode="graph" ), 0.5, 1.5 ),
+  main = "Get\n Along With Network (Undirected)",
+  sub = "node sized by betweenness centrality"
+  )
+
+```
+
+<br>
+
+Much better. Yet, it is still a bit difficult to see the differences due to the number of isolates (i.e. nodes without any edges). Let's remove them using the `displayisolates =` arguement. We will set it to `FALSE` to not display nodes that are isolates.
+
+```{r}
+
+gplot( 
+  gaMatU, 
+  gmode = "graph",
+  edge.col="grey40", 
+  vertex.col="#ba491c",
+  vertex.cex = rescale( betweenness( gaMatU, gmode="graph" ), 0.5, 1.5 ),
+  main = "Get\n Along With Network (Undirected)",
+  sub = "node sized by betweenness centrality",
+  displayisolates = FALSE # here we set it to FALSE, TRUE is the default
+  )
+
+```
+
+<br>
+
+Now we can examine the centralization score for the network:
+
+```{r}
+
+centralization( gaMatU, betweenness, mode="graph" ) 
+
+```
+
+*What does the centralization score of `r round( centralization( gaMatU, betweenness, mode="graph" ) , 2 )` tell us?*
+
+<br>
+
+#### Power and Influence Network (Directed Network)
+
+For the *power and influence* network, individuals could have asymmetric nominations. That is, *i* could nominate *j* and *j* didn't necessarily nominate *i*. We will keep this asymmetry so that we can treat the network as directed.
+ 
+```{r,echo=TRUE, eval=TRUE, message=FALSE}
+
+# set the location for the file
+loc <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-PINS-power-w1-adj.csv"
+
+# read in the .csv file
+piMat <- as.matrix(
+  read.csv( 
+    loc,
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1 
+    )
+  )
+
+```
+
+<br>
+
+We have created a directed network where ties represent "power and influence" nominations from *i* to *j*. Now, let's calculate our betweenness scores.
+
+```{r}
+
+# define the number of nodes in the graph for our calculation
+g <- dim( piMat )[1]
+
+# unstandardized
+betweenness( piMat, gmode="digraph" )
+
+# standardized
+betweenness( piMat, gmode="digraph" ) / ( ( ( g-1 ) * ( g-2 ) ) / 2 )
+
+```
+
+<br>
+
+Now, we can plot it to examine the scores:
+
+```{r}
+
+gplot( 
+  piMat, 
+  gmode = "digraph",
+  edge.col="grey40", 
+  vertex.col="#0b7344",
+  vertex.cex = rescale( betweenness( piMat, gmode="digraph" ), 0.5, 1.5 ),
+  arrowhead.cex = 0.5,
+  main = "Power/Influence Network (Directed)",
+  sub = "node sized by betweenness centrality"
+  )
+
+```
+
+<br>
+
+Again, let's remove the isolates:
+
+```{r}
+
+gplot( 
+  piMat, 
+  gmode = "digraph",
+  edge.col="grey40", 
+  vertex.col="#0b7344",
+  vertex.cex = rescale( betweenness( piMat, gmode="digraph" ), 0.5, 1.5 ),
+  arrowhead.cex = 0.5,
+  main = "Power/Influence Network (Directed)",
+  sub = "node sized by betweenness centrality",
+  displayisolates = FALSE
+  )
+
+```
+
+<br>
+
+Examine the centralization score for the network:
+
+```{r}
+
+centralization( piMat, betweenness, mode="digraph" ) 
+
+```
+
+<br>
+
+*What does the centralization score of `r round( centralization( piMat, betweenness, mode="digraph" ) , 4 )` tell us?*
+
+<br>
+
+### What's next?
+
+Your ready for [Lab 4: Closeness/Betweenness Centrality](https://watts-college.github.io/crj-507-spring-2024/labs/lab-04-instructions.html)!
+
+<br>
+
+____
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/Watts-College/crj-507-spring-2024/issues/new) page. Thanks!
+
+<br>
+<br>

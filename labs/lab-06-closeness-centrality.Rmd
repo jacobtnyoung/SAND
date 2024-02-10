@@ -1,0 +1,726 @@
+---
+title: "Lab 6 - Closeness Centrality and Centralization in R"
+date: "CRJ 605 Statistical Analysis of Networks"
+output: 
+  html_document:
+    df_print: paged
+    theme: lumen
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+    self_contained: true
+---
+
+<style>
+body {
+text-align: left}
+</style>
+
+```{r, echo=FALSE}
+
+# set the defaults for the codechunks
+knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
+
+```
+
+
+```{r,echo=FALSE}
+
+# libraries needed
+
+library( sna )     # for sna functions
+library( network ) # for working with network objects
+
+```
+
+----
+
+<br>
+
+How do we know whether a node is important in a network? As was discussed at the beginning of the lecture on [Degree Centrality](), one of the most popular concepts in network analysis is *centrality*. In that lecture, we covered how centrality can be measured by the number of edges incident on a node. But, that is not they only way that a node can be *central*. The lecture on [Closeness Centrality]() discussed an alternative conceptualization, *closeness*, where important nodes are those who are "close" to other nodes in the network. 
+
+In this lab, we will examine how to calculate closeness centrality and centralization scores in R using the `closeness()` and `centralization()` functions in the `sna` package.
+
+**Why are you learning this?** Centrality scores are a common metric used in many network analysis projects. Being able to calculate these scores and compare them is an important tool for your skill set as a social network analyst!
+
+----
+
+<br>
+
+# **Closeness Centrality (Undirected Binary Graphs)**  
+
+How *close* is a node to other nodes?  
+
+In an undirected binary graph, **closeness centrality** measures how near a node is to the other nodes in the network. This is based on the inverse of the distance of each actor to every other actor.  
+
+<br>
+
+Terminology:  
+
+  + The **distance**, $d(n_i,n_j)$, is the length of the path between *i* and *j*. For example, suppose Sally is friends with Tom, Ulrica, and Violet; Violet is friends with Tom and Walter. What are the *paths* from Violet to Ulrica? Walter from Ulrica?  
+
+  + A **geodesic** is the shortest path between two nodes. What is the *shortest path* (i.e. geodesic) from Violet to Ulrica?  
+
+<br>
+
+**Closeness** centrality is calculated as: 
+
+$$C_C(n_i) = [\sum\limits_{j=1}^g d(n_i,n_j)]^{-1}$$
+
+or 
+
+$$\frac{1}{[\sum\limits_{j=1}^g d(n_i,n_j)]}$$ 
+Here is what the equation is doing:  
+
+  + first identify the distances between *i* and *j* (i.e. $d(n_i,n_j)$) and sum them.
+  
+  + Note that $\sum\limits_{j=1}^g$ is indicating that for *i*, we want to sum over all the *j*s in the graph, *g*. 
+  
+  + then take the inverse of this quantity.  
+
+<br>
+
+## **Manually Calculating Closeness Centrality**
+
+We can manually calculate the distance matrix using the `geodist()` function in the `sna` package. Let's take a look:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# clear the workspace
+rm( list = ls() )
+
+# load the sna library
+library( sna )
+
+# now, take a look at the geodist() function
+?geodist
+
+```
+
+<br>
+
+Let's go ahead and set up a simple matrix and examine the geodesics for that matrix.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# set up the matrix
+u.mat <- rbind(
+  c( 0,1,0,0,0 ),
+  c( 1,0,1,0,0 ),
+  c( 0,1,0,1,1 ),
+  c( 0,0,1,0,1 ),
+  c( 0,0,1,1,0 ))
+
+# now set the names
+mat.names <- c( "Jen","Tom","Bob","Leaf","Jim" )
+rownames( u.mat ) <- mat.names
+colnames( u.mat ) <- mat.names
+
+# let's look at what the geodist() function creates
+u.mat.geodist <- geodist( u.mat )
+class( u.mat.geodist )
+u.mat.geodist
+
+```  
+
+<br>
+
+We can see that the function creates an object of class `list`. In the object, there are two arrays, `$counts` and `$gdist`. The `$counts` array is a matrix containing the number of geodesics between each pair of vertices. The `$gdist` array is a matrix containing the geodesic distances between each pair of vertices.  
+
+To get the geodesic distances, we use the `$` sign to select a single array from the list:
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# print out the distances
+u.mat.geodist$gdist
+
+# if we take the row sum of this object, we get the distances
+distance <- rowSums( u.mat.geodist$gdist )
+distance
+
+```
+
+<br>
+
+Now, let's plot the graph so we can visualize what the distance score is showing. To make it easier to see, let's add the centrality info to the labels and size the nodes by centrality. That will make it easier to visualize.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# create a vector of labels that combines the name with the distances
+# use the paste() function to put characters and numbers together
+names.dist <- paste( 
+  mat.names, # the names of the vertices
+  ", ", # add a comma to separate name from degree
+  round( distance, 0 ), # add the rounded distance
+  sep = "" ) # remove the space between the two inputs 
+
+# change the margins using the mar= argument
+par( mar=c( 0.1, 0.5, 1, 0.1 ) )
+
+# set the seed to reproduce the same layout
+set.seed( 605 )
+
+# render the plot
+gplot( 
+  u.mat,
+  gmode = "graph",
+  label = names.dist,
+  label.cex = 0.6,
+  vertex.col = "lightblue"
+  )
+
+```  
+
+In this plot, we see that **Jen** has a distance score of *9*. (She is so far away!) To see how we get that score, let's do the calculation:  
+
+  + recall that $d(n_i,n_j)$ is the length of the path from *i* to *j*
+  
+    + Jen -> Tom ($d(Jen,Tom)$) is 1
+  
+    + Jen -> Bob ($d(Jen,Bob)$) is 2
+  
+    + Jen -> Leaf  ($d(Jen,Leaf)$) and Jen -> Jim ($d(Jen,Jim)$) are both 3
+  
+    + So that is $\sum\limits_{Jen}^g d(Jen,Tom/Bob/Leaf/Jim) = 1+2+3+3=9$.
+
+
+<br>
+
+To get the closeness centrality score, we divide that quantity by 1.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# take the reciprocal
+close.cent <- 1 / rowSums( u.mat.geodist$gdist )
+close.cent
+
+# we can calculate the standardized closeness centrality by multiplying by g-1
+g <- dim( u.mat )[1]
+close.cent.s <- ( g-1 ) * close.cent
+close.cent.s
+
+# put it all together in a table
+dist.close.table <- round( rbind( distance, close.cent, close.cent.s ), 2 )
+round( dist.close.table, 2 )
+rownames( dist.close.table ) <- c( "distance", "closeness", "stand.close" )
+colnames( dist.close.table ) <- mat.names
+dist.close.table
+
+```
+
+<br>
+
+Now, let's take a look at this info in a series of plots. To render these, let's use a `for` loop:
+
+<br>
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+names.close <- paste( 
+  mat.names, # the names of the vertices
+  ", ", # add a comma to separate name from degree
+  round( close.cent, 2 ), # add the rounded closeness centrality score
+  sep = "" ) # remove the space between the two inputs 
+
+names.s.close <- paste( 
+  mat.names, # the names of the vertices
+  ", ", # add a comma to separate name from degree
+  round( close.cent.s, 2 ), # add the rounded closeness centrality score
+  sep = "" ) # remove the space between the two inputs 
+
+# create the inputs for the loop
+titles <- c( "Distance", "Closeness", "Standardized Closeness")
+cols <- c( "lightblue", "lightgreen", "orange" )
+names <- rbind( names.dist, names.close, names.s.close )
+
+# change the margins using the mar= argument
+par( 
+  mfrow=c( 2,2 ),
+  mar=c( 0.1, 0.5, 1, 0.1 ) 
+  )
+
+for( i in 1:3 ){
+  
+  # set the seed
+  set.seed( 605 )
+
+  # render the plot
+  gplot( 
+  u.mat,
+  gmode = "graph",
+  label = names[i,],
+  label.cex = 0.6,
+  vertex.col = cols[i],
+  main = titles[i]
+  )
+
+}
+
+```  
+
+<br>
+
+## **Using the `sna` Package**  
+
+Alternatively, we could just use the `closeness()` function in the `sna` package. First, take a look at the function using `?closeness`. Note that the standardized closeness centrality is reported by default. If we want the unstandardized closeness, we can just divide the result returned by `closeness()` by *g-1*.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# note the gmode= argument
+?closeness
+
+# standardized
+closeness( u.mat,gmode="graph")
+
+# raw
+closeness( u.mat,gmode="graph" ) / ( g-1 )
+
+```
+
+<br>
+
+## **Closeness Centralization**  
+
+We can also summarize the entire network, in terms of how close nodes are to each other. *Group closeness centralization* tells us how much variation there is in the closeness scores. As we saw in the lab for [degree centrality]() centrality, this measure is bound between 0 and 1 where a value of 0 indicates complete uniformity across nodes in there centrality scores and a value of 1 indicates that one node has the highest possible centrality score, and all others are at the minimum.  
+
+<br>
+
+This is calculated as: $C_C = \frac{\sum\limits_{i=1}^g[C'_C(n^*)-C'_C(n_i)]}{[(g-2)(g-1)]/(2g-3)}$.  
+
+<br>
+
+Where $C'_C(n^*)$ is the maximum or largest standarized closeness centrality score. For a more elaborate discussion of this equation, see Wasserman & Faust (1994: 191-192).  To calculate the group closeness centrality, we can use the `centralization()` function in `sna` and specify `closeness` in the `FUN` argument.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+?centralization
+
+centralization( u.mat, closeness, mode="graph" )
+
+```
+
+*What does the centralization score of `r round( centralization( u.mat, closeness, mode="graph" ), 2 )` tell us?* 
+
+<br>
+
+----
+
+<br>
+
+# **Closeness Centrality (Directed Binary Graphs)**  
+
+In a directed binary graph, closeness centrality has the same interpretation (i.e. it is the inverse of the average distance between nodes), but it takes into account the directional nature of the graph.
+
+For example, consider two scenarios:  
+  + Suppose Laura sends a tie to Miguel and he sends a tie to Bruce (i.e. Laura -> Miguel -> Bruce). Here, Laura is of distance 2 from Bruce.
+  + Now suppose Laura sends a tie to Miguel and Bruce sends a tie to Miguel (i.e. Laura -> Miguel <- Bruce). *How far is Laura from Bruce now?*
+
+Let's take a look at this using the network from the [Closeness Centrality]() lecture.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+# Build the object
+d.mat <- rbind(
+  c( 0,1,0,0,0 ),
+  c( 0,0,1,0,0 ),
+  c( 0,0,0,1,1 ),
+  c( 0,0,1,0,1 ),
+  c( 0,0,1,1,0 )
+  )
+
+# name the rows and columns
+rownames( d.mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
+colnames( d.mat ) <- c( "Jen","Tom","Bob","Leaf","Jim" )
+
+# define g
+g <- dim( d.mat )[1]
+
+```
+
+<br>
+
+## **Manually Calculating Closeness Centrality**
+
+We can manually calculate the distance matrix using the `geodist()` function in the `sna` package as we did above.
+
+```{r}
+
+# calculate distances
+distances <- geodist( d.mat )
+
+# get the geodesics
+geodesics <- distances$gdist
+
+# take a look
+geodesics
+
+```
+
+Something look different?
+
+Let's recode those `Inf` values to be zero and chug on.
+
+```{r}
+
+# code Inf values as zero
+geodesics[geodesics == Inf] <- 0 
+
+# take a look now
+geodesics
+
+```
+
+```{r}
+
+# unstandardized closeness
+1/rowSums( geodesics ) 
+
+# standardized closeness
+( 1/rowSums( geodesics ) ) * ( g - 1 )
+
+```
+
+<br>
+
+## **Using the `sna` Package**  
+
+Alternatively, we could (again) just use the `closeness()` function in the `sna` package. Remember that the standardized closeness centrality is reported by default. If we want the unstandardized closeness, we can just divide the result returned by `closeness()` by *g-1*.
+
+```{r}
+
+# standardized closeness
+closeness( d.mat, gmode="digraph" )
+
+# unstandardized closeness
+closeness( d.mat, gmode="digraph" ) / ( g-1 )
+
+```
+
+<br>
+
+## **Closeness Centralization**  
+
+As discussed in Wasserman & Faust (1994: 200-201), the denominator is not defined for closeness centralization for directed graphs. Yet, score can be computed using the `centralization()` function.
+
+```{r,echo=TRUE,eval=TRUE,message=FALSE}
+
+centralization( d.mat, closeness, mode="digraph" )
+
+```
+
+*What does the centralization score of `r round( centralization( d.mat, closeness, mode="digraph" ), 2 )` tell us?* 
+
+<br>
+
+----
+
+<br>
+
+# **Centrality in PINS Get Along With Network**  
+
+The [*Prison Inmate Networks Study (PINS)*](https://cjrc.la.psu.edu/research/) examines the social networks of prison inmates in a state correctional institution. The study was unique in that it was the first in nearly a century to collection sociometric data in a prison. The researchers collected data on several types of networks. There are two we want to look at here:
+
+  * The *get along with network* was created by asking individuals whom they "get along with" on the unit. We can think of this as "friends" in a prison setting. (People don't really have "friends" in prison, but there are people they "get along with")
+  
+  * The *power and influence network* was created by asking individuals whom they believed was "powerful and influential" on the unit.
+
+Let's examine the closeness centrality scores for both of these networks. These data are available in the [SNA Textbook](https://jacobtnyoung.github.io/sna-textbook/index.html) [data]() folder.
+
+<br>
+
+## Get Along with Network (Undirected Network)
+
+For the *get along with* network, individuals could have asymmetric nominations. That is, *i* could nominate *j* and *j* didn't necessarily nominate *i*. But, we are going to **symmetrize** the network by only taking ties for which ***both*** *i* and *j* indicated that the get along with the other person. This will give us an undirected network.
+ 
+```{r,echo=TRUE, eval=TRUE, message=FALSE}
+
+# set the location for the file
+loc <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-PINS-getalong-w1-adj.csv"
+
+# read in the .csv file
+gaMat <- as.matrix(
+  read.csv( 
+    loc,
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1 
+    )
+  )
+
+# use the symmetrize() function to create an undirected matrix
+gaMatU <- symmetrize( gaMat, rule = "strong" )
+
+# create the network object
+gaNetU <- as.network( gaMatU, directed = FALSE )
+
+```
+
+<br>
+
+Now, we have created an undirected network where ties represent "get along with" nominations from both individuals. 
+
+Before we calculate the closeness scores, recall that in a graph with multiple components (i.e. disconnected subgraphs) individuals who cannot be reached will have a closeness score of zero. So, what do we do? Call it a day and go home? (We could, but we have some options)
+
+What often happens in practice when we have multiple components in a network is that researchers will take the "first component" of and analyze the closeness scores for that graph. The first component is the largest subgraph in a graph. We can see this visually in the following plot:
+
+<br>
+
+```{r,echo=FALSE, eval=TRUE, message=FALSE}
+
+# find the component membership
+cd <- component.dist( as.matrix( gaNetU ), connected="weak" )
+
+# find which component is the largest
+# sort( table( cd$membership ) ) # commented out to hide in .html
+
+# assign the membership in the first component
+comp.col <- cd$membership
+comp.col[ cd$membership != 4 ] <- "#3275a8"
+comp.col[ cd$membership == 4 ] <- "#9cde18"
+
+```
+
+```{r,echo=FALSE, eval=TRUE, message=FALSE, figure.align = "center", figure.height = 5, figure.width = 5}
+
+set.seed ( 605 )
+gplot( gaNetU, gmode = "graph", vertex.col = comp.col, main = "Get Along With Network (Undirected)" )
+
+```
+
+In the plot above, the first component (i.e. the largest subgraph) is colored green. To get the closeness centrality scores, we can use a function called `get.inducedSubgraph()` in the `sna` package to extract a subgraph that meets a condition. In this case, we want to take those cases who are in the first component. Let's walk through the pieces.
+
+<br>
+
+```{r, message=FALSE, figure.align = "center", figure.height = 5, figure.width = 5}
+
+# find the component membership
+cd <- component.dist( as.matrix( gaNetU ), connected="weak" )
+
+# find which component is the largest
+sort( table( cd$membership ) )
+
+# we can see that group number 4 is the largest group. This is the first component.
+# so, we can assign the membership in the first component
+firstComp <- cd$membership
+firstComp[ cd$membership != 4 ] <- 0
+firstComp[ cd$membership == 4 ] <- 1
+
+# now we set this as a network attribute
+gaNetU %v% "firstComp" <- firstComp
+
+# Now, remove those not in the first component by using the get.inducedSubgraph() function.
+# Specifically, we stipulate in the v= argument that we only want vertices that are in the first component.
+gaNetUcomp <- get.inducedSubgraph( 
+  gaNetU, # the network                 
+  v = which( gaNetU %v% "firstComp" == 1 )  # the condition
+  )
+
+# Now, take a look at the plot.
+gplot( 
+  gaNetUcomp, 
+  gmode = "graph",
+  edge.col="grey40", 
+  vertex.col="#9cde18", 
+  main = "First Component of Get\n Along With Network (Undirected)" )
+
+```
+
+<br>
+
+Now, let's calculate our closeness scores:
+
+<br>
+
+```{r}
+
+# get the number of nodes
+n.nodes <- dim( as.matrix( gaNetUcomp ) )[1]
+
+# unstandardized closeness
+closeness( gaNetUcomp, gmode="graph" ) / ( n.nodes - 1 )
+
+# standardized closeness
+closeness( gaNetUcomp, gmode="graph" ) 
+
+# Group Closeness Centralization.
+centralization( gaNetUcomp, closeness, mode="graph" )
+
+```
+
+```{r}
+
+# define the rescale function
+rescale <- function( nchar, low, high ){
+  min_d <- min( nchar )
+  max_d <- max( nchar )
+  rscl  <- ( ( high - low )*( nchar - min_d ) ) / ( max_d - min_d ) + low
+  rscl
+}
+
+
+# now, take a look at the plot
+gplot( 
+  gaNetUcomp, 
+  gmode = "graph",
+  edge.col="grey40", 
+  vertex.col="#9cde18",
+  vertex.cex = rescale( closeness( gaNetUcomp, gmode="graph" ), 0.4, 3 ),
+  main = "First Component of Get\n Along With Network (Undirected)",
+  sub = "node sized by closeness centrality"
+  )
+
+```
+
+<br>
+
+## Power and Influence Network (Directed Network)
+
+For the *power and influence* network, individuals could have asymmetric nominations. That is, *i* could nominate *j* and *j* didn't necessarily nominate *i*. We will keep this asymmetry so that we can treat the network as directed.
+ 
+```{r,echo=TRUE, eval=TRUE, message=FALSE}
+
+# set the location for the file
+loc <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-PINS-power-w1-adj.csv"
+
+# read in the .csv file
+piMat <- as.matrix(
+  read.csv( 
+    loc,
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1 
+    )
+  )
+
+# create the network object
+piNetD <- as.network( piMat, directed = TRUE )
+
+```
+
+<br>
+
+Now, we have created a directed network where ties represent "power and influence" nominations from *i* to *j*. 
+
+As before, we need to extract the first component:
+
+<br>
+
+```{r,echo=FALSE, eval=TRUE, message=FALSE}
+
+# find the component membership
+cd <- component.dist( as.matrix( piNetD ), connected="weak" )
+
+# find which component is the largest
+# sort( table( cd$membership ) ) # commented to hide in the .html
+
+# assign the membership in the first component
+comp.col <- cd$membership
+comp.col[ cd$membership != 1 ] <- "#3275a8"
+comp.col[ cd$membership == 1 ] <- "#ab163b"
+
+```
+
+```{r,echo=FALSE, eval=TRUE, message=FALSE, figure.align = "center", figure.height = 5, figure.width = 5}
+
+set.seed ( 605 )
+gplot( piNetD, gmode = "digraph", vertex.col = comp.col, main = "Power Network (Directed)" )
+
+```
+
+In the plot above, the first component (i.e. the largest subgraph) is shown in red. Now, let's again use the `get.inducedSubgraph()` function in the `sna` package to extract a subgraph that meets the first component condition.
+
+<br>
+
+```{r, message=FALSE, figure.align = "center", figure.height = 5, figure.width = 5}
+
+# find the component membership
+cd <- component.dist( as.matrix( piNetD ), connected="weak" )
+
+# find which component is the largest
+sort( table( cd$membership ) )
+
+# we can see that group number 1 is the largest group. This is the first component.
+# so, we can assign the membership in the first component
+firstComp <- cd$membership
+firstComp[ cd$membership != 1 ] <- 0
+firstComp[ cd$membership == 1 ] <- 1
+
+# now we set this as a network attribute
+piNetD %v% "firstComp" <- firstComp
+
+# Now, remove those not in the first component by using the get.inducedSubgraph() function.
+# Specifically, we stipulate in the v= argument that we only want vertices that are in the first component.
+piNetDcomp <- get.inducedSubgraph( 
+  piNetD, # the network                 
+  v = which( piNetD %v% "firstComp" == 1 )  # the condition
+  )
+
+# Now, take a look at the plot.
+gplot( 
+  piNetDcomp, 
+  gmode = "digraph",
+  edge.col="grey40", 
+  vertex.col="#ab163b", 
+  main = "First Component of Power\n Network (Directed)" )
+
+```
+
+<br>
+
+Now, let's calculate our closeness scores. Note a slight change though. In the `closeness()` function, there is the `gmode=` argument where we specify whether the graph is directed (i.e. `"digraph"` or undirected `"graph"`. If we use `gmode = "digraph"` we will get all zeros because it is using the directionality of the network. For our purposes here, we will set it to `gmode = "graph"` so we can actually get values:
+
+<br>
+
+```{r,echo=TRUE, eval=TRUE, message=FALSE}
+
+# get the number of nodes
+n.nodes <- dim( as.matrix( piNetDcomp ) )[1]
+
+#unstandardized closeness.
+closeness( piNetDcomp, gmode="graph" ) / ( n.nodes - 1 ) 
+
+#standardized closeness.
+closeness( piNetDcomp, gmode="graph" ) 
+
+# Group Closeness Centralization.
+centralization( piNetDcomp, closeness, mode="graph" )
+
+# Now, take a look at the plot.
+gplot( 
+  piNetDcomp, 
+  gmode = "digraph",
+  edge.col="grey40", 
+  vertex.col="#ab163b",
+  vertex.cex = rescale( closeness( piNetDcomp, gmode="graph" ), 0.4, 3 ),
+  main = "First Component of Power\n Network (Directed)",
+  sub = "node sized by closeness centrality"
+  )
+
+```
+
+<br>
+
+A few questions:  
+
+  + What do we see in the plot?  
+  + What does the closeness centralization score of `r round( centralization( piNetDcomp, closeness, mode="graph" ), 2 )` indicate?  
+
+<br>
+
+----
+
+# **Wrapping up...**
+
+Centrality scores are a common metric used in many network analysis projects. In this lab, we examined how to calculate *closeness* centrality and centralization scores in R using the `closeness()` and `centralization()` functions in the `sna` package.
+
+<br>
+
+### ***Questions?***
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>
