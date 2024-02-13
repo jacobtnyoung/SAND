@@ -1,0 +1,136 @@
+---
+title: "Centrality & Centralization Example"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: yeti
+    source: embed
+    smart: false
+runtime: shiny
+---
+
+```{r global, include = FALSE}
+
+library( sna )
+library( network )
+
+set.seed( 12345 )
+
+```
+
+
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+
+            sliderInput( inputId = "n.nodes",
+                         label = h3( "Number of nodes:" ) ,
+                         min = 5,
+                         max = 250,
+                         value = 125 )
+            #sliderInput( inputId ="tie.prob",
+            #             label = h3( "Probability of a tie:" ) ,
+            #             min = 0,
+            #             max = 1,
+            #             value = 0.05 )
+            sliderInput( inputId ="deg.cent",
+                         label = h3( "Degree Centralization:" ) ,
+                         min = 0,
+                         max = 1,
+                         value = 0.2 )
+            #selectInput( inputId = "graph.type", 
+            #             label = h3( "Directionality of Graph" ), 
+            #             choices = list( "Directed" = TRUE, "Undirected" = FALSE ), 
+            #             selected = TRUE )
+            #selectInput( inputId = "graph.type2", 
+            #             label = h3( "Directed?" ), 
+            #             choices = list( "Directed" = "digraph", "Undirected" = "graph" ), 
+            #             selected = "digraph" )
+            
+            
+
+
+```
+
+
+Column
+-----------------------------------------------------------------------
+
+```{r}
+
+# alter the degree distribution to match the centralization target
+
+net.for.plot2 <- reactive({
+
+  net.for.plot <- 
+  as.network(
+    rgraph( 
+      n = input$n.nodes,
+      m = 1, 
+      tprob = 0.05
+      ), 
+    directed = FALSE
+    )
+
+dcent <- centralization( net.for.plot, degree, mode = "graph" )
+  
+  while ( abs( dcent - input$deg.cent ) > 0.01 ){
+    if( dcent < input$deg.cent ){
+      add.edge( net.for.plot, 1, sample( seq( 2:input$n.nodes ), 1 ) )
+  } else{
+    delete.edges( net.for.plot, 1, sample( seq( 2:input$n.nodes ), 1 ) )
+  }
+    dcent <- centralization( net.for.plot, degree, mode = "graph" )
+}
+
+return( net.for.plot ) # Return the modified network
+
+})
+
+
+renderPlot({
+  # plot the graph.
+  gplot( 
+    net.for.plot2(),
+    vertex.col = "firebrick", 
+    gmode = "graph" 
+    )
+  })
+
+```
+
+```{r}
+
+#renderPlot({
+  
+  # Plot the degree distribution.
+#  hist( 
+#    degree( 
+#      net.for.plot(),
+#      cmode = "indegree" ),
+#    xlab = "Degree Distribution",
+#    main = "Histogram of Degree Distribution"
+#    )
+#  })
+
+```
+
+
+<style>
+
+.chart-shim { overflow: auto; }
+ 
+table{
+   border-spacing:1px;
+   margin-top:30px;
+   margin-bottom:30px;
+   margin-left: auto;
+   margin-right: auto;
+   align:center} 
+
+td{ padding: 6px 10px 6px 10px } 
+
+th{ text-align: left; } 
+
+</style>
