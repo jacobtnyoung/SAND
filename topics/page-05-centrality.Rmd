@@ -47,7 +47,7 @@ How do we know whether a node is important in a network? How can we compare the 
 
   + [Homework 3 instructions](../hmwk/hmwk-03-instructions.html)  
   + [Homework 3 template](../hmwk/templates/hmwk-03-template.zip?raw=true)  
-  
+  + [Homework 3 solutions]()  
 
 <br>
 
