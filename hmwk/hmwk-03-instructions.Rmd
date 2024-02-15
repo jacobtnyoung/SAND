@@ -80,11 +80,34 @@ Pick **one** of your networks from [Homework 1](../hmwk/hmwk-01-instructions.htm
 
 <br>
 
-## Using the Template, Knitting, and Submitting
+----
 
-For this homework, you will use a .Rmd template I have created. Download the [template for this homework](../hmwk/templates/hmwk-03-template.zip?raw=true) prior to beginning the homework. For all the homework assignments, be sure to show both the solution for your code and write out your answers in the body text (were relevant). When you have completed your assignment, click the "Knit" button to render your `.RMD` file into a `.HTML` report. 
+# How to Submit
 
-A physical copy of the assignment must be turned in during class on the corresponding due date. This assignment is *DUE* on **2/21**.
+Download the [Homework 3 template](../hmwk/templates/hmwk-03-template.zip?raw=true) prior to beginning. **The template contains code for accessing the data files**.
+
+<br>
+
+### Knitting to HTML
+
+When you have completed your homework, click the "Knit" button to render your `.RMD` file into a `.HTML` report.
+
+<br>
+
+### Special Instructions
+
+Upload both your `.RMD` and `.HTML` files to the appropriate assignment on the Canvas page for this course. Just click the "Start Assignment" button to upload the files. This assignment is *DUE* on **2/21**.
+
+<br>
+
+### Before You Submit
+
+Remember to ensure the following before submitting your assignment.
+
+1. Name your files using this format: **Hmwk-##-LastName.rmd** and **Hmwk-##-LastName.html**
+2. Show both the solution for your code and write out your answers in the body text 
+
+See [Google's R Style Guide](https://google.github.io/styleguide/Rguide.xml) for examples of common conventions.
 
 <br>
 
