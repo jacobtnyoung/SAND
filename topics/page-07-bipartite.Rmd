@@ -28,32 +28,31 @@ knitr::opts_chunk$set( echo = TRUE )
 
 <br>
 
+So far, we have worked with networks that have one set of nodes and one set of edges. But, not all of the networks we want to examine have a single node set. More complex relational structures have multiple partitions of node sets. Bipartite graphs allow us to represent networks that have two partitions of nodes. This section introduces bipartite graphs (i.e. two-mode networks). 
 
-These lectures examine data that are two-mode. That is, data in which objects in one modality (e.g. people) are connected through a second modality (e.g. clubs). 
+In addition, we will review a common approach in research where a bipartite graph is reduced to a unipartite graph (called *projection*). Projection is the process by which we map the connectivity between modes to a single mode. This procedure produces a one-mode network and allows us to use the tools developed for networks with a single set of nodes (with some caveats).This week will focus on network projection. 
 
-The first lecture and the accompanying lab provides an overview of how to create adjacency matrices from two-mode networks and how to analyze bipartite graphs. 
-
-The second lecture and lab focus on projecting two-mode networks to one-mode (i.e. unipartite graphs) and the consequent weighting of edges that occurs. 
-
-A problem set (with solutions) is provided to work through the material covered.
+We will also explore working with weighted networks. That is, a network where edges can differ in terms of their values (moving beyond 0s and 1s!)
 
 <br>
 
-#### Lecture Materials  
+#### Lecture & Lab Materials  
 
-  + [Bipartite Graphs lecture](../lectures/lecture-07-bipartite.pdf)
+  + [Bipartite Graphs & Two-Mode Networks lecture](../lectures/lecture-06-bipartite.pdf)  
+  + [Projection & Weighted Graphs lecture](../lectures/lecture-07-projection-weighted.pdf)
+
+<br>
+
+  + [Bipartite Graphs & Two-Mode Networks in R lab](../labs/lab-07-bipartite.html)  
+  + [Projection & Weighted Graphs in R lab](../labs/lab-08-projection-weighted.html)
   
-  + [Lab 07-Bipartite Graphs/Two-Mode Networks](../labs/lab-07-bipartite.html)
-  
-    + Two-mode edgelist (.csv) from Young & Ready (2015) used in Bipartite Graphs lecture & Bipartite Graphs lab  
-  
-  <br>
-  
-  + Bipartite Graphs problem set (pdf, see Part B) and solutions (html) (Rmd)
-  
-  + [Projection & Weighted Graphs lecture](../lectures/lecture-08-projection-weighted.pdf)
-  
-  + [Lab 08-Projection & Weighted Graphs](../labs/lab-08-projection-weighted.html)
+<br>
+
+#### Homework Materials  
+
+  + [Homework 4 instructions](../hmwk/hmwk-04-instructions.html)  
+  + [Homework 4 template](../hmwk/templates/hmwk-04-template.zip?raw=true)  
+  + [Homework 4 solutions]()  
 
 <br>
 
@@ -61,10 +60,15 @@ ____
 
 <br>
 
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
+
+<br>
+
+<br>
+
 #### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 <br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***

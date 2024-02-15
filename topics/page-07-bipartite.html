@@ -397,49 +397,56 @@ body {
 text-align: justify}
 </style>
 <p><br></p>
-<div id="centrality" class="section level2">
-<h2><em>Centrality</em></h2>
+<div id="bipartite-graphstwo-mode-networks" class="section level2">
+<h2><em>Bipartite Graphs/Two-Mode Networks</em></h2>
 <hr />
-<p>How do we know whether a node is important in a network? How can we
-compare the structure of different networks? These are key questions in
-network analysis and this week we will start to think about how we
-describe networks. One of the most popular concepts in network analysis
-is centrality. That is, important nodes are those who are central. Also,
-we can compare networks by examining how they differ (or are similar)
-based on the distribution of centrality scores. This section introduces
-the concept of centrality, focusing specifically on three different
-operationalizatons: degree, closeness, and betweenness.</p>
+<p><br></p>
+<p>So far, we have worked with networks that have one set of nodes and
+one set of edges. But, not all of the networks we want to examine have a
+single node set. More complex relational structures have multiple
+partitions of node sets. Bipartite graphs allow us to represent networks
+that have two partitions of nodes. This section introduces bipartite
+graphs (i.e. two-mode networks).</p>
+<p>In addition, we will review a common approach in research where a
+bipartite graph is reduced to a unipartite graph (called
+<em>projection</em>). Projection is the process by which we map the
+connectivity between modes to a single mode. This procedure produces a
+one-mode network and allows us to use the tools developed for networks
+with a single set of nodes (with some caveats).This week will focus on
+network projection.</p>
+<p>We will also explore working with weighted networks. That is, a
+network where edges can differ in terms of their values (moving beyond
+0s and 1s!)</p>
 <p><br></p>
 <div id="lecture-lab-materials" class="section level4">
 <h4>Lecture &amp; Lab Materials</h4>
 <ul>
-<li><a href="../lectures/lecture-04-degree-centrality.pdf">Degree
-Centrality lecture</a><br />
+<li><a href="../lectures/lecture-06-bipartite.pdf">Bipartite Graphs
+&amp; Two-Mode Networks lecture</a><br />
 </li>
-<li><a href="../lectures/lecture-05-close-between-centrality.pdf">Closeness
-&amp; Betweenness Centrality lecture</a></li>
+<li><a href="../lectures/lecture-07-projection-weighted.pdf">Projection
+&amp; Weighted Graphs lecture</a></li>
 </ul>
 <p><br></p>
 <ul>
-<li><a href="../labs/lab-05-degree-centrality.html">Degree Centrality
-and Centralization in R lab</a><br />
+<li><a href="../labs/lab-07-bipartite.html">Bipartite Graphs &amp;
+Two-Mode Networks in R lab</a><br />
 </li>
-<li><a href="../labs/lab-06-closeness-centrality.html">Closeness
-Centrality and Centralization in R lab</a><br />
-</li>
-<li><a href="../labs/lab-07-betweenness-centrality.html">Betweenness
-Centrality and Centralization in R lab</a></li>
+<li><a href="../labs/lab-08-projection-weighted.html">Projection &amp;
+Weighted Graphs in R lab</a></li>
 </ul>
 <p><br></p>
 </div>
 <div id="homework-materials" class="section level4">
 <h4>Homework Materials</h4>
 <ul>
-<li><a href="../hmwk/hmwk-03-instructions.html">Homework 3
+<li><a href="../hmwk/hmwk-04-instructions.html">Homework 4
 instructions</a><br />
 </li>
-<li><a href="../hmwk/templates/hmwk-03-template.zip?raw=true">Homework 3
-template</a></li>
+<li><a href="../hmwk/templates/hmwk-04-template.zip?raw=true">Homework 4
+template</a><br />
+</li>
+<li><a href>Homework 4 solutions</a></li>
 </ul>
 <p><br></p>
 <hr />
