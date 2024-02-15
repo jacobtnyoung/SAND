@@ -202,7 +202,6 @@ close.cent.s
 
 # put it all together in a table
 dist.close.table <- round( rbind( distance, close.cent, close.cent.s ), 2 )
-round( dist.close.table, 2 )
 rownames( dist.close.table ) <- c( "distance", "closeness", "stand.close" )
 colnames( dist.close.table ) <- mat.names
 dist.close.table
