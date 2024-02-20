@@ -43,8 +43,8 @@ We will also explore working with weighted networks. That is, a network where ed
 
 <br>
 
-  + [Bipartite Graphs & Two-Mode Networks in R lab](../labs/lab-07-bipartite.html)  
-  + [Projection & Weighted Graphs in R lab](../labs/lab-08-projection-weighted.html)
+  + [Bipartite Graphs & Two-Mode Networks in R lab](../labs/lab-08-bipartite.html)  
+  + [Projection & Weighted Graphs in R lab](../labs/lab-09-projection-weighted.html)
   
 <br>
 
@@ -52,7 +52,6 @@ We will also explore working with weighted networks. That is, a network where ed
 
   + [Homework 4 instructions](../hmwk/hmwk-04-instructions.html)  
   + [Homework 4 template](../hmwk/templates/hmwk-04-template.zip?raw=true)  
-  + [Homework 4 solutions]()  
 
 <br>
 

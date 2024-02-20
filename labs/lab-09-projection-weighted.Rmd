@@ -1,5 +1,5 @@
 ---
-title: "Lab 08-Projection & Weighted Graphs"
+title: "Lab 9 - Projection and Weighted Graphs in R"
 date: "CRJ 605 Statistical Analysis of Networks"
 output: 
   html_document:
@@ -12,269 +12,534 @@ output:
     self_contained: true
 ---
 
-```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
-library( devtools )
-library( network )
-library( sna )
+<style>
+body {
+text-align: left}
+</style>
+
+```{r, echo=FALSE}
+
+# set the defaults for the codechunks
+knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
+
 ```
 
-*This lab works with unipartite/one-mode projections of two-mode networks.*
+```{r,echo=FALSE}
 
-***
+# libraries needed
 
-### **One-Mode Networks by Projection**  
+library( sna )     # for sna functions
+library( network ) # for working with network objects
 
-*Projection* is the process by which we map the connectivity between modes to a single mode. 
+```
 
-For example, consider a two-mode network of people in groups. By projecting, we get:  
+----
 
- * One-mode network of people connected to people by groups.  
+<br>
 
- * One-mode network of groups connected by people.
+As discussed in the [Bipartite Graphs & Two-Mode Networks](../lectures/lecture-06-bipartite.pdf) lecture, bipartite graphs are useful for operationalizing contexts where nodes come from *two* separate classes. In contrast to one-mode networks, or unipartite graphs, where edges can be incident *within* a particular node/vertex set, in two-mode or bipartite graphs there are two partitions of nodes (called modes), and edges only occur *between* these partitions (i.e. not within). In the [Projection & Weighted Graphs](../lectures/lecture-07-projection-weighted.pdf) lecture, we saw that **projection** is the process by which we map the connectivity between modes to a single mode. And, we saw that we can use a weighted graph or a binarized graph in the analysis of the project.
+
+In this lab, we will review how a unipartite or one-mode network can be created through projection. We will also review how to work with weighted graphs.
+
+*Why are you learning this?* Bipartite graphs are a common network structure used in many network analysis projects. Being able to work with these objects and summarize their structure is an important tool for your skill set as a social network analyst!
+
+<br>
+
+# **One-Mode Networks by Projection**  
 
 *How do we do this?*
 
-Following [Breiger (1974)](https://www.jstor.org/stable/2576011), we can build the adjacency matrix for each projected network through matrix algebra. Specifically, multiplying an adjacency matrix by it’s **transpose**. The transpose of a matrix *A* simply reverses the columns and rows: $\sf{AT_{ij}}$ =  $\sf{A_{ji}}$.
+Following [Breiger (1974)](https://www.jstor.org/stable/2576011), we can build the adjacency matrix for each projected network through matrix algebra. Specifically, multiplying an adjacency matrix by it’s **transpose**. The transpose of a matrix *A* simply reverses the columns and rows: $\sf{A^T_{ij}}$ =  $\sf{A_{ji}}$.
 
 The two-mode, *NxM*, adjacency matrix, when multiplied by it’s transpose, produces either:  
 
+ * An *NxN* matrix (ties among *N* nodes via *M*)
+
  * An *MxM* matrix (ties among *M* nodes via *N*)  
- 
+
+To examine how this works, let's first set up an example:
+
+```{r}
+
+# clear the workspace
+rm( list = ls() )
+
+# create an example matrix
+A <- rbind(
+  c( 1,1,0,0,0 ),
+  c( 1,0,0,0,0 ),
+  c( 1,1,0,0,0 ),
+  c( 0,1,1,1,1 ),
+  c( 0,0,1,0,0 ),
+  c( 0,0,1,0,1 )
+  )
+
+# name the rows and columns 
+rownames( A ) <- c( "A","B","C","D","E","F" )
+colnames( A ) <- c( "1","2","3","4","5" )
+
+# print out the matrix
+A
+
+```
+
+<br>
+
+## **Transposition**
+
+In R, the `t()` function, or `transpose()` returns the transposition of a matrix. To see the the help on the `transpose()` function, just use `?t` to pull up the help page.
+
+```{r}
+
+# print the transpose of our example
+t( A )
+
+```
+
+*What is different?* Compare the difference between `A` and `t( A )`. 
+
+<br>
+
+### **Matrix Multiplication in R**
+
+To create the project, we need to use matrix algebra. To multiply matrices in R, we have to use the following operator: `%*%`. This is different then `*` in that `%*%` tells R to use matrix multiplication. For example, compare the differences:
+
+```{r}
+
+# create two matrices
+a <- matrix( c(1,1,1,1), nrow=2, byrow=TRUE )
+b <- matrix( c(2,2,2,2), nrow=2, byrow=TRUE )
+
+# multiply the first element in a by the first element in b
+a * b
+
+# multiply the matrix a by the matrix b
+a %*% b
+
+```
+
+*What is the difference?* When we use `a * b`, it is not using matrix multiplication.
+
+<br>
+
+To multiply two matrices, the number of columns in the first matrix must match the number of rows in the second matrix. This is called *conformability*. Only matrices with *conformable* dimensions can be multiplied. For example, 5x6 X 6x5 works, but not 5x6 X 5x6. When two matrices are multiplied by each other, this renders the *product* matrix. The *product* matrix has the number of rows equal to the first matrix and the number of columns equal to the second matrix.
+
+<br>
+
+Recall that from the two-mode, *NxM*, adjacency matrix, we can produce two different matrices:  
+
  * An *NxN* matrix (ties among *N* nodes via *M*)
  
-In R, the `t()` function, or `transpose()` returns the transposition of a matrix:
+   * This is created by using *NxM* X t(*NxM*), or *NxM* X *MxN*  
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# clear the workspace.
-rm(list = ls())
+ * An *MxM* matrix (ties among *M* nodes via *N*)  
+ 
+    * This is created by using t(*NxM*) X *NxM*, or *MxN* X *NxM*  
 
-# call the libraries.
-library(sna, quietly=TRUE)
-library(network, quietly=TRUE)
+Let's create each of these with our example network.
+ 
+```{r}
 
-# create the example network.
-bipartite.example <- rbind(c(1,1,0,0,0),c(1,0,0,0,0),c(1,1,0,0,0),c(0,1,1,1,1),c(0,0,1,0,0),c(0,0,1,0,1))
-rownames(bipartite.example) <- c("A","B","C","D","E","F")
-colnames(bipartite.example) <- c("1","2","3","4","5")
-bipartite.example.net <- as.network(bipartite.example,bipartite=dim(bipartite.example)[1]) # take the first dimension of the matrix.
-gplot(bipartite.example.net,label=network.vertex.names(bipartite.example.net),gmode="twomode", usearrows=FALSE, vertex.cex=2,label.cex=1.2,main="Bipartite Graph of Example Graph")
+# create the NxN matrix
+A %*% t( A )
 
-# print out the object.
-bipartite.example
+# create the MxM matrix
+t( A ) %*% A
 
-# Now, take a look at the t() function.
-?t
-
-# Compare the objects. What has changed?
-t(bipartite.example)
 ```
 
-To multiply in R, we have to use the following character: `%*%`. This is different then `*` in that `%*%` tells R to use matrix multiplication. For example, compare the difference between these two objects:
+<br>
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Compare these objects:
-a <- matrix(c(1,1,1,1),nrow=2,byrow=T)
-b <- matrix(c(2,2,2,2),nrow=2,byrow=T)
-a*b   #this one is multiplying the first element in a by the first element in b.
-a%*%b #this one is actual matrix multiplication.
-# what is different between them?
-```
+# **Projections**
 
-To multiply two matrices, the number of columns in the first matrix must match the number of rows in the second matrix. Only matrices with *conformable* dimensions can be multiplied. For example, 5x6 X 6x5 works, but not 5x6 X 5x6. The *product* matrix has the number of rows equal to the first matrix and the number of columns equal to the second matrix.
+## **The Person Matrix**
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-#bipartite.example%*%bipartite.example # this does not work because the dimensions do not match.
-bipartite.example%*%t(bipartite.example) #but this works, because we have arranged the dimensions correctly.
+Ok, so we have created the projections, which are the one-mode networks that represent information in the two-mode networks. Recall from the [Projection & Weighted Graphs](../lectures/lecture-07-projection-weighted.pdf) lecture that [Breiger (1974)](https://www.jstor.org/stable/2576011) referred to the *person* matrix (i.e. the *NxN* matrix) and the *group* matrix (i.e. the *MxM* matrix).
 
-# again, note that the use of the * operator produces a different matrix.
-bipartite.example*bipartite.example
-```
+```{r}
 
-Now, let's look at our results from the slides:
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# let's redefine the object to be consistent with the slides.
-A <- bipartite.example
-
-# create the "person" matrix: recall this is A X t(A).
-P <- A%*%t(A)
+# create the "person" matrix: recall this is A X t(A)
+P <- A %*% t( A )
 
 P
-# What does the diagonal represent in this matrix?
-# What do the off-diagonal elements represent?
 
-set.seed(1)
-gplot(P,gmode="graph",label=c("A","B","C","D","E","F"))
+```
 
-# create the "group" matrix: recall this is t(A) X A.
-G <- t(A)%*%A
+*What does the diagonal represent in this matrix? What do the off-diagonal elements represent?*
+
+<br>
+
+The *diagonal* elements represent the number of nodes in the second mode of the bipartite graph to which a node is connected. Put differently, if we have a **two-mode network** where one set of nodes are individuals and the other set of nodes are events, then the *diagonal* of the projection for the "person" matrix represents the number of events that an individual attended.  
+
+The *off-diagonal* elements represent the ties between nodes in the same node set of the bipartite graph. That is, ties between individuals. 
+
+<br>
+
+To visualize this by plotting each network, then we can better see what is happening. We will use the `gplot()` function, so be sure to call the `sna` package library.
+
+```{r, fig.width=8, fig.height=4, fig.fullwidth=TRUE}
+
+# call the library
+library( sna )
+
+# set the plot regions to ease with visualization
+par( 
+  mfrow = c( 1, 2 ),
+  mar = c( 0, 1, 4, 1)
+  )
+
+# set the seed to reproduce the plot
+set.seed( 605 )
+
+# plot the bipartite network
+gplot( A,
+       gmode = "twomode",
+       main = NA,
+       usearrows = FALSE,
+       label = c( "A","B","C","D","E","F", "1","2","3","4","5" ),
+       label.pos = 5,
+       vertex.cex = 2,
+       vertex.col = c(                   # create a vector of colors
+         rep( "#fa6e7a", dim( A )[1] ),  # the first color is the number of nodes in the first mode
+         rep( "#00aaff", dim( A )[2] ) ) # the second color is the number of nodes in the second mode
+       )
+title( "Bipartite Matrix", line = 1 )
+
+# plot the person matrix
+gplot( P,
+       gmode = "graph",
+       label = c( "A","B","C","D","E","F" ),
+       main = NA,
+       usearrows = FALSE,
+       label.pos = 5,
+       vertex.cex = 2,
+       vertex.col = "#fa6e7a",
+       vertex.sides = 99.      # set the shapes to be circles
+       )
+title( "Unipartite Projection of\n Person Matrix", line = -1 )
+
+
+```
+
+From the plots we can see what the projection is doing. It is creating a unipartite graph based on the ties in the bipartite graph. For example, consider nodes *A*, *B*, and *C*. In the bipartite graph, *B*, is connected to *A* and *C* through node *1*. We see this in the unipartite graph where *A*, *B*, and *C* are connected. In other words, we have taken the links between *A*, *B*, and *C* in the bipartite graph and reproduced them in a unipartite graph.
+
+<br>
+
+## **The Group Matrix**
+
+Now, let's take a look at the "group" matrix. The projection for the "group" matrix has a different interpretation. Let's work through this to see it.   
+
+```{r}
+
+# create the "group" matrix: recall this is t(A) X A
+G <- t( A ) %*% A
 
 G
-# What does the diagonal represent in this matrix?
-# What do the off-diagonal elements represent?
 
-set.seed( 1 )
-gplot( G, gmode = "graph", label = c( "1","2","3","4","5" ) )
-
-``` 
-
-
-### **One-Mode Networks using `tnet()` functions**  
-
-As discussed in the "Projection and Weighted Networks" lecture, we have some options when working with the projected network. For example, we can *binarize* the off-diagonal elements to reflect 0 and 1s for the presence and absense of ties. Alternatively, we could use the *summation* method whereby the off-diagonal elements represent the count of shared nodes. Finally, we could use the *Newman* method were ties are weighted by the number of edges incident on a node prior to projection.
-
-We can look at these various approaches in the `tnet()` package. The function we want to examine is the `projecting_tm()` function. This function has a `method=` argument where we can stipulate what type of projection we want.
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# First, call the tnet() package.
-library(tnet)
-
-# Look at the function.
-?projecting_tm
-
-# Coerce the object to be of class tnet.
-bipartite.example.tnet <- as.tnet(as.matrix(bipartite.example.net))
-
-# Now, create the various projections based on the different method= arguments.
-binary.projection.example <- projecting_tm(bipartite.example.tnet, method="binary")
-sum.projection.example    <- projecting_tm(bipartite.example.tnet, method="sum")
-newman.projection.example <- projecting_tm(bipartite.example.tnet, method="Newman")
 ```
 
-Now let's take a look at the differences between them. I prefer to view these as matrices, which requires us to coerce to an object of class `network()`. This takes several steps: 
+*What does the diagonal represent in this matrix? What do the off-diagonal elements represent?*
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# First, coerce the object to an igraph object using the tnet_igraph function.
-binary.projection.example.igraph <- tnet_igraph(binary.projection.example,type="weighted one-mode tnet")
-sum.projection.example.igraph    <- tnet_igraph(sum.projection.example,type="weighted one-mode tnet")
-newman.projection.example.igraph <- tnet_igraph(newman.projection.example,type="weighted one-mode tnet")
+<br>
 
-# Now, load the intergraph package to coerce the igraph object to a network object using the asNetwork() function.
-library(intergraph)
-binary.projection.example.net <- asNetwork(binary.projection.example.igraph)
-sum.projection.example.net    <- asNetwork(sum.projection.example.igraph)
-newman.projection.example.net <- asNetwork(newman.projection.example.igraph)
+The *diagonal* elements represent the number of nodes in the first mode of the bipartite graph to which a node is connected. If we have a **two-mode network** where one set of nodes are individuals and the other set of nodes are events, then the *diagonal* of the projection for the "group" matrix represents the number of individuals that attend an event. The *off-diagonal* elements represent the ties between events. Essentially, how events are connected by people attending them. Let's plot this to see it.
 
-# Then, detach tnet and igraph because they conflict with sna.
-detach(package: tnet)
-detach(package: igraph)
+```{r, fig.width=8, fig.height=4, fig.fullwidth=TRUE}
 
-# Now, finally, we can look at the matrices.
-as.matrix(binary.projection.example.net, attrname = "weight")
-as.matrix(sum.projection.example.net, attrname = "weight")
-as.matrix(newman.projection.example.net, attrname = "weight")
-
-# It is a bit easier to just pull the edge atttribute.
-weights.mat <-cbind(
-  binary.projection.example.net %e% "weight",
-  sum.projection.example.net %e% "weight",
-  newman.projection.example.net %e% "weight"
-)
-colnames(weights.mat) <- c("Binary","Summation","Newman")
-weights.mat
-
-# plot the graph with the edge weights to see the differences.
-par(mfrow=c(2,2))
-set.seed(1)
-gplot(bipartite.example.net,label=c("A","B","C","D","E","F","","","","",""),gmode="twomode", usearrows=FALSE, vertex.cex=2,label.cex=1.2,main="Bipartite Graph of Example Graph")
-set.seed(1)
-gplot(binary.projection.example.net,gmode="graph", main="Binary", 
-      edge.lwd = binary.projection.example.net %e% "weight"*5, # size the edges based on the weight.
-      vertex.col= "orange",label = c("A","B","C","D","E","F")) # set the correct labels.
-set.seed(1)
-gplot(sum.projection.example.net,gmode="graph",main="Summation", edge.lwd = sum.projection.example.net %e% "weight"*5, vertex.col = "lightblue",label = c("A","B","C","D","E","F"))
-set.seed(1)
-gplot(newman.projection.example.net,gmode="graph",main="Newman", edge.lwd = newman.projection.example.net %e% "weight"*5, vertex.col = "lightgreen",label = c("A","B","C","D","E","F"))
-par(mfrow=c(1,1))
-```
-
-***
-
-### **Empirical Example**  
-
-Now, let's take a look at the biparite graph used in a paper I wrote with Justin Ready entitled ["Diffusion of Ideas and Technology: The Role of Networks in Influencing the Endorsement and Use of On-Officer Video Cameras"](https://journals.sagepub.com/doi/10.1177/1043986214553380). The goal of the paper was to examine how police officers develop cognitive frames about the usefulness of body-worn cameras and try to determine whether interactions with other officers provide a conduit for facilitating cognitive frames that increase camera legitimacy. 
-
-The bipartite graph is available as an edgelist is available [here](https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/officer.event.edgelist.csv). Let's import the edgelist and take a look at the network.
-
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-
+# call the library
 library( sna )
-library( network )
 
-url <- ( "https://raw.githubusercontent.com/jacobtnyoung/SAND/main/data/lab_data/lab-07-officer-event-edgelist.csv" )
+# set the plot regions to ease with visualization
+par( 
+  mfrow = c( 1, 2 ),
+  mar = c( 0, 1, 4, 1)
+  )
 
-officer.event.edgelist   <- as.matrix( read.csv( url, as.is=TRUE, header=TRUE ) ) 
+# set the seed to reproduce the plot
+set.seed( 605 )
 
-# create the matrix format.
-uR <-unique( officer.event.edgelist[,1] )
-uC <- unique( officer.event.edgelist[,2] )
-mat <- matrix( 0, length( uR ), length( uC ) )
-rownames( mat ) <- uR
-colnames( mat ) <- uC
-mat[officer.event.edgelist] <- 1
-diag( mat ) <- 0
+# plot the bipartite network
+gplot( A,
+       gmode = "twomode",
+       main = NA,
+       usearrows = FALSE,
+       label = c( "A","B","C","D","E","F", "1","2","3","4","5" ),
+       label.pos = 5,
+       vertex.cex = 2,
+       vertex.col = c( 
+         rep( "#fa6e7a", dim( A )[1] ), 
+         rep( "#00aaff", dim( A )[2] ) )
+       )
+title( "Bipartite Matrix", line = 1 )
 
-# Now, create the bipartite network. 
-officer.event.net <- as.network(mat,bipartite=81,matrix.type="adjacency")
-
-# Load tnet.
-library(tnet)
-
-# Coerce the object to be of class tnet.
-bipartite.officer.tnet <- as.tnet(as.matrix(officer.event.net))
-
-# Now, create the various projections based on the different method= arguments.
-binary.projection.officer <- projecting_tm(bipartite.officer.tnet, method="binary")
-sum.projection.officer    <- projecting_tm(bipartite.officer.tnet, method="sum")
-newman.projection.officer <- projecting_tm(bipartite.officer.tnet, method="Newman")
-
-# Now, load the intergraph package to coerce the igraph object to a network object using the asNetwork() function.
-library(intergraph)
-binary.projection.officer.net <- asNetwork(binary.projection.officer)
-sum.projection.officer.net    <- asNetwork(sum.projection.officer)
-newman.projection.officer.net <- asNetwork(newman.projection.officer)
-
-# Then, detach tnet and igraph because they conflict with sna.
-detach(package: tnet)
-detach(package: igraph)
-
-# Create some stuff for the plot.
-status <- c(rep("Control",44),rep("Treatment",37),rep("Event",153))
-vcol <- status
-vcol[status == "Control"]   <- "green" # make controls green.
-vcol[status == "Treatment"] <- "Red" # make treatment group red.
-vcol[status == "Event"]     <- "White" # make events white.
-vsides <- rep(0,length(status))
-vsides[status == "Control"]   <- 3 # make controls triangles.
-vsides[status == "Treatment"] <- 4 # make treatment group squares.
-vsides[status == "Event"]     <- 50 # make events circles.
-
-
-# plot the graph with the edge weights to see the differences.
-par(mfrow=c(2,2))
-set.seed(1)
-gplot(officer.event.net,gmode="twomode",usearrows=FALSE,displayisolates=FALSE,vertex.col=vcol,vertex.sides=vsides,edge.col="grey60",edge.lwd=1.2,vertex.cex = c(rep(2,dim(as.matrix(officer.event.net))[1]),rep(1.2,dim(as.matrix(officer.event.net))[2])))
-set.seed(1)
-gplot(binary.projection.officer.net,gmode="graph", main="Binary", edge.lwd = binary.projection.officer.net %e% "w", vertex.col= "orange")
-set.seed(1)
-gplot(sum.projection.officer.net,gmode="graph", main="Summation", edge.lwd = sum.projection.officer.net %e% "w"*2, vertex.col= "lightblue")
-set.seed(1)
-gplot(newman.projection.officer.net,gmode="graph", main="Newman", edge.lwd = sum.projection.officer.net %e% "w"*2, vertex.col= "lightgreen")
-par(mfrow=c(1,1))
+# plot the person matrix
+gplot( G,
+       gmode = "graph",
+       label = c( "1","2","3","4","5" ),
+       main = NA,
+       usearrows = FALSE,
+       label.pos = 5,
+       vertex.cex = 2,
+       vertex.col = "#00aaff",
+       vertex.sides = 4        # set the shape to be a square
+       )
+title( "Unipartite Projection of\n Group Matrix", line = -1 )
 
 ```
 
-***  
+<br>
 
-#### ***Questions?***
+From the plots we can see what the projection is doing. It is creating a unipartite graph based on the ties in the bipartite graph, but this time it is for the other node set. For example, consider nodes *1*, *2*, and *3*. In the bipartite graph, *1*, is connected to *2* through node *A* and *C*. Node *2* and *3* are connected through node *D*. We see this in the unipartite graph where *1* is connected to *2* and *2* is connected to *3*. In other words, we have taken the links between *1*, *2*, and *3* in the bipartite graph and reproduced them in a unipartite graph.
 
+<br>
+
+# **Structural Properties of [Young & Ready's (2015)](https://journals.sagepub.com/doi/10.1177/1043986214553380) Police Officer Network**  
+
+Now, let's work with a real example. As discussed in the [Bipartite Graphs & Two-Mode Networks](../lectures/lecture-06-bipartite.pdf) lecture, [Young & Ready (2015)](https://journals.sagepub.com/doi/10.1177/1043986214553380) examined how police officers develop cognitive frames about the usefulness of body-worn cameras. They argued that police officers views of body-worn cameras influence whether they use their cameras in incidents and that these views partly result from sharing incidents with other officers where they exchanged views about the legitimacy of body-worn cameras.
+
+The adjacency matrix is available in the [SNA Textbook](https://jacobtnyoung.github.io/sna-textbook/index.html) [data]() folder. Let's import the the matrix, create a network, assign an attribute, and plot it. Then, we will work through the structural properties.
+
+```{r}
+
+# set the location for the file
+loc <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-officer-events-adj.csv"
+
+# read in the .csv file
+camMat <- as.matrix(
+  read.csv( 
+    loc,
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1 
+    )
+  )
+
+```
+
+We can check the dimensions of the matrix using the `dim()` function. The `camMat` matrix has `r dim( camMat )[1]` rows and `r dim( camMat )[2]` columns. Recall that this is police officers and incidents, so there are `r dim( camMat )[1]` police officers and `r dim( camMat )[2]` incidents that connect officers.
+
+
+```{r}
+
+# identify the number of police officers
+N <- dim( camMat )[1]
+
+# identify the number of incidents
+M <- dim( camMat )[2]
+
+```
+
+<br>
+
+## **Create the Projections**
+
+Now that we have it put together, let's create the projections. To do this, we just need to employ matrix multiplication on the `camMat` matrix.
+
+```{r}
+
+# create the "person" matrix
+camMatP <- camMat %*% t( camMat )
+
+# create the "group" matrix
+camMatG <- t( camMat ) %*% camMat
+
+
+```
+
+<br>
+
+Now, let's plot the networks!
+
+```{r, fig.width=10, fig.height=10, fig.fullwidth=TRUE}
+
+# set the plot regions to ease with visualization
+par( 
+  mfrow = c( 2, 2 ),
+  mar = c( 2, 1, 4, 1)
+  )
+
+# set the seed to reproduce the plot
+set.seed( 605 )
+
+# plot the bipartite network
+gplot( camMat,
+       gmode="twomode",
+       usearrows=FALSE,
+       edge.col="grey60",
+       vertex.col = c( 
+         rep( "#34e5eb", dim( camMat )[1] ), 
+         rep( "#4f0a1a", dim( camMat )[2] ) ),
+       edge.lwd=1.2
+       )
+title( "Bipartite Matrix of Officers and Incidents", line = 1 )
+
+# plot the person matrix
+gplot( camMatP,
+       gmode = "graph",
+       usearrows = FALSE,
+       edge.col="grey60",
+       edge.lwd=1.2,
+       vertex.col = "#34e5eb"
+       )
+title( "Unipartite Projection of\n Officers (Person) Matrix", line = 1 )
+
+# plot the group matrix
+gplot( camMatG,
+       gmode = "graph",
+       usearrows = FALSE,
+       edge.col="grey60",
+       edge.lwd=1.2,
+       vertex.col = "#4f0a1a",
+       vertex.sides = 4
+       )
+title( "Unipartite Projection of\n Incidents (Group) Matrix", line = 1 )
+
+```
+
+<br>
+
+Now that we have reduced our bipartite graph to a unipartite graph, we can employ the same descriptive tools we have previously used.
+
+<br>
+
+## **Using the Weights in the Plot**
+
+Note that when we create the projection, the matrix is actually a weighted matrix. We saw this in the [Projection & Weighted Graphs](../lectures/lecture-07-projection-weighted.pdf) lecture. 
+We can use this information in our plot. That is, we can use the weighted matrix to shade the edges (darker are larger weights) and size the edges (where larger are bigger weights). To see how this works, let's build a few functions.
+
+<br>
+
+### **Reworking the `edge.rescale()` function**
+
+First, we will create the `edge.rescale()` function to help us here. This function returns a weighted edgelist that can be used to aid with plotting. Then, we will create the `edge.shade()` function that shades the edges based on the size of the edge.
+
+```{r}
+
+edge.rescale <- function( uniMat, low, high ){
+  diag( uniMat ) <- 0
+  min_w <- min( uniMat[uniMat != 0] )
+  max_w <- max( uniMat[uniMat != 0] )
+  rscl <- ( ( high-low )  * ( uniMat[uniMat != 0] - min_w ) ) / ( max_w - min_w ) + low
+  rscl
+}
+
+edge.shade <- function( uniMat ){
+  net.edges <- edge.rescale( uniMat, 0.01, 1 )
+  vec.to.color <- as.vector( abs( net.edges ) )
+  vec.to.color <- 1 - vec.to.color # subtract 1 to flip the grey function scale.
+  edge.cols <- grey( vec.to.color )
+  return( edge.cols )
+}
+
+```
+
+<br>
+
+Now, let's plot the networks with the edges adjusted. We will plot the bipartite graph, the officer network, and the officer network with the shading.
+
+```{r, fig.width=10, fig.height=5, fig.fullwidth=TRUE}
+
+# set the plot regions to ease with visualization
+par( 
+  mfrow = c( 1, 3 ),
+  mar = c( 2, 1, 5, 1)
+  )
+
+# plot the bipartite network
+gplot( camMat,
+       gmode="twomode",
+       usearrows=FALSE,
+       edge.col="grey60",
+       vertex.col = c( 
+         rep( "#34e5eb", dim( camMat )[1] ), 
+         rep( "#4f0a1a", dim( camMat )[2] ) ),
+       edge.lwd=1.2
+       )
+title( "Bipartite Matrix of Officers and Incidents", line = 1 )
+
+# plot the person matrix
+set.seed( 605 )
+gplot( camMatP,
+       gmode = "graph",
+       usearrows = FALSE,
+       vertex.col = "#34e5eb"
+       )
+title( "Unipartite Projection of\n Officers (Person) Matrix\n (no shading)", line = 1 )
+
+# plot the person matrix
+set.seed( 605 )
+gplot( camMatP,
+       gmode = "graph",
+       usearrows = FALSE,
+       edge.col = edge.shade( camMatP ),           # note the usage here
+       edge.lwd = edge.rescale( camMatP, 0.1, 5 ), # note the usage here
+       vertex.col = "#34e5eb"
+       )
+title( "Unipartite Projection of\n Officers (Person) Matrix", line = 1 )
+
+```
+
+Now, we will plot the bipartite graph, the incident network, and the incident network with the shading.
+
+```{r, fig.width=10, fig.height=5, fig.fullwidth=TRUE}
+
+# set the plot regions to ease with visualization
+par( 
+  mfrow = c( 1, 3 ),
+  mar = c( 2, 1, 4, 1)
+  )
+
+# plot the bipartite network
+gplot( camMat,
+       gmode="twomode",
+       usearrows=FALSE,
+       edge.col="grey60",
+       vertex.col = c( 
+         rep( "#34e5eb", dim( camMat )[1] ), 
+         rep( "#4f0a1a", dim( camMat )[2] ) ),
+       edge.lwd=1.2
+       )
+title( "Bipartite Matrix of Officers and Incidents", line = 1 )
+
+# plot the group matrix
+set.seed( 605 )
+gplot( camMatG,
+       gmode = "graph",
+       usearrows = FALSE,
+       vertex.col = "#4f0a1a",
+       vertex.sides = 4
+       )
+title( "Unipartite Projection of\n Incidents (Group) Matrix\n (no shading)", line = 1 )
+
+
+# plot the group matrix
+set.seed( 605 )
+gplot( camMatG,
+       gmode = "graph",
+       usearrows = FALSE,
+       edge.col = edge.shade( camMatG ),           # note the usage here
+       edge.lwd = edge.rescale( camMatG, 0.1, 5 ), # note the usage here
+       vertex.col = "#4f0a1a",
+       vertex.sides = 4
+       )
+title( "Unipartite Projection of\n Incidents (Group) Matrix", line = 1 )
+
+```
+
+
+<br>
+
+----
+
+# **Wrapping up...**
+
+In this lab, we reviewed how a unipartite or one-mode network can be created through projection. We also reviewed how to work with weighted graphs.
+
+
+<br>
+
+### ***Questions?***
 
 <br>
 
 ##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
-
-<br>
-<br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
