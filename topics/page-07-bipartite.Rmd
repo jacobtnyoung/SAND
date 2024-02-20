@@ -22,7 +22,7 @@ knitr::opts_chunk$set( echo = TRUE )
 
 <br>
 
-## *Bipartite Graphs/Two-Mode Networks*
+## *Bipartite Graphs/Two-Mode Networks & Weighted Graphs*
 
 ----
 
@@ -30,7 +30,7 @@ knitr::opts_chunk$set( echo = TRUE )
 
 So far, we have worked with networks that have one set of nodes and one set of edges. But, not all of the networks we want to examine have a single node set. More complex relational structures have multiple partitions of node sets. Bipartite graphs allow us to represent networks that have two partitions of nodes. This section introduces bipartite graphs (i.e. two-mode networks). 
 
-In addition, we will review a common approach in research where a bipartite graph is reduced to a unipartite graph (called *projection*). Projection is the process by which we map the connectivity between modes to a single mode. This procedure produces a one-mode network and allows us to use the tools developed for networks with a single set of nodes (with some caveats).This week will focus on network projection. 
+In addition, we will review a common approach in research where a bipartite graph is reduced to a unipartite graph (called *projection*). Projection is the process by which we map the connectivity between modes to a single mode. This procedure produces a one-mode network and allows us to use the tools developed for networks with a single set of nodes (with some caveats). This week will focus on network projection. 
 
 We will also explore working with weighted networks. That is, a network where edges can differ in terms of their values (moving beyond 0s and 1s!)
 
