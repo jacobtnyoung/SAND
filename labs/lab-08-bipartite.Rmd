@@ -349,7 +349,7 @@ event.size <- event.deg / N
 v.size <- c( actor.size, event.size )
 
 # set the seed to reproduce the plot layout
-set.seed( 507 )
+set.seed( 605 )
 
 # execute the plot
 gplot(
