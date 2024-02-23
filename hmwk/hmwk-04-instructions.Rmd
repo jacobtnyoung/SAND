@@ -1,0 +1,140 @@
+---
+title: "Homework 4 - Bipartite Graphs and Two-Mode Networks - INSTRUCTIONS"
+date: "CRJ 605 Statistical Analysis of Network Data"
+output: 
+  html_document:
+    df_print: paged
+    theme: cosmo
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+    self_contained: true
+---
+
+<style>
+body {
+text-align: left}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+----
+
+# Introduction
+
+The purpose of this homework is to familiarize yourself with bipartite graphs and two-mode networks in *R*. Please review the following materials before beginning this homework:  
+
+  + [Bipartite Graphs & Two-Mode Networks](../lectures/lecture-06-bipartite.pdf) lecture
+  + [Bipartite Graphs & Two-Mode Networks in R](../labs/lab-08-bipartite.html) lab
+  + [Projection & Weighted Graphs](../lectures/lecture-07-projection-weighted.pdf) lecture 
+  + [Projection & Weighted Graphs in R](../labs/lab-09-projection-weighted.html) lab
+
+<br>
+
+## The Networks
+
+For this homework assignment, you will use two network objects: 
+
+The first network is constructed from data recorded in [Paul Revere's Ride](https://global.oup.com/ushe/product/paul-reveres-ride-9780195098310?cc=us&lang=en&), by David Fischer. In the book, Fischer documents Reveres connections through various affiliations in locations and how these influenced history. The Paul Revere conspiracy dataset concerns relationships between 254 people and their affiliations with seven different organizations in Boston. The dataset refers to Paul Revere, who was responsible for organizing a local militia of Boston's revolutionary movement. The network is two-mode, with 254 actors and 7 organizations ("events"). We will refer to this network as the `PaulRevereNet`.
+
+The second network is the Philippine Kidnappings Data which is a collection of relationships on the Abu Sayyaf Group (ASG), a violent non-state actor operating in the Southern Philippines. In particular, this data is related to the Salast movement that has been founded by Aburajak Janjalani, a native terrorist of the Southern Philippines in 1991. ASG is active in kidnapping and other kinds of terrorist attacks. The object is a two-mode network, with 246 kidnappers and the 105 terrorist events they attended. We will refer to this as the `PhilKidnapNet` network.
+
+<br>
+
+## Part I: Two-Mode Networks
+
+For both the `PaulRevereNet` network and the `PhilKidnapNet` network, do the following:  
+
+1. Plot the network using the `gplot()` function.  
+2. Calculate the density of the network.
+3. Interpret the density of the network.
+4. Calculate the degree centrality scores for each set of nodes.  
+5. Calculate the mean degree centrality scores and interpret the values.  
+6. Calculate the standardized degree centrality scores for each set of nodes.  
+7. Calculate the mean standardized degree centrality score.  
+8. Plot the network using the standardized degree centrality scores.
+9. Calculate the dyadic clustering score.
+10. Interpret the dyadic clustering score.
+11. Using the vertex attribute corresponding to the names, discuss which node in each node set (i.e. `N` and `M`) is most central in the network.
+
+*Note*: for 9, you can access the vertex attribute for the `PaulRevereNet` network using the `PaulRevereNet %v% "people.names"` and `PaulRevereNet %v% "place.names"`, respectively. For the `PhilKidnapNet` network, the names of the nodes are stored as a vertex attribute called `vertex.names`.
+
+<br>
+
+## Part II: Projection and Unipartite Networks
+
+For both the `PaulRevereNet` network and the `PhilKidnapNet` network, do the following:  
+
+1. Create an object of class `matrix` from the network. Use the `as.sociomatrix()` function in the `network` package to do so.
+2. Create the unipartite graph that represents the "person" matrix.
+3. Create the unipartite graph that represents the "group" matrix.
+4. Plot all three graphs.
+5. Create an object of class `network` from the binarized "person" matrix. Use this object for steps 6-13.
+6. Calculate the degree, closeness, and betweenness centrality scores for each actor.  
+7. Calculate the standardized degree, closeness, and betweenness centrality scores for each actor.  
+8. Calculate and report the mean (unstandardized) degree, closeness, and betweenness centrality scores.
+9. Interpret each mean centrality score.
+10. Calculate the graph centralization for degree, closeness, and betweenness centrality.  
+11. Interpret each graph centralization score.
+
+<br>
+
+----
+
+# How to Submit
+
+Download the [Homework 4 template](../hmwk/templates/hmwk-04-template.zip?raw=true) prior to beginning. **The template contains code for accessing the data files**.
+
+<br>
+
+### Knitting to HTML
+
+When you have completed your homework, click the "Knit" button to render your `.RMD` file into a `.HTML` report.
+
+<br>
+
+### Special Instructions
+
+Upload both your `.RMD` and `.HTML` files to the appropriate assignment on the Canvas page for this course. Just click the "Start Assignment" button to upload the files. This assignment is *DUE* on **3/13**.
+
+<br>
+
+### Before You Submit
+
+Remember to ensure the following before submitting your assignment.
+
+1. Name your files using this format: **Hmwk-##-LastName.rmd** and **Hmwk-##-LastName.html**
+2. Show both the solution for your code and write out your answers in the body text 
+
+See [Google's R Style Guide](https://google.github.io/styleguide/Rguide.xml) for examples of common conventions.
+
+<br>
+
+### Common Knitting Issues
+
+`.RMD` files are knit into `.HTML` and other formats procedural, or line-by-line.
+
+* An error in code when knitting will halt the process; error messages will tell you the specific line with the error
+* Certain functions like `install.packages()` or `setwd()` are bound to cause errors in knitting 
+* Altering a dataset or variable in one chunk will affect their use in all later chunks
+* If an object is "not found", make sure it was created or loaded with `library()` in a previous chunk
+
+**If All Else Fails:** If you cannot determine and fix the errors in a code chunk that's preventing you from knitting your document, add `eval = FALSE` inside the brackets of `{r}` at the beginning of a chunk to ensure that R does not attempt to evaluate it, that is: `{r eval = FALSE}`. This will prevent an erroneous chunk of code from halting the knitting process.  
+
+<br>
+
+____
+
+<br>
+
+<p align="center"> [Back to SAND main page](https://jacobtnyoung.github.io/SAND/) </p>
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>
