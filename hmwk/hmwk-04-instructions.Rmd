@@ -36,7 +36,7 @@ The purpose of this homework is to familiarize yourself with bipartite graphs an
 
 ## The Networks
 
-For this homework assignment, you will use two network objects: 
+For this homework assignment, there are two network objects to work with: 
 
 The first network is constructed from data recorded in [Paul Revere's Ride](https://global.oup.com/ushe/product/paul-reveres-ride-9780195098310?cc=us&lang=en&), by David Fischer. In the book, Fischer documents Reveres connections through various affiliations in locations and how these influenced history. The Paul Revere conspiracy dataset concerns relationships between 254 people and their affiliations with seven different organizations in Boston. The dataset refers to Paul Revere, who was responsible for organizing a local militia of Boston's revolutionary movement. The network is two-mode, with 254 actors and 7 organizations ("events"). We will refer to this network as the `PaulRevereNet`.
 
@@ -46,7 +46,7 @@ The second network is the Philippine Kidnappings Data which is a collection of r
 
 ## Part I: Two-Mode Networks
 
-For both the `PaulRevereNet` network and the `PhilKidnapNet` network, do the following:  
+For **either** (but if you are feeling it, do *both*!) the `PaulRevereNet` network or(and?) the `PhilKidnapNet` network, do the following:  
 
 1. Plot the network using the `gplot()` function.  
 2. Calculate the density of the network.
@@ -66,7 +66,7 @@ For both the `PaulRevereNet` network and the `PhilKidnapNet` network, do the fol
 
 ## Part II: Projection and Unipartite Networks
 
-For both the `PaulRevereNet` network and the `PhilKidnapNet` network, do the following:  
+For **either** (but if you are feeling it, do *both*!) the `PaulRevereNet` network or(and?) the `PhilKidnapNet` network, do the following:  
 
 1. Create an object of class `matrix` from the network. Use the `as.sociomatrix()` function in the `network` package to do so.
 2. Create the unipartite graph that represents the "person" matrix.
