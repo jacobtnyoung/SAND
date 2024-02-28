@@ -409,7 +409,7 @@ We can use this information in our plot. That is, we can use the weighted matrix
 
 <br>
 
-### **Reworking the `edge.rescale()` function**
+### **Reworking the `rescale()` function to incorporate edge weights**
 
 First, we will create the `edge.rescale()` function to help us here. This function returns a weighted edgelist that can be used to aid with plotting. Then, we will create the `edge.shade()` function that shades the edges based on the size of the edge.
 
