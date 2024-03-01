@@ -28,29 +28,39 @@ knitr::opts_chunk$set( echo = TRUE )
 
 <br>
 
-These lectures examine the logic of generative models for network data.   
+So far, we have mainly been doing *descriptive statistics* with network data. That is, seeing how we work with build network data structures and describing the properties of those networks. For example, the question "how are the degrees distributed in this network?" is a descriptive question in that we are describing the distribution of ties.
 
-The lecture introduces the exponential random graph model (ERGM) as a flexible tool for specifying network configurations that generate global network structures.  
+Moving forward, we will shift toward *inferential statistics* where we test hypotheses on networks. For example, the question "is the distribution of degrees different from a network where ties form at random?" is a hypothesis and we need a modeling framework for testing this hypothesis.
 
-The first lab provides an overview of different dependence specifications of the model (e.g. dyadic independence) and working with node level attributes using the ergm package.  
+This provides a whole new body of questions that we can ask:  
 
-The second lab (Simulation and Goodness of Fit) examines functions for goodness of fit and simulation in the ergm package. A comprehensive archive of materials, discussion, syntax, papers, etc. for the ergm package is available at the statnet website.  
+  * How do networks form?  
+  * What are the micro patterns that generate global structure? 
+  * How likely is it that we would observe these configurations if ties formed at random?
 
-A problem set (with solutions) is provided to work through the material covered.
+The lecture introduces the **Exponential Random Graph Model (ERGM)**, which is a flexible tool for specifying network configurations that generate global network structures. 
+
+The first lab provides an introduction to ERGMs in R. We will work through different dependence specifications of the model reviewed in the lecture (e.g. dyadic independence) and show how to incorporate node level attributes into the model. We will be using the `ergm` package throughout the lab.  
+
+The second lab examines functions for goodness of fit and simulation in the `ergm` package. A comprehensive archive of materials, discussion, syntax, papers, etc. for the `ergm` package is available at the [statnet](https://statnet.org/) website.  
 
 <br>
 
-#### Lecture Materials  
+#### Lecture & Lab Materials  
 
-  + [Introduction to ERGMs lecture](../lectures/lecture-09-ergm-intro.pdf)
+  + [Introduction to Exponential Random Graph Models (ERGMs) lecture](../lectures/lecture-08-ergm.pdf)
   
-  + [R script for Introduction to ERGMs lecture](../lecture_syntax/lecture-syntax-09-ergm-intro.R)
-  
-  + [Lab 09-Introduction to Exponential Random Graph Models (ERGMs)](../labs/lab-09-ergm-intro.html)
-  
-  + [Lab 10-Simulation and Goodness of Fit with Exponential Random Graph Models (ERGMs)](../labs/lab-10-ergm-gof.html)
-  
-  + ERGMs problem set (pdf) and solutions (html) (Rmd)
+<br>
+
+  + [Introduction to Exponential Random Graph Models (ERGMs) in R lab](../labs/lab-10-ergm-intro.html)
+  + [Simulation and Goodness of Fit with Exponential Random Graph Models (ERGMs) lab](../labs/lab-11-ergm-gof.html)
+
+<br>
+
+#### Homework Materials  
+
+  + [Homework 5 instructions](../hmwk/hmwk-05-instructions.html)  
+  + [Homework 5 template](../hmwk/templates/hmwk-05-template.zip?raw=true)  
 
 <br>
 
@@ -58,10 +68,15 @@ ____
 
 <br>
 
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
+
+<br>
+
+<br>
+
 #### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 <br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
