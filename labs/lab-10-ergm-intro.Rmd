@@ -623,6 +623,15 @@ summary( d.homophily.gaNetU )
 
 <br>
 
+## **Endogenous Network Structure**  
+
+A major strength of the ERGM is the ability to model endogeous network structures.
+
+!!!HERE
+
+
+<br>
+
 ----
 
 # **Wrapping up...**
