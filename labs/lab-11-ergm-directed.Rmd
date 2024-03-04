@@ -1,5 +1,5 @@
 ---
-title: "Lab 10 - Introduction to Exponential Random Graph Models (ERGMs) in R"
+title: "Lab 11 - More Exponential Random Graph Models (ERGMs) in R"
 date: "CRJ 605 Statistical Analysis of Networks"
 output: 
   html_document:
@@ -46,6 +46,12 @@ library( ergm )    # for working with ergms
 ----
 
 <br>
+
+
+!!!HERE: Want to work through this for the directed network
+
+Need to add the link to lab 10 here
+
 
 In the [Introduction to Exponential Random Graph Models (ERGMs) lecture](../lectures/lecture-08-ergm.pdf) you were introduced to several examples of models from the exponential family of random graphs. This lab provides an introduction to ERGMs in R using the `ergm` package. We will work through different dependence specifications of the model reviewed in the lecture (e.g. dyadic independence) and show how to incorporate node level attributes into the model.
 

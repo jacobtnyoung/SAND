@@ -526,7 +526,6 @@ title( "Unipartite Projection of\n Incidents (Group) Matrix", line = 1 )
 
 ```
 
-
 <br>
 
 ----
