@@ -37,36 +37,66 @@ The purpose of this homework is to familiarize you with estimating exponential r
 
 For this part of the homework you will use data from [Thomas Grund and James Densley's study](https://journals.sagepub.com/doi/full/10.1177/1043986214553377) of ties among members of an inner-city gang in London, England. The network is undirected, binary ties collected from anonymized arrests data. We will refer to this network as the `LondonGangNet`. Note that the object is of class `network`. 
 
+Regarding the attributes:  
+
+  + `Birthplace` records where they were born where the values are: 1 = West Africa, 2= Caribbean, 3= UK, 4= East Africa  
+  + `Prison` indicates whether they have been to prison
+  + `Age` is their age in years  
+  + `Convictions` is the number of convictions a gang member has
+
 <br>
 
 For the `LondonGangNet` network, do the following:  
 
-1. Plot the `LondonGangNet` network and plot a random network with the same number of edges.
-2. Based on the plots, how does the `LondonGangNet` network differ from the random network?
-3. Plot the degree distribution for the `LondonGangNet` network and the random network?
-4. Estimate an ERGM where ties form at random. Interpret the coefficient.
+1. Plot the `LondonGangNet` and plot a random network with the same number of edges.
+2. Based on the plots, how does the `LondonGangNet` differ from the random network?
+3. Estimate an ERGM where ties form at random. Interpret the coefficient.
+4. Examine and describe the relationship between degree and the attribute `Prison` of experience.
+5. Estimate an ERGM where gang members differ in their degree based on the attribute `Prison`. Interpret the coefficient.
+6. Estimate an ERGM where gang members differ in their degree based on the attribute `Convictions`. Interpret the coefficient.
+7. Examine the mixing matrix for `Birthplace`. What is the interpretation of this matrix?
+8. Estimate an ERGM where gang members of the same `Birthplace` are more likely to form ties.
+9. What is the probability of a tie between gang members who are from the same `Birthplace`?
+10. Estimate an ERGM where gang members of similar `Age` are more likely to form ties.
+11. What is the probability of a tie between gang members who are the same `Age`?
+12. Simulate a network from the `Prison` or (and?) `Convictions` ERGMs (i.e. #5 or/and #6). 
+13. Plot the simulated network from #12 and the `LondonGangNet`, identifying nodes based on `Prison` or `Conviction` in both plots.
+14. Simulate a network from the `Birthplace` or (and?) `Age` ERGMs (i.e. #8 or/and #10). 
+15. Plot the simulated network from #14 and the `LondonGangNet`, identifying nodes based on `Birthplace` or `Age` in both plots.
+16. Evaluate the goodness of fit for the models in #5, #6, #8, or #10.
+17. Which model provides the best fit to the data? How do you know?
 
-HERE
+<br>
 
+## Part II: Working with a Directed Network
 
-6. Examine and describe the relationship between degree and the attribute `years` of experience.
-7. Estimate an ERGM where department leaders with more `years` of experience differ in their degree. Interpret the coefficients.
-8. Examine the mixing matrix for `hivscreen`. What is the interpretation of this matrix?
-9. Estimate an ERGM where departments that provide an `hivscreen` have a preference for communicating with departments that also provide an `hivscreen`.
-10. What is the probability of a tie between two departments who *both* provide an `hivscreen`?
-11. What is the probability of a tie between two departments who *do not* provide an `hivscreen`?
-12. Does the interpretation of the mixing matrix for `hivscreen` lead to the same conclusion as the ERG model for `hivscreen`?
-13. Examine the mixing matrix for `nutrition`. What is the interpretation of this matrix?
-14. Estimate an ERGM where departments that provide `nutrition` programs have a preference for communicating with departments that also provide `nutrition` programs.
-15. What is the probability of a tie between two departments who *both* provide `nutrition` programs?
-16. What is the probability of a tie between two departments who *do not* provide a `nutrition` program?
-17. Does the interpretation of the mixing matrix for `nutrition` lead to the same conclusion as the ERG model for `nutrition`?
-18. Now, estimate an ERGM where: departments have a preference for communicating with other departments based on `hivscreen` **and** `nutrition`. Interpret the coefficients.
-19. Plot the LDHS network and identify the nodes based on `hivscreen` and `nutrition`.
-20. Simulate a network from the `hivscreen` **and** `nutrition` ERGM and compare it to the observed LDHS network.
-21. Evaluate the goodness of fit for the `hivscreen` **and** `nutrition` ERGM.  
+For this part of the homework you will use data from WO-PINS study. The network is directed, binary ties collected from women in a prison unit. We will refer to this network as  `trustNet`. Note that the object is of class `network`. 
 
+Regarding the attributes:  
 
+  + `White` records whether the respondent is white and 0 is non-white
+  + `YearsOnUnit` indicates the number of years the individual has been on the unit
+
+<br>
+
+For the `trustNet` network, do the following:  
+
+1. Plot the `trustNet` and plot a random network with the same number of edges.
+2. Based on the plots, how does the `trustNet` differ from the random network?
+3. Estimate an ERGM where ties form at random. Interpret the coefficient.
+4. Examine and describe the relationship between outdegree and the attribute `White` of experience.
+5. Examine and describe the relationship between indegree and the attribute `White` of experience.
+6. Estimate an ERGM where individuals differ in their degree based on the attribute `White`. Interpret the coefficient.
+7. Estimate an ERGM where differ differ in their degree based on the attribute `YearsOnUnit`. Interpret the coefficient.
+8. Examine the mixing matrix for `White`. What is the interpretation of this matrix?
+9. Estimate an ERGM where are more likely to form ties based on `White` (i.e. homophily for the attribute `White`).
+10. What is the probability of a tie between two individuals who are both white?
+11. What is the probability of a tie between two individuals who are both non-white?
+12. Estimate an ERGM where ties are reciprocated.
+13. Simulate a network from the ERGM in #6, #7, or (and?) #9. 
+14. Plot the simulated network from #12 and the `trustNet`, identifying nodes based on `White` or (and?) `YearsOnUnit` in both plots.
+15. Evaluate the goodness of fit for the models in #6, #7, #9, or #12.
+16. Which model provides the best fit to the data? How do you know?
 
 <br>
 
