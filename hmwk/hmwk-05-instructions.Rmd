@@ -1,0 +1,128 @@
+---
+title: "Homework 5 - Exponential Random Graph Models - INSTRUCTIONS"
+date: "CRJ 605 Statistical Analysis of Network Data"
+output: 
+  html_document:
+    df_print: paged
+    theme: cosmo
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+    code_fold: show
+    self_contained: true
+---
+
+<style>
+body {
+text-align: left}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+----
+
+# Introduction
+
+The purpose of this homework is to familiarize you with estimating exponential random graph models (ERGMs) in *R*. Please review the following materials before beginning this homework:  
+
+  + [Introduction to Exponential Random Graph Models (ERGMs)](../lectures/lecture-08-ergm.pdf) lecture
+  + [Introduction to Exponential Random Graph Models (ERGMs) in R](../labs/lab-10-ergm-intro.html) lab
+  + [Simulation and Goodness of Fit with Exponential Random Graph Models (ERGMs)](../labs/lab-11-ergm-gof.html) lab
+
+<br>
+
+## Part I: Working with an Undirected Network
+
+For this part of the homework you will use data from [Thomas Grund and James Densley's study](https://journals.sagepub.com/doi/full/10.1177/1043986214553377) of ties among members of an inner-city gang in London, England. The network is undirected, binary ties collected from anonymized arrests data. We will refer to this network as the `LondonGangNet`. Note that the object is of class `network`. 
+
+<br>
+
+For the `LondonGangNet` network, do the following:  
+
+1. Plot the `LondonGangNet` network and plot a random network with the same number of edges.
+2. Based on the plots, how does the `LondonGangNet` network differ from the random network?
+3. Plot the degree distribution for the `LondonGangNet` network and the random network?
+4. Estimate an ERGM where ties form at random. Interpret the coefficient.
+
+HERE
+
+
+6. Examine and describe the relationship between degree and the attribute `years` of experience.
+7. Estimate an ERGM where department leaders with more `years` of experience differ in their degree. Interpret the coefficients.
+8. Examine the mixing matrix for `hivscreen`. What is the interpretation of this matrix?
+9. Estimate an ERGM where departments that provide an `hivscreen` have a preference for communicating with departments that also provide an `hivscreen`.
+10. What is the probability of a tie between two departments who *both* provide an `hivscreen`?
+11. What is the probability of a tie between two departments who *do not* provide an `hivscreen`?
+12. Does the interpretation of the mixing matrix for `hivscreen` lead to the same conclusion as the ERG model for `hivscreen`?
+13. Examine the mixing matrix for `nutrition`. What is the interpretation of this matrix?
+14. Estimate an ERGM where departments that provide `nutrition` programs have a preference for communicating with departments that also provide `nutrition` programs.
+15. What is the probability of a tie between two departments who *both* provide `nutrition` programs?
+16. What is the probability of a tie between two departments who *do not* provide a `nutrition` program?
+17. Does the interpretation of the mixing matrix for `nutrition` lead to the same conclusion as the ERG model for `nutrition`?
+18. Now, estimate an ERGM where: departments have a preference for communicating with other departments based on `hivscreen` **and** `nutrition`. Interpret the coefficients.
+19. Plot the LDHS network and identify the nodes based on `hivscreen` and `nutrition`.
+20. Simulate a network from the `hivscreen` **and** `nutrition` ERGM and compare it to the observed LDHS network.
+21. Evaluate the goodness of fit for the `hivscreen` **and** `nutrition` ERGM.  
+
+
+
+<br>
+
+----
+
+# How to Submit
+
+Download the [Homework 5 template](../hmwk/templates/hmwk-05-template.zip?raw=true) prior to beginning. **The template contains code for accessing the data files**.
+
+<br>
+
+### Knitting to HTML
+
+When you have completed your homework, click the "Knit" button to render your `.RMD` file into a `.HTML` report.
+
+<br>
+
+### Special Instructions
+
+Upload both your `.RMD` and `.HTML` files to the appropriate assignment on the Canvas page for this course. Just click the "Start Assignment" button to upload the files. This assignment is *DUE* on **3/27**.
+
+<br>
+
+### Before You Submit
+
+Remember to ensure the following before submitting your assignment.
+
+1. Name your files using this format: **Hmwk-##-LastName.rmd** and **Hmwk-##-LastName.html**
+2. Show both the solution for your code and write out your answers in the body text 
+
+See [Google's R Style Guide](https://google.github.io/styleguide/Rguide.xml) for examples of common conventions.
+
+<br>
+
+### Common Knitting Issues
+
+`.RMD` files are knit into `.HTML` and other formats procedural, or line-by-line.
+
+* An error in code when knitting will halt the process; error messages will tell you the specific line with the error
+* Certain functions like `install.packages()` or `setwd()` are bound to cause errors in knitting 
+* Altering a dataset or variable in one chunk will affect their use in all later chunks
+* If an object is "not found", make sure it was created or loaded with `library()` in a previous chunk
+
+**If All Else Fails:** If you cannot determine and fix the errors in a code chunk that's preventing you from knitting your document, add `eval = FALSE` inside the brackets of `{r}` at the beginning of a chunk to ensure that R does not attempt to evaluate it, that is: `{r eval = FALSE}`. This will prevent an erroneous chunk of code from halting the knitting process.  
+
+<br>
+
+____
+
+<br>
+
+<p align="center"> [Back to SAND main page](https://jacobtnyoung.github.io/SAND/) </p>
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+<br>

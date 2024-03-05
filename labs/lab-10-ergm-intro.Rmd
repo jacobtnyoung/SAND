@@ -14,11 +14,9 @@ output:
 
 ```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
 
-library( devtools )
 library( network )
 library( sna )
-library( UserNetR )
-
+library( ergm )
 ```
 
 <style>
@@ -51,19 +49,7 @@ In the [Introduction to Exponential Random Graph Models (ERGMs) lecture](../lect
 
 <br>
 
-# **Modeling Friendship in the PINS *Get Along With* and  *Power/Influence* Networks**  
-
-The [*Prison Inmate Networks Study (PINS)*](https://cjrc.la.psu.edu/research/) examines the social networks of prison inmates in a state correctional institution. The study was unique in that it was the first in nearly a century to collection sociometric data in a prison. The researchers collected data on several types of networks. There are two we want to look at here:
-
-  * The *get along with network* was created by asking individuals whom they "get along with" on the unit. We can think of this as "friends" in a prison setting. (People don't really have "friends" in prison, but there are people they "get along with")
-  
-  * The *power and influence network* was created by asking individuals whom they believed was "powerful and influential" on the unit.
-
-Let's examine the degree centrality scores for both of these networks. These data are available in the [SNA Textbook](https://jacobtnyoung.github.io/sna-textbook/index.html) [data]() folder.
-
-<br>
-
-## *Get Along With* Network (Undirected Network)
+# **Modeling Friendship in the PINS *Get Along With* Network**  
 
 For the *get along with* network, individuals could have asymmetric nominations. That is, *i* could nominate *j* and *j* didn't necessarily nominate *i*. But, we are going to **symmetrize** the network by only taking ties for which ***both*** *i* and *j* indicated that the get along with the other person. This will give us an undirected network.
  
@@ -106,7 +92,7 @@ coords <- gplot( gaNetU )
 ```
 
 
-```{r, echo=FALSE, fig.align="center"}
+```{r, echo=TRUE, fig.align="center"}
 
 gplot( 
   gaNetU, 
@@ -359,7 +345,7 @@ names( edge.indep.gaNetU )
 
 ```
 
-First, the summary shows the coefficent $\theta$ from the equation above. The value of `r round( edge.indep.gaNetU$coefficients[1], 2 )` indicates that the desnity of the network is below .5 or 50%. An `edges` term of 0 would represent 50% or 0.5 density. As we saw above, the density of the `gaNetU` network is `r round( den, 3 )`.   
+First, the summary shows the coefficient $\theta$ from the equation above. The value of `r round( edge.indep.gaNetU$coefficients[1], 2 )` indicates that the density of the network is below .5 or 50%. An `edges` term of 0 would represent 50% or 0.5 density. As we saw above, the density of the `gaNetU` network is `r round( den, 3 )`.   
 
 In the general formulation of the ERGM, the $\delta$ represents the *change statistic*, or the change in the statistic of interest when an edge is added (i.e. $Y_{ij}$) goes from 0 to 1). The change statistic for the `edges` term is always 1, so we can think of the probability of a tie between *i* and *j* as the logit of the coefficients for the `edges` term. Specifically, we can use the calculation that is usual for a logistic regression to interpret the coefficient:  
 
@@ -466,8 +452,6 @@ Let's look at this for our example. Looking at the table we see:
 Recall that in the general formulation of the ERGM, the $\delta$ represents the *change statistic*, or the change in the statistic of interest when an edge is added (i.e. $Y_{ij}$) goes from 0 to 1). The change statistic for the `nodefactor` term is different from the `edges` term we saw above. If the predictor is categorical, the value of the change statistic is 0, 1 or 2. Specifically:  
 
 * If neither of the nodes have the characteristic of interest, the change statistic is 0.  
-
-* A value of 1 indicates that *one* of the nodes in the dyad has the characteristic.  
 
 * A value of 2 indicates that *both* of the nodes in the dyad have the characteristic.
 
@@ -586,9 +570,9 @@ $\frac{1}{1 + e^{-(\theta_1X_1)}}$
 
 <br>
 
-Using the coefficient of `round( homophily.gaNetU$coefficients[2], 2 )`, the predicted probability of an edge between nodes with the **same** role designation is:
+Using the coefficient of `round( homophily.gaNetU$coefficients[2], 2 )`, the predicted probability of an edge between nodes with the **same** race/ethnicity is:
 
-$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(\theta_{edges} \times \delta_{edges} + (\theta_{role.homophily} \times \delta_{role.homophily}))$  
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(\theta_{edges} \times \delta_{edges} + (\theta_{race.homophily} \times \delta_{race.homophily}))$  
 
 $\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-6.62 \times 1 + 1.98 \times 1)$  
 
@@ -623,12 +607,456 @@ summary( d.homophily.gaNetU )
 
 <br>
 
-## **Endogenous Network Structure**  
+### **Accounting for Degree and Homophily**
 
-A major strength of the ERGM is the ability to model endogeous network structures.
+In the model examining homophily, note that we excluded the `nodefactor` term. This inherently assumes that there are no degree differences between the nodes based on `Race`. As a result, we are not accounting for an important feature of the network. Specifically, we could observe homophily on `Race` simply because there are differences in the degree distribution by the values for the attribute `Race`. Let's take this into account by reestimating the model and including both the `nodefactor` and the `nodematch` terms.
 
-!!!HERE
+```{r}
 
+DH.gaNetU <- ergm( 
+  gaNetU ~ edges
+  + nodefactor( "Race" )            
+  + nodematch( "Race", diff=FALSE )
+  ) 
+
+summary( DH.gaNetU )
+
+```
+
+**Yikes**! Look at those estimates. *What is the problem?*
+
+<br>
+
+## **Dyad Dependence: Modeling Endogenous Network Structures**  
+
+All of the models above are **edge indepedent** or **dyad independent** models in that the probability of a tie from *i* to *j* is not dependent on a tie to *k*. But, in reality, many network structures are formed due to dependencies between dyads. For example, whether I decide to befriend you may depend on whether we have a shared friend in common. That is **dyad dependence**.
+
+A major strength of the ERGM is the ability to model such endogenous network structures. In the models above, we observed homophily for the attribute `Race`. The model proposed that the probability of a tie was more likely to occur between *i* and *j* if they both are of the same race/ethnicity. This is because we observed many same-race/ethnicity dyads in the mixing matrix:
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+mixingmatrix( gaNetU, "Race" )
+
+```
+
+But, we may observe such mixing due to transitivity in a network. If we wanted to examine homophily, we would want to account for the tendency for transitive relationships to form. 
+
+Let's estimate a model that includes the `gwesp` term. This terms add a count of the edgewise shared parterns in a network to the model. Positive values indicate that there is a tendency for an edge to form between *i* and *j* if they have a shared partner. Note that when we move to the dyad dependence model, the estimation gets a bit more complicated. We won't go into the details now, but you will see some differences in the code below.
+
+```{r, message=FALSE, warning=FALSE}
+
+triad.gaNetU <- ergm( 
+  gaNetU ~ edges
+  + nodematch( "Race", diff=TRUE )
+  + gwesp( decay = 0.25, fixed = TRUE ), # here is our gwesp term
+  
+  control = control.ergm(
+    seed = 605 ) # here we use the control argument to set the seed to reproduce results
+  ) 
+
+summary( triad.gaNetU )
+
+```
+
+*What is the interpretation of the model?*
+
+<br>
+
+# **Modeling Status in the PINS *Power/Influence* Network**  
+
+Let's walk back through what we covered above with a directed network, noting differences in the model as we go.
+
+For the *power and influence* network, individuals could have asymmetric nominations. That is, *i* could nominate *j* and *j* didn't necessarily nominate *i*. We will keep this asymmetry so that we can treat the network as directed.
+
+```{r}
+
+# clear the workspace since we will recycle object names
+rm( list = ls() )
+
+# set the location for the file
+loc <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-PINS-power-w1-adj.csv"
+
+# read in the .csv file
+piMat <- as.matrix(
+  read.csv( 
+    loc,
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1 
+    )
+  )
+
+piNetD <- as.network( piMat, directed = TRUE )
+
+```
+
+<br>
+
+
+```{r, fig.show="hide"}
+
+# Set the coordinates
+set.seed( 605 )
+coords <- gplot( piNetD )
+
+```
+
+
+```{r, echo=TRUE, fig.align="center"}
+
+gplot( 
+  piNetD, 
+  gmode = "digraph",
+  edge.col="grey40", 
+  vertex.col="#5bf5b5",
+  coord = coords,
+  main = "PINS Power/Influence Network (Directed)"  
+  )
+
+```
+
+*Think about the structure here. What do you notice?*  
+
+*How might we go about incorporating this information into a model of the network?*  
+
+<br>
+
+Before we get going, let's define some graphical objects we will use.
+
+```{r}
+
+# define the number of nodes
+g <- dim( piMat )[1]
+
+# define the number of edges
+l <- sum( piMat )/2
+
+# define the density
+den <- l / ( g *( g - 1 ) ) 
+
+den
+
+```
+
+*What is the interpretation of the density?*  
+
+<br>
+
+Recall that the exponential random graph model seeks to model the underlying processes that generated the observed network. Let's create a random graph with the same nodes, edges, and density as the `piNetD` network and compare them by using the `rgraph()` function in the `sna` package:
+
+```{r, message=FALSE}
+
+# set the seed to reproduce these results
+set.seed( 605 )
+
+# generate the random graph
+random.graph <- rgraph(
+  g,                   # the number of nodes in the network
+  1,                   # we want just 1 random graph 
+  tprob = den,         # the density of the network 
+  mode = "digraph"    # it is directed 
+  )
+
+# now coerce the random graph to a network object
+random.net <- as.network( random.graph, directed = FALSE )
+
+```
+
+<br>
+
+We can now compare our observed data with a graph that has the same density and the edges are randomly distributed over the nodes.
+
+```{r}
+
+# set the margins
+par( mfrow=c( 1,2 ), 
+     mar=c( 0.1, 0.5, 2, 0.5 ) )
+
+# set the seed
+set.seed( 605 )
+
+# create the first plot
+gplot( 
+  piNetD, 
+  gmode = "digraph",
+  edge.col="grey40", 
+  vertex.col="#5bf5b5",
+  coord = coords,
+  main = "PINS Power/Influence Network (Directed)"  
+  )
+
+# create the second plot
+gplot( 
+  random.net, 
+  gmode = "digraph",
+  edge.col = "grey40", 
+  vertex.col="#069e6e",
+  main = "Random network"
+  )
+
+```
+
+*How is the Power/Influence network different from the random network?*  
+
+<br>
+
+### **Adding Attributes (revisited)**
+
+We can use the same attributes as above. Some we cleared the workspace, we will want to reload and recreate the attributes.
+
+```{r}
+
+# define the attributes object
+attrs <- read.csv( 
+    "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-PINS-w1-age-race-attributes.csv",
+    as.is = TRUE,
+    header = TRUE 
+    )
+
+# let's recode the single 4 to a 1
+race.recoded <- attrs[,2]
+race.recoded[ race.recoded == 4 ] <- 1
+
+
+# assign the attributes to the network
+piNetD %v% "Age" <- attrs[,1]
+
+# now assign the recoded value
+piNetD %v% "Race" <- race.recoded
+
+```
+
+Now, let's use the `Race` attribute and the `Age` attribute in a plot. We will color the nodes based on `Race` and size the nodes based on `Age`. Note that for `Age`, we are going to need to use the `rescale()` function.
+
+```{r}
+
+# create the colors for race
+node.cols <- piNetD %v% "Race"
+node.cols[ piNetD %v% "Race" == 1 ] <- "#eb105d"
+node.cols[ piNetD %v% "Race" == 2 ] <- "#5773fa"
+node.cols[ piNetD %v% "Race" == 3 ] <- "#37cf00"
+
+# define the rescale function
+rescale <- function( nchar, low, high ){
+  min_d <- min( nchar )
+  max_d <- max( nchar )
+  rscl  <- ( ( high - low )*( nchar - min_d ) ) / ( max_d - min_d ) + low
+  rscl
+}
+
+# now, plug our pieces into our plot
+gplot( 
+  piNetD, 
+  gmode = "digraph",
+  edge.col="grey40", 
+  vertex.col=node.cols,
+  vertex.cex = rescale( piNetD %v% "Age", 0.5, 2 ),
+  coord = coords,
+  main = "PINS Power/Influence Network (Directed)"  
+  )
+
+# add a legend
+legend( "topright", 
+        legend=c( "White", "Black", "Hispanic" ), 
+        col = unique( node.cols ), 
+        pch = 19, 
+        pt.cex=1
+        )
+
+```
+
+*Think about the structure again. What do you notice about race or age?*  
+
+*How might we go about incorporating this information into a model of the network?*  
+
+<br>
+
+## **Adding Nodal Covariates**  
+
+Let's test three new hypotheses:  
+
+* Nodes differ in their degree based on their age.  
+
+* Nodes that are of similar age are more likely to share ties (i.e. *homophily*).
+
+* Nodes reciprocate ties.
+
+<br>
+
+We can test these hypotheses using the `nodecov` (since age is continuous) and `absdiff` terms. And, for reciprocity, a new term `mutual`. 
+
+<br>
+
+### **Testing the Degree Effect of Age**
+
+```{r}
+
+# let's add the nodecov term for age to our model
+age.d.piNetD <- ergm( 
+  piNetD ~ edges 
+  + nodecov( "Age" )
+  ) 
+
+summary( age.d.piNetD )
+
+```
+
+For the `nodecov` term adds one network statistic to the model that sums the attribute of interest for the two nodes comprising the end points of each edge in the network. Positive values indicate that as the continuous attribute increases, the edge is *more likely*, relative to lower values. Note the difference here compared to the interpretation for categorical attributes. 
+
+*What does the model tell us?*
+
+<br>
+
+Let's look at this for our example. Looking at the table we see:  
+
+* the term `r names( age.d.piNetD$coefficients )[2]` has a value of `r round( age.d.piNetD$coefficients[2], 2 )`, and is significantly different from zero at the *p<0.5* level. 
+
+Recall that in the general formulation of the ERGM, the $\delta$ represents the *change statistic*, or the change in the statistic of interest when an edge is added (i.e. $Y_{ij}$) goes from 0 to 1). The change statistic for the `nodecov` term is different from the `edges` term we saw above. If the predictor is continuous, we interpret one-unit changes in the attribute.
+
+<br>
+
+Using the coefficient of `r round( age.d.piNetD$coefficients[2], 2 )`, if we increase `Age` by 1 unit, the predicted probability of a tie between *i* and *j* is:
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(\theta_{edges} \times \delta_{edges} + \theta_{age} \times \delta_{age})$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic((-8.87 \times 1) + (0.02 \times 1))$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-8.87 + 0.02)$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-8.85) = 0.0001$  
+
+<br>
+
+The value of `r round( plogis( -8.85 ), 5 )` is returned by using the command `plogis()`. We can see this by adding the equation elements to the `plogis()` function.
+
+```{r}
+
+plogis( 
+  age.d.piNetD$coefficients[1]*1  # the edges term
+  + age.d.piNetD$coefficients[2]*1  # the nodecov term for age
+  )
+
+```
+
+<br>
+
+The term for `Age` above tells us that degree is correlated with age. But, remember that this network is directed. So, we could test two additional hypotheses:
+
+  + Indegree increases with age
+  + Outdegree decreases with age
+
+Note that we use the `nodecov` term for continuous attributes. But, we can refine this for directed graphs using the `nodeicov` and `nodeocov` terms. (For categorical attributes, we use `nodeifactor` and `nodeofactor`). 
+
+For the `nodeicov` term, positive values indicate that as the continuous attribute increases, then *i* is more likely to *receive* and tie from *j* (because it is the indegree). For the `nodeocov` term, positive values indicate that as the continuous attribute increases, then *i* is more likely to *send* and tie to *j* (because it is outdegree).     
+
+Let's check it out in the model.
+
+```{r}
+
+# let's add the nodeicov and nodeocov terms for age to our model
+age.sr.piNetD <- ergm( 
+  piNetD ~ edges 
+  + nodeicov( "Age" ) # effect for receiving ties
+  + nodeocov( "Age" ) # effect for sending ties
+  ) 
+
+summary( age.sr.piNetD )
+
+```
+
+To remind you, in this model we have separated the effect of `Age` on sending ties and receiving ties. *What is the interpretation of the model estimates?*
+
+<br>
+
+### **Testing Homophily on Age**
+
+Now let's look at a different hypothesis: Nodes of similar age are more likely to share ties (i.e. *homophily*). We can test this using the `absdiff` term. Before we estimate the model for homophily, let's take a look at the `absdiff` term to see its functionality. You can do so using `?"absdiff-ergmTerm"`. (note the use of help here is a bit different).
+
+Now, let's estimate the model for homophily.
+
+```{r}
+
+age.h.piNetD <- ergm( 
+  piNetD ~ edges 
+  + nodeicov( "Age" ) 
+  + nodeocov( "Age" ) 
+  + absdiff( "Age" ) # homophily for age  
+  ) 
+
+summary( age.h.piNetD )
+
+```
+
+Note that the term adds one network statistic to the model for the variable that takes the absolute difference in the value of the attribute for each node. This means that negative values will indicate homophily. For the `absdiff` term, negative values indicate that for a pair of nodes with **similar** attribute values, an edge is *more likely*. Put differently, as the absolute value of the difference between each node on the attribute gets larger, the probability of a tie declines. Thus, negative coefficients indicate the presence of **homophily** and positive coefficients indicate the presence of **heterophily**.
+
+<br>
+
+Using the coefficient of `r round( age.h.piNetD$coefficients[4], 2 )`, the predicted probability of an edge between nodes with the **same** age is:
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(\theta_{edges} \times \delta_{edges} + (\theta_{age.homophily} \times \delta_{age.homophily}))$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-8.67 \times 1 + -0.03 \times 0)$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-8.67 + 0)$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-8.67) = 0.00017$  
+
+<br>
+
+The value of `r round( plogis( -8.67 ), 5 )` is returned by using the command `plogis()`.  
+
+```{r}
+
+plogis( age.h.piNetD$coefficients[1]*1 + age.h.piNetD$coefficients[4]*0 )
+
+```
+
+<br>
+
+## **Testing for Reciprocity**  
+
+Now, let's test whether the probability of a tie for *i* to *j* depends on the presence of a tie from *j* to *i* (i.e. reciprocity).
+
+```{r, message=FALSE, warning=FALSE}
+
+recp.piNetD <- ergm( 
+  piNetD ~ edges
+  + nodeicov( "Age" ) 
+  + nodeocov( "Age" ) 
+  + absdiff( "Age" )
+  + mutual,          # add the term for reciprocity
+  
+  control = control.ergm(
+    seed = 605 ) # here we use the control argument to set the seed to reproduce results
+  ) 
+
+summary( recp.piNetD )
+
+```
+
+*What is the interpretation of the coefficient?*
+
+<br>
+
+Using the coefficient of `r round( recp.piNetD$coefficients[5], 2 )`, the predicted probability of an edge between *i* and *j* if a tie exist between *j* and *i* is:
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(\theta_{edges} \times \delta_{edges} + (\theta_{reciprocity} \times \delta_{reciprocity}))$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-8.57 \times 1 + 1.74 \times 1)$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-8.57 + 1.74)$  
+
+$\Bigg(P \Bigg(Y_{ij}=1 \> | \> n \> actors, Y_{ij}^C\Bigg) \Bigg) = logistic(-6.83) = 0.0011$  
+
+<br>
+
+The value of `r round( plogis( -6.83 ), 4 )` is returned by using the command `plogis()`.  
+
+```{r}
+
+plogis( recp.piNetD$coefficients[1]*1 + recp.piNetD$coefficients[5]*1 )
+
+```
 
 <br>
 
@@ -636,7 +1064,7 @@ A major strength of the ERGM is the ability to model endogeous network structure
 
 # **Wrapping up...**
 
-In this lab, you were introduced to exponential family of random graphs in R using the `ergm` package. We worked through different dependence specifications of the model reviewed in the [Introduction to Exponential Random Graph Models (ERGMs) lecture](../lectures/lecture-08-ergm.pdf) and showed how to incorporate node level attributes into the model.
+In this lab, you were introduced to exponential family of random graphs in R using the `ergm` package. We worked through different dependence specifications of the model reviewed in the [Introduction to Exponential Random Graph Models (ERGMs) lecture](../lectures/lecture-08-ergm.pdf). We also showed how to incorporate node level attributes and endogenous network structures.
 
 <br>
 
