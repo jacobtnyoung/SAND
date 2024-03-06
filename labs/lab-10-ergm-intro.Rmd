@@ -12,13 +12,6 @@ output:
     self_contained: true
 ---
 
-```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
-
-library( network )
-library( sna )
-library( ergm )
-```
-
 <style>
 body {
 text-align: left}

@@ -1,5 +1,5 @@
 ---
-title: "Lab 10-Simulation and Goodness of Fit with Exponential Random Graph Models (ERGMs)"
+title: "Lab 11 - Simulation and Goodness of Fit with Exponential Random Graph Models (ERGMs) in R"
 date: "CRJ 605 Statistical Analysis of Networks"
 output: 
   html_document:
@@ -11,171 +11,269 @@ output:
     code_fold: show
     self_contained: true
 ---
+<style>
+body {
+text-align: left}
+</style>
 
-```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
+```{r, echo=FALSE}
 
-library( devtools )
-library( network )
+# set the defaults for the codechunks
+knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
+
+```
+
+```{r,echo=FALSE}
+
+# libraries needed
+
+library( sna )     # for sna functions
+library( network ) # for working with network objects
+library( ergm )    # for working with ergms
+
+```
+
+----
+
+<br>
+
+In the [Introduction to Exponential Random Graph Models (ERGMs) lecture](../lectures/lecture-08-ergm.pdf) you were introduced to several examples of models from the exponential family of random graphs and we worked through those models in the [Introduction to Exponential Random Graph Models (ERGMs) in R](../labs/lab-10-ergm-intro.html) lab. 
+
+This lab continues working with ERGMs in R using the `ergm` package. Specifically, we ask the question: *how do we evaluate whether our model is a good fit to the data?* This is the notion of "goodness of fit" and we can assess how well our model fits the data using the `gof()` function in the `ergm` package.
+
+# **Evaluation Model Fit for the PINS *Get Along With* Network**  
+
+Recall that in the [Introduction to Exponential Random Graph Models (ERGMs) in R](../labs/lab-10-ergm-intro.html) lab we estimated a series of ERGMs using the *get along with* network from PINS. Here, we want to re-estimate the models and examine goodness of fit.
+
+## Setting Up
+
+First, let's bring in the data, create the network object, and assign attributes.
+
+```{r}
+
+# load the libraries we need
 library( sna )
-library( UserNetR )
-
-```
-
-*This lab introduces simulating networks after estimating exponential random graph models using the `ergm` package. Additionally, goodness of fit using the `gof()` function is also discussed.*
-
-***
-
-## **Getting Started**  
-
-As discussed in the [Introduction to Random Graph Models](https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_8_ergm_a_slides.pdf) lecture, we are trying to build a model that accurately represents the processes that generated the observed network. Let's continue working with the `Bali` network from the `UserNetR` package. Recall that the `Bali` network shows the interactions among the Jemaah Islamiyah terrorist group that carried out the bombings in Bali in 2002. The object `Bali` is of class `network` and has 17 vertices and 126 edges. 
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-
-# clear the workspace
-rm( list = ls() )
-
-# load the UserNetR package
-library( UserNetR )
-
-# load the network packages so that we can work with the object
-library( sna )
 library( network )
-
-```
-
-Let's take a look at a plot of the data based on the roles.
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-
-# lets create some colors for the roles
-library( RColorBrewer )
-
-my.pal <- brewer.pal( length( unique( Bali%v%"role" ) ), "Set2" )
-
-role.col <- my.pal[as.factor( Bali%v%"role" )]
-
-# lets plot the data and look at the various roles
-set.seed( 605 )
-
-gplot( Bali, 
-       usearrows = FALSE, 
-       vertex.col = role.col, 
-       edge.col = "grey40"
-         )
-
-legend( "topright", 
-        legend=c( "Bomb Maker", "Command", "Ops Asst", 
-                  "Suicide Bomber", "Team Lima" ), 
-        col = my.pal, pch = 19, pt.cex=2 
-        )
-title( "Interactions among the 17 members\n of the 2002 Bali terrorist network" )
-
-```
-
-
-## **The `simulate.ergm()` or `simulate()` and `control.ergm()` functions**  
-
-One way of examining how well our ergm model represents the underlying processes that generated the observed network is to simulate a network based on the model estimates. We can do this using the `simulate.ergm()` or `simulate()` function that is built into the `ergm` package. This function randomly samples networks from the specified model. Let's see how it works:
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-
-# load the ergm library.
 library( ergm )
 
-# take a look at the help for simulate.
-?simulate.ergm
+# set the location for the file
+loc <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-PINS-getalong-w1-adj.csv"
 
-# Let's take a look a random graph/edge independence model.
-edge.indep.Bali <- ergm(Bali ~ edges)
-summary(edge.indep.Bali)
+# read in the .csv file
+gaMat <- as.matrix(
+  read.csv( 
+    loc,
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1 
+    )
+  )
 
-# Now, simulate a network from the model.
-sim.edge.indep.Bali <- simulate(
-  edge.indep.Bali, # we are going to use the estimates from this model for our simulation.
-  nsim=1, # simulate 1 network.
-  warning=FALSE, # suppress a warning that pops up when we use this function.
-  seed = 605 # set the seed so that it reproduces the same results.
-)
+# use the symmetrize() function to create an undirected matrix
+gaMatU <- symmetrize( gaMat, rule = "strong" )
 
-# The function creates an object of class network.
-class(sim.edge.indep.Bali)
+# create the network object
+gaNetU <- as.network( gaMatU, directed = FALSE )
 
-# Look at the simulated network.
-summary(sim.edge.indep.Bali,print.adj = FALSE)
 
-# Let's take a look at the simulated network and compare it to our observed network.
-op <- par(mfrow=c(1,2), mai = c(0,0,0.7,0))
-set.seed(605)
-gplot(sim.edge.indep.Bali, main="Simulated",vertex.col="lightgreen", gmode="graph")
-set.seed(605)
-gplot(Bali, main="Observed",vertex.col="lightblue", gmode="graph")
-par(op)
+# define the attributes object
+attrs <- read.csv( 
+    "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-PINS-w1-age-race-attributes.csv",
+    as.is = TRUE,
+    header = TRUE 
+    )
+
+# let's recode the single 4 to a 1
+race.recoded <- attrs[,2]
+race.recoded[ race.recoded == 4 ] <- 1
+
+# now assign the recoded value
+gaNetU %v% "Age" <- attrs[,1]
+gaNetU %v% "Race" <- race.recoded
+
 ```
 
-*How is the Bali network different from the network generated from the edge independence model? What are the structural features that the model is not capturing?*  
+<br>
 
+Now, let's estimate a few models. We will estimate several (each subsequent model will include the prior terms):  
+
+  + An edge independence model  
+  + A model where we add a term where `Race` influences degree  
+  + A model where we add a term where there is homophily based on `Race`  
+  + A model where we take into account transitivity
+  
+<br>
+
+Ok, let's run the models. (remember that we can use the `summary()` function on the model object to summarize the results).
+
+```{r, message=FALSE, warning=FALSE}
+
+# edge independence model
+m1.gaNetU <- ergm( gaNetU ~ edges ) 
+
+# add the effect of Race on degree
+m2.gaNetU <- ergm( gaNetU ~ edges  + nodefactor( "Race" ) ) 
+  
+# add the homophily effect for Race  
+m3.gaNetU <- ergm( gaNetU ~ edges + nodematch( "Race" ) )
+
+# add the effect for transitivity  
+m4.gaNetU <- ergm( gaNetU ~ edges + nodematch( "Race", diff=TRUE ) + gwesp( decay = 0.25, fixed = TRUE ),
+  control = control.ergm( seed = 605 ) ) 
+
+```
+
+## **The `simulate.ergm()` or `simulate()` and `control.ergm()` Functions**  
+
+How can we go about assessing model fit? What would a good fitting model do? Well, one way to think about this is whether the model we estimate reproduces structures in the data. In other words, if we estimate a model, then simulated some data from that model, we could say: "does the simulated network **look like** our observed network?" This is the logic of how we will approach goodness of fit with our models. 
+
+First, we need to think about simulating a network (or networks) from our model. We can do this using the `simulate.ergm()` or `simulate()` function that is built into the `ergm` package. This function randomly samples networks from the specified model. We can examine the function using `?simulate.ergm`. Let's see how it works:
+
+```{r, message=FALSE}
+
+# simulate a network from the edge independence model
+sim.m1.gaNetU <- simulate(
+  m1.gaNetU,               # the model we want to simulate from
+  nsim=1,                  # simulate 1 network
+  seed = 605               # set the seed to reproduce results
+)
+
+```
+
+Boom! You simulated a network. Now what? Take a look at what we did.
+
+```{r}
+
+# the function creates an object of class network
+class( sim.m1.gaNetU )
+
+# look at the simulated network
+sim.m1.gaNetU
+
+```
+
+Awesome! We have an object of class `network` that has the attributes of our observed data. Now, we can compare our observed network to our simulated network.
+
+```{r}
+
+# set the margins
+par( mfrow=c( 1,2 ), 
+     mar=c( 0.1, 0.5, 2, 0.5 ) )
+
+# set the seed
+set.seed( 605 )
+
+# create the first plot
+gplot( 
+  gaNetU, 
+  gmode = "graph",
+  edge.col="grey40", 
+  vertex.col="#f71505",
+  main = "PINS Get\n Along With Network (Undirected)"
+  )
+
+# create the second plot for the simulated network
+gplot( 
+  sim.m1.gaNetU, 
+  gmode = "graph",
+  edge.col = "grey40", 
+  vertex.col="#11adf5",
+  main = "Network Simulated from\n Edge Independence Model"
+  )
+
+```
+
+*How is the network different from the network generated from the edge independence model? What are the structural features that the model is not capturing?*  
+
+<br>
 
 ## **Simulating more complex models and more graphs**  
 
-Let's try a more complex model based on the nodal attribute `role`. Specifically let's allow:  
+Well, dang. It looks like our model is doing a great job reproducing the structure in our observed network.
 
-* Nodes to differ in their degree based on the role they played in the network.  
+Let's take a look at the additional models we created:
 
-* Nodes with the same role designation to be more likely to share ties than nodes that are not in the same role designation (i.e. *homophily*).
+```{r}
 
-Recall that we can examine each of these postulates  using the `nodefactor` (for categorical attributes [for continuous attributes use `nodecov`]) and `nodematch` (for categorical attributes [for continuous attributes use `absdiff`]) terms:
+# simulate a network from the degree effect for Race model
+sim.m2.gaNetU <- simulate( m2.gaNetU, nsim=1, seed = 605 )
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# First, estimate the model.
-role.Bali <- ergm(Bali ~ edges + nodefactor("role") + nodematch("role")) 
-summary(role.Bali)
+# simulate a network from the homophily model
+sim.m3.gaNetU <- simulate( m3.gaNetU, nsim=1, seed = 605 )
 
-# Now, simulate a network from the model.
-sim.role.Bali <- simulate(role.Bali, nsim=1, warning=FALSE, seed = 605)
+# simulate a network from transitivity model
+sim.m4.gaNetU <- simulate( m4.gaNetU, nsim=1, seed = 605 )
 
-# Let's take a look at the simulated network and compare it to our observed network.
-op <- par(mfrow=c(1,2), mai = c(0,0,0.7,0))
-set.seed(605)
-gplot(sim.role.Bali, main="Simulated",vertex.col="lightgreen", gmode="graph")
-set.seed(605)
-gplot(Bali, main="Observed",vertex.col="lightblue", gmode="graph")
-par(op)
 ```
 
-So far we have only simulated 1 network. Let's simulate several networks and see how they differ from the observed network. We can use the `nsim` argument to request more simulated objects.
+Now that we have our simulated networks, let's plot them.
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+```{r}
 
-# Simulate 8 networks
-sims.role.Bali <- simulate(role.Bali, nsim=8, warning=FALSE, seed = 605)
+# set the margins
+par( mfrow=c( 2,2 ), 
+     mar=c( 0.1, 0.5, 2, 0.5 ) )
 
-# Note that the function returns these as a network.list object
-class(sims.role.Bali)
+# set the seed
+set.seed( 605 )
 
-# If we want to reference a specific simulated network, we use the [[]] indexing
-summary(sims.role.Bali[[1]],print.adj=FALSE)
+# create the first plot
+gplot( 
+  gaNetU, 
+  gmode = "graph",
+  edge.col="grey40", 
+  vertex.col="#f71505",
+  main = "PINS Get\n Along With Network (Undirected)"
+  )
 
-# Let's color the nodes based on their role
-library(RColorBrewer)
-my.pal <- brewer.pal(length(unique(Bali%v%"role")),"Set2")
-role.col <- my.pal[as.factor(Bali%v%"role")]
+# create the second plot for the simulated network
+gplot( 
+  sim.m2.gaNetU, 
+  gmode = "graph",
+  edge.col = "grey40", 
+  vertex.col="#11adf5",
+  main = "Network Simulated from\n Degree Model"
+  )
 
-# Let's take a look at the simulated network and compare it to our observed network.
-op <- par(mfrow=c(3,3), mai = c(0,0,0.7,0))
-gplot(sims.role.Bali[[1]], main="Simulated 1",vertex.col=role.col, gmode="graph")
-gplot(sims.role.Bali[[2]], main="Simulated 2",vertex.col=role.col, gmode="graph")
-gplot(sims.role.Bali[[3]], main="Simulated 3",vertex.col=role.col, gmode="graph")
-gplot(sims.role.Bali[[4]], main="Simulated 4",vertex.col=role.col, gmode="graph")
-set.seed(605)
-gplot(Bali, main="Observed",vertex.col=role.col, gmode="graph")
-gplot(sims.role.Bali[[5]], main="Simulated 5",vertex.col=role.col, gmode="graph")
-gplot(sims.role.Bali[[6]], main="Simulated 6",vertex.col=role.col, gmode="graph")
-gplot(sims.role.Bali[[7]], main="Simulated 7",vertex.col=role.col, gmode="graph")
-gplot(sims.role.Bali[[8]], main="Simulated 8",vertex.col=role.col, gmode="graph")
-par(op)
+# create the third plot for the simulated network
+gplot( 
+  sim.m3.gaNetU, 
+  gmode = "graph",
+  edge.col = "grey40", 
+  vertex.col="#e707f2",
+  main = "Network Simulated from\n Homophily Model"
+  )
+
+# create the fourth plot for the simulated network
+gplot( 
+  sim.m4.gaNetU, 
+  gmode = "graph",
+  edge.col = "grey40", 
+  vertex.col="#17f207",
+  main = "Network Simulated from\n Transitivity Model"
+  )
+
+
 ```
 
-*How is the Bali network different from the networks generated from the dyad independence model? What are the structural features that the model is not capturing? Is the model doing a good job capturing the role of the attribute **Role**?*  
+*What do think? As our models become more complex, are we doing better at reproducing the structures we observe?*
+
+<br>
+
+
+!!!HERE
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## **Simulating alternative models**  
 
