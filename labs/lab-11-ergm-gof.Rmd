@@ -260,8 +260,264 @@ gplot(
 
 <br>
 
+## **Goodness-of-fit (the basic logic)**  
 
-!!!HERE
+Recall that we are fitting a model to observed data. That is, we are specifying the stochastic process that generated our observed data. We have specified local processes that generate our observed network. So, one way to determine how well the model fits the data is to see how well the model generates global network properties. That is, if the processes we have specified are operating, would we get the degree distribution (for example) we observe?
+
+We can get a sense of how well the model is representing the observed network based on the visual comparison with the simulated networks (as we did above). In addition, we could look at whether our simulated networks are reproducing particular structures in our network.
+
+We can use the `summary()` function and use the `ergm` terms to return descriptive stats on the networks (i.e. the observed network and the simulated networks). Let's take a look at the degree distribution as well as the number of triangles in our observed network and our simulated networks:  
+
+```{r}
+
+# let's see how this works for our observed network
+
+summary( 
+  gaNetU            # the network we want summary info on 
+  ~ edges           # give the edges; note the ~
+  + degree( 0:5 )   # count of degrees 0 through 5
+  + triangle        # count of triangles
+  )
+
+```  
+
+The output shows that the Bali network has:  
+
+* `r summary( gaNetU ~ edges + degree( 0:5 ) + triangle )[1]` edges  
+
+* `r summary( gaNetU ~ edges + degree( 0:5 ) + triangle )[2]` nodes with degree 0, `r summary( gaNetU ~ edges + degree( 0:5 ) + triangle )[3]` with degree 1, and so on to degree 5. 
+
+* `r summary( gaNetU ~ edges + degree( 0:5 ) + triangle )[8]` triangles (i.e. *i*-*j*, *j*-*k*, & *i*-*k*)  
+
+<br>
+
+Now, let's take this info for our observed network and do the same for the simulated network from the fourth model. Then, we can look at whether the simulation is reproducing the structures we observe in the network.
+
+```{r}
+
+summary( 
+  sim.m4.gaNetU   
+  ~ edges         
+  + degree( 0:5 ) 
+  + triangle      
+  )
+
+```
+
+Let's build a table to compare them:
+
+```{r}
+
+# put a table together for ease of comparing
+obsSimTab <- cbind(
+  summary( gaNetU  ~ edges + degree( 0:5 ) + triangle ),
+  summary( sim.m4.gaNetU  ~ edges + degree( 0:5 ) + triangle )
+)
+
+# add some names and then examine the table
+colnames( obsSimTab ) <- c( "Obs Net", "Sim Net" )
+obsSimTab
+
+```
+
+*Looking through the table, how well is the model representing the structures we have decided to examine?*
+
+<br>
+
+### *Going Behind One Network*
+
+So far, we have only looked at one simulation. Alternatively, we could run a lot of simulations and examine the distribution of a particular structural property (e.g. triangles). In the `simulate()` function, we can use several arguments to give us what we want:  
+
+  * The `monitor=` argument to pass any specific terms we want to simulate. Since we are focusing just on the number of triangles, we would use `monitor=~triangle`. Note the incorporation of the `~` in the `monitor=` argument.  
+  
+  * We can also use the `output=` argument to just calculate stats rather than generating networks. Since we are only interested in the stats and don't want the networks, we use `output="stats"`.
+
+<br>
+
+Let's simulate 500 networks and take a look at the results:
+
+```{r}
+
+# run the simulation
+
+gaNetU.large.sim <- simulate(
+  m4.gaNetU,                # the model to simulate from
+  nsim = 500,               # ask for 500 simulations
+  monitor = ~ triangle,     # we want it to focus on the triangles
+  output = "stats",           # just keep the stats, not the networks
+  seed = 605                # set the seed to reproduce the results
+)
+
+```
+
+Boom! We simulated 500 networks from our model. 
+
+Let's see what it gave us.
+
+```{r}
+
+head( gaNetU.large.sim )
+
+```
+
+We can see that it reports the count of all the terms in the model in the columns and each row is the count for each simulated network.
+
+Now, we can plot the summary stats for all the simulated networks to visualize the information.
+
+```{r}
+
+hist( 
+  gaNetU.large.sim[,"triangle"],  # plot the triangle counts from each simulation
+  main = "Simulations \n (X shows observed network)", # add a title
+  xlim = c( 0,50 ), # set the x axis limits
+  ylim = c( 0,200 ), # set the y axis limits
+  xlab = "Number of triangles",  # label the x axis
+  ylab = "Number of simulated networks" #label the y axes 
+  )
+
+# add a mark where the observed count is
+points(
+  summary( 
+    gaNetU ~ triangle ),
+  4, 
+  pch="X", 
+  cex=2, 
+  col="red"
+  )
+
+```
+
+*In looking at the simulation of the triangles, is our model generating as much transitivity as we observe in the network?*  
+
+<br>
+
+## **Goodness-of-fit with the `gof()` function**  
+
+As we just saw, we can simulate lots of networks and then compare our observed network to the networks simulated from the model estimates. In `ergm`, there is a function that does this for us, `gof()`. The `gof()` function calculates *p*-values for geodesic distance, degree, and reachability summaries to diagnose the goodness-of-fit of exponential family random graph models. We can examine the help page for the `gof()` function using `?gof`.  
+
+As shown in the help, the `gof()` function takes a fitted `ergm` object (i.e. an estimated model), and uses the `GOF=` argument to specify what summaries information we want to calculate for our **simulated** networks. Rather than simulating the networks, then calculating the stats, then creating a plot, the `gof()` function does all of this for us! (how nice).  
+
+The `GOF=` argument takes a formula object, of the form `~ <model terms>` specifying the statistics to use to diagnosis the goodness-of-fit of the model. They do not need to be terms that are in the model, and typically are not. Currently supported terms are the degree distribution (`degree` for *undirected graphs*, or `idegree` and/or `odegree` for *directed graphs*), geodesic distances (`distance`), shared partner distributions (`espartners` [1 edge-wise shared partner is *i*-*j*, *j*-*k*, and *i*-*k*] and `dspartners` [1 dyad-wise shared partner is *j*-*k* and *i*-*k*]), the triad census (`triadcensus`), and the terms of the original model (`model`). The default formula for undirected networks is `~ degree + espartners + distance + model`, and the default formula for directed networks is `~ idegree + odegree + espartners + distance + model`. 
+
+Let's go ahead and take a look at this with the `m4.gaNetU` model we estimated above where:  
+
+  * `ergm( gaNetU ~ edges + nodematch( "Race", diff=TRUE ) + gwesp( decay = 0.25, fixed = TRUE )`
+  
+We want to calculate the degree distribution (`degree`), the edge-wise shared partner distribution (`espartners`), and the geodesic distances (`distance`). 
+
+
+```{r}
+
+m4.gaNetU.gof <- gof(
+  m4.gaNetU,               # our estimated model
+  GOF = ~degree            # the degree distribution 
+    + espartners           # the edge-wise shared partners distribution
+    + distance,            # the geodesic distance distribution
+  verbose = TRUE,          # we want it to tell us what it is doing while it is doing it
+  control = control.gof.ergm( seed = 605 ) # set the seed to reproduce results 
+)
+
+# print out the goodness of fit info
+m4.gaNetU.gof
+
+```
+
+The object `m4.gaNetU.gof` shows the goodness-of-fit for the degree distribution, the edge-wise shared partner distribution, and the geodesic distances. Each table shows the value in the observed network (`obs`) as well as the minimum (`min`), mean (`mean`), and maximum (`max`) of that value in the **simulations**.  
+
+The *p*-value column (`p-value`) is the proportion of the simulated values of the statistic that are at least as extreme as the observed value. *Large* values indicate that the simulated networks are similar to the observed network. Values less than 0.05 demonstrate a significant difference between the observed network and the simulated networks.  
+
+<br>
+
+We can reference each table using the `$pval` operator. Take a look at the names using: `names(m4.gaNetU.gof)`. Let's take a look at the degree distribution first:
+
+
+```{r}
+
+m4.gaNetU.gof$pval.deg
+
+```
+
+In looking through the *Goodness-of-fit for degree* table, what do the *p*-values tell us?
+
+The degree distribution in the simulated data are matching well with the degree distribution for the observed data. In other words, our model (i.e. `ergm( gaNetU ~ edges + nodematch( "Race", diff=TRUE ) + gwesp( decay = 0.25, fixed = TRUE )`) is reproducing a degree distribution that is very similar to the degree distribution in our observed data.
+
+Now let's look at the other distributions. Take a look at the *Goodness-of-fit for edge-wise shared partner* table:
+
+```{r}
+
+m4.gaNetU.gof$pval.espart
+
+```
+
+Recall that an edge-wise shared partner of 1 or `esp1` is *i*-*j*, *j*-*k*, and *i*-*k*. An edge-wise shared partner of 2 or `esp2` is *i*-*j*, *j*-*k* and *i*-*k*, as well as *i*-*l* and *l*-*l*. And so on... 
+
+*What is the interpretation of this table?* 
+
+***Conceptually, what does the difference (or lack thereof?) between the simulated networks and the observed networks, based on the edge-wise shared partner distribution tell us?***
+
+<br>
+
+Now, take a look at the *Goodness-of-fit for minimum geodesic distance* table:
+
+```{r}
+
+m4.gaNetU.gof$pval.dist
+
+```
+
+Recall that a geodesic is the shortest path between two nodes. The distribution shows the count of these (when it shows `Inf`, this indicates the number of dyads that are unreachable).
+
+*What is the interpretation of this table?*
+
+<br>
+
+Finally, we can plot the `gof()` object and examine the simulated and observed data.
+
+```{r}
+
+# set the plot panes
+par( mfrow = c( 2,2 ) )
+
+plot( m4.gaNetU.gof )
+
+```
+
+Each plot shows boxplots for the values of the simulated networks. The **dark** line in each plot is the network statistic for the *observed network*. Situations where the dark line falls outside of the boxplots indicates that the simulation is not reproducing that particular structural aspect of the network.
+
+*Overall, how well is our model at reproducing the observed distributions?*
+
+<br>
+
+As a contrast, let's look at the goodness of fit for the model where we exclude the term to account for transitivity in the network. Recall that the `m3.gaNetU` model was: `r m3.gaNetU$formula`.
+
+```{r}
+
+# run the gof function
+m3.gaNetU.gof <- gof(
+  m3.gaNetU,               # our estimated model
+  GOF = ~degree            # the degree distribution 
+    + espartners           # the edge-wise shared partners distribution
+    + distance,            # the geodesic distance distribution
+  verbose = TRUE,          # we want it to tell us what it is doing while it is doing it
+  control = control.gof.ergm( seed = 605 ) # set the seed to reproduce results 
+)
+
+# plot the gof diagnostics
+par( mfrow = c( 2,2 ) )
+plot( m3.gaNetU.gof )
+
+```
+
+Now, let's ask a few questions:  
+
+  * Which distributions is the model doing a good job reproducing?  
+  * Where does it not do a good job? (Why is this the case?)
+
+<br>
+
+# **Evaluation Model Fit for the PINS *Power/Influence* Network**  
+
+!!!HERE with going through 
 
 
 
@@ -273,9 +529,10 @@ gplot(
 
 
 
+!!!!HERE WITH WORKING this IN!
 
 
-## **Simulating alternative models**  
+# **Simulating Alternative Models**  
 
 Suppose we wanted to simulate a model where the effect of homophily is less strong. In other words, what would *this* network look like if there was not homophily? We can do this by plugging new values into the `simulate.ergm` function.  
 
@@ -314,162 +571,7 @@ gplot(no.homophily.sim, main="No Homophily Simluation",vertex.col=role.col, gmod
 *How does the simulated network differ from the* `Bali` *network?*
 
 
-## **Goodness-of-fit (the basic logic)**  
-
-Recall that we are fitting a model to observed data. That is, we are specifying the stochastic process that generated our observed data. We have specified local processes that generate our observed network. So, one way to determine how well the model fits the data is to see how well the model generates global network properties. That is, if the processes we have specified are operating, would we get the indegree distribution (for example) we observe?
-
-We can get a sense of how well the model is representing the observed network based on the visual comparison with the simulated networks. In addition, we could look at whether our simulated networks are reproducing particular structures in our network. We can use the `summary()` function and use the `ergm` terms to return descriptives on the networks (i.e. the observed network and the simulated networks). Let's take a look at the degree distribution as well as the number of triangles in our observed network and our simulated networks:  
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# First, let's see how this works for our observed network.
-summary(Bali ~ edges + degree(0:5) + triangle)
-```  
-
-The output shows that the Bali network has:  
-
-* 63 edges  
-
-* 0 nodes with degree 0, degree 1, and degree 2  
-
-* 1 node with degree 3, 1 node with degree 4, and 5 nodes with degree 5  
-
-* 125 triangles (i.e. *i*-*j*, *j*-*k*, & *i*-*k*)  
-
-Now, let's take this info for our observed network and do the same for the simulated networks. Then, we can look at whether the simulations are reproducing the structures we observe in the Bali network.
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Create a table that binds together the stats we want for each network.
-  # For each network, we ask for the edges, the degree distribution (0 through 5), and the number of triangles.
-Bali.nets.stats <- rbind(
-  summary(Bali ~ edges + degree(0:5) + triangle), # The stats for the observed network.
-  summary(sims.role.Bali[[1]] ~ edges + degree(0:5) + triangle), # The stats for the simulated networks.
-  summary(sims.role.Bali[[2]] ~ edges + degree(0:5) + triangle),
-  summary(sims.role.Bali[[3]] ~ edges + degree(0:5) + triangle), 
-  summary(sims.role.Bali[[4]] ~ edges + degree(0:5) + triangle),
-  summary(sims.role.Bali[[5]] ~ edges + degree(0:5) + triangle),
-  summary(sims.role.Bali[[6]] ~ edges + degree(0:5) + triangle),  
-  summary(sims.role.Bali[[7]] ~ edges + degree(0:5) + triangle),
-  summary(sims.role.Bali[[8]] ~ edges + degree(0:5) + triangle)
-)
-
-# Add some names and then examine the table.
-rownames(Bali.nets.stats) <- c("Bali Net", "Sim1","Sim2","Sim3","Sim4","Sim5","Sim6","Sim7","Sim8")
-Bali.nets.stats
-```
-
-Recall that the simulations are based on the following model: `ergm(Bali ~ edges + nodefactor("role") + nodematch("role"))`.  
-
-*Looking through the table, how well is the model representing the structures we have decided to examine?*
-
-
-We just decided to look at 8 simulations. Alternatively, we could run a lot of simulations and examine the distribution of a particular structural property (e.g. triangles). In the `simulate()` function, we can use the `monitor=` argument to pass any specific terms we want to simulate. Since we are focusing just on the number of triangles, we would use `monitor=~triangle`. Note the incorporation of the `~` in the `monitor=` argument. We can also use the `statsonly=` argument to just calculate stats rather than generating networks. Since we are only interested in the stats and don't want the networks, we use `statsonly=TRUE`.
-
-Let's simulate 500 networks and take a look at the results:
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Run the simulation.
-Bali.large.sim<-simulate(
-  role.Bali, # use the model based on role.
-  nsim = 500, # ask for 500 simulations.
-  monitor = ~ triangle, # we want it to focus on the triangles.
-  statsonly = TRUE, # just keep the stats, not the networks.
-  seed = 605 # set the seed to reproduce the results.
-)
-
-# Now, plot the simulated stats to see the results.
-hist(Bali.large.sim[,"triangle"], # plot the triangle counts from each simulation.
-     main = "Simulations \n (X shows observed network)", # add a title.
-     xlim = c(0,200), ylim = c(0,125), # set the axis limits.
-     xlab = "Number of triangles", ylab = "Number of simulated networks" #label the axes.
-     )
-points(summary(Bali ~ triangle),4, pch="X", cex=2, col="red")
-```
-
-*In looking at the simulation of the triangles, is our model generating as much transitivity as we observe in the Bali network?*  
-
-
-## **Goodness-of-fit with the `gof()` function**  
-
-As we just saw, we can simulate lots of networks and then compare our observed network to the networks simulated from the model estimates. In `ergm`, there is a function that does this for us, `gof()`. The `gof()` function calculates *p*-values for geodesic distance, degree, and reachability summaries to diagnose the goodness-of-fit of exponential family random graph models.  
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Take a look at the help for the function.
-?gof
-```
-
-As shown in the help, the `gof()` function takes a fitted `ergm` object (i.e. an estimated model), and uses the `GOF=` argument to specify what summaries information we want to calculate for our **simulated** networks. Rather than simulating the networks, then calculating the stats, then creating a plot, the `gof()` function does all of this for us! (how nice).  
-
-The `GOF=` argument takes a formula object, of the form `~ <model terms>` specifying the statistics to use to diagnosis the goodness-of-fit of the model. They do not need to be terms that are in the model, and typically are not. Currently supported terms are the degree distribution (`degree` for *undirected graphs*, or `idegree` and/or `odegree` for *directed graphs*), geodesic distances (`distance`), shared partner distributions (`espartners` [1 edge-wise shared partner is *i*-*j*, *j*-*k*, and *i*-*k*] and `dspartners` [1 dyad-wise shared partner is *j*-*k* and *i*-*k*]), the triad census (`triadcensus`), and the terms of the original model (`model`). The default formula for undirected networks is `~ degree + espartners + distance + model`, and the default formula for directed networks is `~ idegree + odegree + espartners + distance + model`. 
-
-Let's go ahead and take a look at this with the `role.Bali` model we estimated above where: `ergm(Bali ~ edges + nodefactor("role") + nodematch("role"))`. We want to calculate the degree distribution (`degree`), the edge-wise shared partner distribution (`espartners`), and the geodesic distances (`distance`). 
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-role.Bali.gof <- gof(
-  role.Bali, # our estimated model.
-  GOF = ~degree # the degree distribution, 
-    + espartners # the edge-wise shared partners distribution,
-    + distance, # the geodesic distance distribution.  
-  verbose = TRUE, # we want it to tell us what it is doing while it is doing it.
-  control = control.gof.ergm(seed = 605) # set the seed to reproduce results, note the control= argument. 
-)
-
-# Now, print out the goodness of fit info.
-role.Bali.gof
-```
-
-The object `role.Bali.gof` shows the goodness-of-fit for the degree distribution, the edge-wise shared partner distribution, and the geodesic distances. Each table shows the value in the observed network (`obs`) as well as the minimum (`min`), mean (`mean`), and maximum (`max`) of that value in the **simulations**.  
-
-The *p*-value column (`p-value`) is the proportion of the simulated values of the statistic that are at least as extreme as the observed value. *Large* values indicate that the simulated networks are similar to the observed network. Values less than 0.05 demonstrate a significant difference between the observed network and the simulated networks.  
-
-
-We can reference each table using the `$pval` operator. Take a look at the names using: `names(role.Bali.gof)`. Let's take a look at the degree distribution first:
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Return the gof info for just the degree distribution.
-role.Bali.gof$pval.deg
-```
-
-In looking through the *Goodness-of-fit for degree* table, none of the *p*-values are less than 0.05, suggesting that the degree distribution in the simulated data are matching well with the degree distribution for the observed data. In other words, our model (i.e. `ergm(Bali ~ edges + nodefactor("role") + nodematch("role"))`) is reproducing the degree distribution in our observed data.
-
-Now let's look at the other distributions. Take a look at the *Goodness-of-fit for edge-wise shared partner* table:
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Return the gof info for just the edge-wise shared partner distribution.
-role.Bali.gof$pval.espart
-```
-
-Recall that an edge-wise shared partner of 1 or `esp1` is *i*-*j*, *j*-*k*, and *i*-*k*. An edge-wise shared partner of 2 or `esp2` is *i*-*j*, *j*-*k* and *i*-*k*, as well as *i*-*l* and *l*-*l*. And so on... 
-
-*What is the interpretation of this table?* 
-
-***Conceptually, what does the difference between the simulated networks and the observed networks, based on the edge-wise shared partner distribution tell us?***
-
-Now, take a look at the *Goodness-of-fit for minimum geodesic distance* table:
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Return the gof info for just the edge-wise shared partner distribution.
-role.Bali.gof$pval.dist
-```
-
-Recall that a geodesic is the shortest path between two nodes. The distribution shows the count of these and `Inf` indicates the number of dyads that are unreachable.
-
-*What is the interpretation of this table?*
-
-Finally, we can plot the `gof()` object and examine the simulated and observed data.
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-#Set up the plotting pane.
-  # Since we have 3 distributions, we need four windows.
-op <- par(mfrow=c(2,2))
-plot(role.Bali.gof)
-par(op)
-```
-
-Each plot shows boxplots for the values of the simulated networks. The **dark** line in each plot is the network statistic for the *observed network*. Situations where the dark line falls outside of the boxplots indicates that the simulation is not reproducing that particular structural aspect of the network.
-
-For example, take a look at the *degree distribution*. Nodes with degree 5 and 9 are not well represented in our model. In other words, our model has a hard time generating networks in which nodes have degree 5 or 9.
-
-As another example, take a look at the edge-wise shared partner distribution. The model is not generating enough dyads that have 7 and 8 shared partners ( that is *i* and *j* are tied and share 7 or 8 other nodes in common). This makes sense because we didn't fit a transitivity term to our network. So, basically, the simulations are telling us that the `nodefactor` and `nodematch` terms based on "role" are not the reason for the transitivity we observe in the network.
+!!!THIS ALL NEEDS TO BE UPDATED TO THE other lab setup for the bottom
 
 
 ***  
