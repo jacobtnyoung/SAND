@@ -106,7 +106,7 @@ Now, let's estimate a few models. We will estimate several (each subsequent mode
 
 Ok, let's run the models. (remember that we can use the `summary()` function on the model object to summarize the results).
 
-```{r, message=FALSE, warning=FALSE}
+```{r}
 
 # edge independence model
 m1.gaNetU <- ergm( gaNetU ~ edges ) 
@@ -123,13 +123,15 @@ m4.gaNetU <- ergm( gaNetU ~ edges + nodematch( "Race", diff=TRUE ) + gwesp( deca
 
 ```
 
+<br>
+
 ## **The `simulate.ergm()` or `simulate()` and `control.ergm()` Functions**  
 
 How can we go about assessing model fit? What would a good fitting model do? Well, one way to think about this is whether the model we estimate reproduces structures in the data. In other words, if we estimate a model, then simulated some data from that model, we could say: "does the simulated network **look like** our observed network?" This is the logic of how we will approach goodness of fit with our models. 
 
 First, we need to think about simulating a network (or networks) from our model. We can do this using the `simulate.ergm()` or `simulate()` function that is built into the `ergm` package. This function randomly samples networks from the specified model. We can examine the function using `?simulate.ergm`. Let's see how it works:
 
-```{r, message=FALSE}
+```{r}
 
 # simulate a network from the edge independence model
 sim.m1.gaNetU <- simulate(
@@ -187,7 +189,7 @@ gplot(
 
 <br>
 
-## **Simulating more complex models and more graphs**  
+## **Simulating More Complex Models**  
 
 Well, dang. It looks like our model is doing a great job reproducing the structure in our observed network.
 
@@ -252,7 +254,6 @@ gplot(
   vertex.col="#17f207",
   main = "Network Simulated from\n Transitivity Model"
   )
-
 
 ```
 
@@ -324,7 +325,7 @@ obsSimTab
 
 <br>
 
-### *Going Behind One Network*
+### *Going Beyond One Simulated Network*
 
 So far, we have only looked at one simulation. Alternatively, we could run a lot of simulations and examine the distribution of a particular structural property (e.g. triangles). In the `simulate()` function, we can use several arguments to give us what we want:  
 
@@ -391,13 +392,15 @@ points(
 
 <br>
 
-## **Goodness-of-fit with the `gof()` function**  
+## **Goodness-of-Fit with the `gof()` Function**  
 
 As we just saw, we can simulate lots of networks and then compare our observed network to the networks simulated from the model estimates. In `ergm`, there is a function that does this for us, `gof()`. The `gof()` function calculates *p*-values for geodesic distance, degree, and reachability summaries to diagnose the goodness-of-fit of exponential family random graph models. We can examine the help page for the `gof()` function using `?gof`.  
 
 As shown in the help, the `gof()` function takes a fitted `ergm` object (i.e. an estimated model), and uses the `GOF=` argument to specify what summaries information we want to calculate for our **simulated** networks. Rather than simulating the networks, then calculating the stats, then creating a plot, the `gof()` function does all of this for us! (how nice).  
 
 The `GOF=` argument takes a formula object, of the form `~ <model terms>` specifying the statistics to use to diagnosis the goodness-of-fit of the model. They do not need to be terms that are in the model, and typically are not. Currently supported terms are the degree distribution (`degree` for *undirected graphs*, or `idegree` and/or `odegree` for *directed graphs*), geodesic distances (`distance`), shared partner distributions (`espartners` [1 edge-wise shared partner is *i*-*j*, *j*-*k*, and *i*-*k*] and `dspartners` [1 dyad-wise shared partner is *j*-*k* and *i*-*k*]), the triad census (`triadcensus`), and the terms of the original model (`model`). The default formula for undirected networks is `~ degree + espartners + distance + model`, and the default formula for directed networks is `~ idegree + odegree + espartners + distance + model`. 
+
+<br>
 
 Let's go ahead and take a look at this with the `m4.gaNetU` model we estimated above where:  
 
@@ -433,7 +436,7 @@ We can reference each table using the `$pval` operator. Take a look at the names
 
 ```{r}
 
-m4.gaNetU.gof$pval.deg
+m4.gaNetU.gof$pval.deg[1:11,]
 
 ```
 
@@ -445,7 +448,7 @@ Now let's look at the other distributions. Take a look at the *Goodness-of-fit f
 
 ```{r}
 
-m4.gaNetU.gof$pval.espart
+m4.gaNetU.gof$pval.espart[1:6,]
 
 ```
 
@@ -461,7 +464,7 @@ Now, take a look at the *Goodness-of-fit for minimum geodesic distance* table:
 
 ```{r}
 
-m4.gaNetU.gof$pval.dist
+m4.gaNetU.gof$pval.dist[1:21,]
 
 ```
 
@@ -488,7 +491,7 @@ Each plot shows boxplots for the values of the simulated networks. The **dark** 
 
 <br>
 
-As a contrast, let's look at the goodness of fit for the model where we exclude the term to account for transitivity in the network. Recall that the `m3.gaNetU` model was: `r m3.gaNetU$formula`.
+As a contrast, let's look at the goodness of fit for the model where we exclude the term to account for transitivity in the network. Recall that the `m3.gaNetU` model was: `m3.gaNetU$formula`.
 
 ```{r}
 
@@ -515,76 +518,454 @@ Now, let's ask a few questions:
 
 <br>
 
+----
+
 # **Evaluation Model Fit for the PINS *Power/Influence* Network**  
 
-!!!HERE with going through 
+Now, let's go back through this using a directed network. Recall that in the [Introduction to Exponential Random Graph Models (ERGMs) in R](../labs/lab-10-ergm-intro.html) lab we estimated a series of ERGMs using the *power and influence* network from PINS. Here, we want to re-estimate the models and examine goodness of fit.
+
+## Setting Up
+
+First, let's bring in the data, create the network object, and assign attributes.
+
+```{r}
+
+# clear the workspace in case we recycle some objects
+rm( list = ls( ) )
+
+# load the libraries we need (this is redundant)
+library( sna )
+library( network )
+library( ergm )
+
+# set the location for the file
+loc <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-PINS-power-w1-adj.csv"
+
+# read in the .csv file
+piMat <- as.matrix(
+  read.csv( 
+    loc,
+    as.is = TRUE,
+    header = TRUE,
+    row.names = 1 
+    )
+  )
+
+# create the network object
+piNetD <- as.network( piMat, directed = TRUE )
 
 
+# define the attributes object
+attrs <- read.csv( 
+    "https://raw.githubusercontent.com/jacobtnyoung/sna-textbook/main/data/data-PINS-w1-age-race-attributes.csv",
+    as.is = TRUE,
+    header = TRUE 
+    )
 
+# let's recode the single 4 to a 1
+race.recoded <- attrs[,2]
+race.recoded[ race.recoded == 4 ] <- 1
 
+# now assign the recoded value
+piNetD %v% "Age" <- attrs[,1]
+piNetD %v% "Race" <- race.recoded
 
+```
 
+<br>
 
+Now, let's estimate a few models. We will estimate several (each subsequent model will include the prior terms):  
 
+  + An edge independence model  
+  + A model where we add a term where `Age` influences indegree and outdegree  
+  + A model where we add a term where there is homophily based on `Age`  
+  + A model where we take into account reciprocity
+  
+<br>
 
+Ok, let's run the models. (remember that we can use the `summary()` function on the model object to summarize the results).
 
+```{r}
 
-!!!!HERE WITH WORKING this IN!
+# edge independence model
+m1.piNetD <- ergm( piNetD ~ edges ) 
 
+# add the effects of Age on indegree and outdegree
+m2.piNetD <- ergm( piNetD ~ edges  + nodeicov( "Age" ) + nodeocov( "Age" ) ) 
+  
+# add the homophily effect for Age  
+m3.piNetD <- ergm( piNetD ~ edges  + nodeicov( "Age" ) + nodeocov( "Age" ) ) 
+
+# add the effect for reciprocity  
+m4.piNetD <- ergm( piNetD ~ edges + nodeicov( "Age" ) + nodeocov( "Age" ) + absdiff( "Age" ) + mutual,
+  control = control.ergm( seed = 605 ) ) 
+
+```
+
+<br>
+
+## **Simulating a Single Network**  
+
+Let's simulate a network and plot it along with our observed network. Let's use the edge independence model:
+
+```{r}
+
+# simulate a network from the edge independence model
+sim.m1.piNetD <- simulate(
+  m1.piNetD,               # the model we want to simulate from
+  nsim=1,                  # simulate 1 network
+  seed = 605               # set the seed to reproduce results
+)
+
+# set the margins
+par( mfrow=c( 1,2 ), 
+     mar=c( 0.1, 0.5, 2, 0.5 ) )
+
+# set the seed
+set.seed( 605 )
+
+# create the first plot
+gplot( 
+  piNetD, 
+  gmode = "digraph",
+  edge.col="grey40", 
+  vertex.col="#f71505",
+  main = "PINS Power/Influence\n Network (Directed)"
+  )
+
+# create the second plot for the simulated network
+gplot( 
+  sim.m1.piNetD, 
+  gmode = "digraph",
+  edge.col = "grey40", 
+  vertex.col="#11adf5",
+  main = "Network Simulated from\n Edge Independence Model"
+  )
+
+```
+
+*How is the network different from the network generated from the edge independence model? What are the structural features that the model is not capturing?*  
+
+<br>
+
+## **Simulating More Complex Models**  
+
+Let's take a look at the additional models we created:
+
+```{r}
+
+# estimate the simulations
+sim.m2.piNetD <- simulate( m2.piNetD, nsim=1, seed = 605 )
+sim.m3.piNetD <- simulate( m3.piNetD, nsim=1, seed = 605 )
+sim.m4.piNetD <- simulate( m4.piNetD, nsim=1, seed = 605 )
+
+```
+
+Now that we have our simulated networks, let's plot them.
+
+```{r}
+
+# set the margins
+par( mfrow=c( 2,2 ), 
+     mar=c( 0.1, 0.5, 2, 0.5 ) )
+
+# set the seed
+set.seed( 605 )
+
+# create the first plot
+gplot( 
+  piNetD, 
+  gmode = "digraph",
+  edge.col="grey40", 
+  vertex.col="#f71505",
+  main = "PINS Power/Influence\n Network (Directed)"
+  )
+
+# create the second plot for the simulated network
+gplot( 
+  sim.m2.piNetD, 
+  gmode = "digraph",
+  edge.col = "grey40", 
+  vertex.col="#11adf5",
+  main = "Network Simulated from\n Degree Model"
+  )
+
+# create the third plot for the simulated network
+gplot( 
+  sim.m3.piNetD, 
+  gmode = "digraph",
+  edge.col = "grey40", 
+  vertex.col="#e707f2",
+  main = "Network Simulated from\n Homophily Model"
+  )
+
+# create the fourth plot for the simulated network
+gplot( 
+  sim.m4.piNetD, 
+  gmode = "digraph",
+  edge.col = "grey40", 
+  vertex.col="#17f207",
+  main = "Network Simulated from\n Reciprocity Model"
+  )
+
+```
+
+*What do think? As our models become more complex, are we doing better at reproducing the structures we observe?*
+
+<br>
+
+## **Goodness-of-fit with the `gof()` function**  
+
+Let's examine the goodness of fit for the `m4.piNetD` model.
+
+```{r}
+
+m4.piNetD.gof <- gof(
+  m4.piNetD,               # our estimated model
+  GOF = ~idegree           # the indegree distribution 
+    + odegree              # the outdegree distribution
+    + espartners           # the edge-wise shared partners distribution
+    + distance,            # the geodesic distance distribution
+  verbose = TRUE,          # we want it to tell us what it is doing while it is doing it
+  control = control.gof.ergm( seed = 605 ) # set the seed to reproduce results 
+)
+
+# print out the goodness of fit info
+m4.piNetD.gof
+
+```
+
+<br>
+
+Look through the table for each distribution. *What is the interpretation of each table?*
+
+<br>
+
+Finally, we can plot the `gof()` object and examine the simulated and observed data.
+
+```{r}
+
+# set the plot panes
+par( mfrow = c( 3,2 ) )
+
+plot( m4.piNetD.gof )
+
+```
+
+Each plot shows boxplots for the values of the simulated networks. The **dark** line in each plot is the network statistic for the *observed network*. Situations where the dark line falls outside of the boxplots indicates that the simulation is not reproducing that particular structural aspect of the network.
+
+*Overall, how well is our model at reproducing the observed distributions?*
+
+<br>
+
+As a contrast, let's look at the goodness of fit for the edge independence model (`m1.piNetD`).
+
+```{r}
+
+# run the gof function
+m1.piNetD.gof <- gof(
+  m1.piNetD,               # our estimated model
+  GOF = ~idegree           # the indegree distribution 
+    + odegree              # the outdegree distribution
+    + espartners           # the edge-wise shared partners distribution
+    + distance,            # the geodesic distance distribution
+  verbose = TRUE,          # we want it to tell us what it is doing while it is doing it
+  control = control.gof.ergm( seed = 605 ) # set the seed to reproduce results 
+)
+
+# plot the gof diagnostics
+par( mfrow = c( 3,2 ) )
+plot( m1.piNetD.gof )
+
+```
+
+Now, let's ask a few questions:  
+
+  * Which distributions is the model doing a good job reproducing?  
+  * Where does it not do a good job? (Why is this the case?)
+
+<br>
 
 # **Simulating Alternative Models**  
 
+## **No Homophily?**
+
 Suppose we wanted to simulate a model where the effect of homophily is less strong. In other words, what would *this* network look like if there was not homophily? We can do this by plugging new values into the `simulate.ergm` function.  
 
-Since a fitted `ergm` model is of class `ergm`, it has several parts that we can reference as objects:
+Since a fitted `ergm` model is of class `ergm`, it has several parts that we can reference as objects. 
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# check the class.
-class(role.Bali)
+```{r}
 
-# see the pieces of the ergm object.
-names(role.Bali)
+# see the names associated with the object
+names( m4.piNetD )
 
-# the coefficients are an object that we can take, modify, and use with the simulation.
-role.Bali$coef
+# the coefficients are an object that we can take, modify, and use with the simulation
+m4.piNetD$coefficients
 
-# Let's create a new object that is just the model coefficients.
-no.homophily.coef <- role.Bali$coef
+```
 
-# Now, let's change the effect of nodematch for "role" to be zero.
-  # That is the sixth element in the vector, so we index accordingly.
-no.homophily.coef[6] <- 0 
+If we want to simulate a model where there is no homophily, then we can set the coefficient to zero, then simulate from that new set of model coefficients. In our case, we well change the effect of `absdiff.Age` to be zero.
+
+```{r}
+
+# create a new object that is just the model coefficients
+no.homophily.coef <- m4.piNetD$coefficients
+
+# set the coefficent to zero; it is the 4th element
+no.homophily.coef[4] <- 0 
 
 # Now, the effect is zero.
 no.homophily.coef
 
-# now, plug the edited coefficient into a simulation.
+# now, plug the edited coefficient into a simulation
 no.homophily.sim <- simulate(
-  role.Bali, 
-  coef = no.homophily.coef, # tell it to use the new coefficents.
-  verbose = TRUE # tell it to show us what it is doing.
+  m4.piNetD,                # the model we are simulating from 
+  coef = no.homophily.coef, # tell it to use the new coefficients
+  verbose = TRUE            # tell it to show us what it is doing
 ) 
-# Now, plot the simulated network with no homophily.
-gplot(no.homophily.sim, main="No Homophily Simluation",vertex.col=role.col, gmode="graph")
+
 ```
 
-*How does the simulated network differ from the* `Bali` *network?*
+Now that we have the simulated network, we can plot it and compare it to our observed network. We will want to size the nodes by age. So, let's first run that through the `rescale()` function.
+
+```{r}
+
+# define the rescale function
+rescale <- function( nchar, low, high ){
+  min_d <- min( nchar )
+  max_d <- max( nchar )
+  rscl  <- ( ( high - low )*( nchar - min_d ) ) / ( max_d - min_d ) + low
+  rscl
+}
+
+# create the objects to use for the plots
+PiNetDobsSize <- rescale( piNetD %v% "Age", 0.2, 3 )
+PiNetDsimSize <- rescale( piNetD %v% "Age", 0.2, 3 )
+
+```
+
+```{r}
+
+# set the margins
+par( mfrow=c( 1,2 ), 
+     mar=c( 0.1, 0.5, 2, 0.5 ) )
+
+# set the seed
+set.seed( 605 )
+
+# create the first plot
+gplot( 
+  piNetD, 
+  gmode = "digraph",
+  edge.col="grey40", 
+  vertex.col="#f71505",
+  vertex.cex = PiNetDobsSize,
+  displayisolates = FALSE,
+  main = "PINS Power/Influence\n Network (Directed)"
+  )
+
+# create the second plot for the simulated network
+gplot( 
+  no.homophily.sim, 
+  gmode = "digraph",
+  edge.col = "grey40", 
+  vertex.col="#03fc7b",
+  vertex.cex = PiNetDsimSize,
+  displayisolates = FALSE,
+  main = "Network Simulated from\n No Homophily Model"
+  )
+
+```
+
+*How does the simulated network differ from the* `piNetD` *network?* *Can you see the difference in the role that homophily plays?* 
+
+<br>
 
 
-!!!THIS ALL NEEDS TO BE UPDATED TO THE other lab setup for the bottom
+## **Aversion to Reciprocity?**
 
+In the model above, `m4.piNetD`, we showed that there was evidence of reciprocity in power/influence nominations. What would the network look like if there was an *aversion*, such that the probability of a tie from *i* to *j* is lower if there is a tie from *j* to *i*?
 
-***  
+If we want to simulate a model where there is an aversion to reciprocal ties, then we can take the coefficient for the reciprocity term and multiply it by -1, then simulate from that new set of model coefficients.
 
-#### ***Questions?***
+```{r}
 
+# create a new object that is just the model coefficients
+anti.recip.coef <- m4.piNetD$coefficients
+
+# set the coefficient
+anti.recip.coef[5] <- anti.recip.coef[5]*-1 
+
+# now, plug the edited coefficient into a simulation
+anti.recip.sim <- simulate(
+  m4.piNetD,                # the model we are simulating from 
+  coef = anti.recip.coef,   # tell it to use the new coefficients
+  verbose = TRUE            # tell it to show us what it is doing
+) 
+
+```
+
+Now that we have the simulated network, we can plot it and compare it to our observed network. We will want to color the reciprocated ties. To do this, we can get the matrix of reciprocated ties (using `symmetrize()`) and then pass colors to this matrix.
+
+```{r}
+
+# create the symmetric matrix
+sympiMat <- symmetrize( piNetD, rule = "strong" )
+
+# create a matrix of colors
+sympiMatCols <- sympiMat
+sympiMatCols[sympiMat == 0] <- "grey80"
+sympiMatCols[sympiMat == 1] <- "#3746a3" # set a color for mutual ties
+
+```
+
+Now, we pass this information to the plot.
+
+```{r}
+
+# set the margins
+par( mfrow=c( 1,2 ), 
+     mar=c( 0.1, 0.5, 3, 0.5 ) )
+
+# set the seed
+set.seed( 605 )
+
+# create the first plot
+gplot( 
+  piNetD, 
+  gmode = "digraph",
+  edge.col=sympiMatCols, 
+  vertex.col="#03eeff",
+  displayisolates = FALSE,
+  main = "PINS Power/Influence\n Network (Directed)"
+  )
+
+# create the second plot for the simulated network
+gplot( 
+  no.homophily.sim, 
+  gmode = "digraph",
+  edge.col = "grey80", 
+  vertex.col="#03fc7b",
+  displayisolates = FALSE,
+  main = "Network Simulated from\n Aversion to\n Reciprocity Model"
+  )
+
+```
+
+*How does the simulated network differ from the* `piNetD` *network?* *Can you see the difference in the role that reciprocity plays?* 
+
+----
+
+<br>
+
+# **Wrapping up...**
+
+In this lab, we continued working with ERGMs in R using the `ergm` package. Specifically, we ask the question: *how do we evaluate whether our model is a good fit to the data?* This is the notion of "goodness of fit" and we worked through how to assess model fit using the `gof()` function in the `ergm` package.
+
+<br>
+
+### ***Questions?***
 
 <br>
 
 ##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
-
-<br>
-<br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
