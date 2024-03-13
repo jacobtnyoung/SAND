@@ -51,7 +51,7 @@ For the `LondonGangNet` network, do the following:
 1. Plot the `LondonGangNet` and plot a random network with the same number of edges.
 2. Based on the plots, how does the `LondonGangNet` differ from the random network?
 3. Estimate an ERGM where ties form at random. Interpret the coefficient.
-4. Examine and describe the relationship between degree and the attribute `Prison` of experience.
+4. Examine and describe the relationship between degree and the attribute `Prison`.
 5. Estimate an ERGM where gang members differ in their degree based on the attribute `Prison`. Interpret the coefficient.
 6. Estimate an ERGM where gang members differ in their degree based on the attribute `Convictions`. Interpret the coefficient.
 7. Examine the mixing matrix for `Birthplace`. What is the interpretation of this matrix?
@@ -84,10 +84,10 @@ For the `trustNet` network, do the following:
 1. Plot the `trustNet` and plot a random network with the same number of edges.
 2. Based on the plots, how does the `trustNet` differ from the random network?
 3. Estimate an ERGM where ties form at random. Interpret the coefficient.
-4. Examine and describe the relationship between outdegree and the attribute `White` of experience.
-5. Examine and describe the relationship between indegree and the attribute `White` of experience.
+4. Examine and describe the relationship between degree and the attribute `White`.
+5. Examine and describe the relationship between degree and the attribute `YearsOnUnit` of experience.
 6. Estimate an ERGM where individuals differ in their degree based on the attribute `White`. Interpret the coefficient.
-7. Estimate an ERGM where differ differ in their degree based on the attribute `YearsOnUnit`. Interpret the coefficient.
+7. Estimate an ERGM where individuals differ in their degree based on the attribute `YearsOnUnit`. Interpret the coefficient.
 8. Examine the mixing matrix for `White`. What is the interpretation of this matrix?
 9. Estimate an ERGM where are more likely to form ties based on `White` (i.e. homophily for the attribute `White`).
 10. What is the probability of a tie between two individuals who are both white?
