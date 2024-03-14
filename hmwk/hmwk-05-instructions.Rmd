@@ -92,9 +92,9 @@ For the `trustNet` network, do the following:
 9. Estimate an ERGM where are more likely to form ties based on `White` (i.e. homophily for the attribute `White`).
 10. What is the probability of a tie between two individuals who are both white?
 11. What is the probability of a tie between two individuals who are both non-white?
-12. Estimate an ERGM where ties are reciprocated.
+12. Estimate an ERGM where ties are reciprocated. Interpret the coefficient.
 13. Simulate a network from the ERGM in #6, #7, or (and?) #9. 
-14. Plot the simulated network from #12 and the `trustNet`, identifying nodes based on `White` or (and?) `YearsOnUnit` in both plots.
+14. Plot the simulated network from #13 and the `trustNet`, identifying nodes based on `White` or (and?) `YearsOnUnit` in both plots.
 15. Evaluate the goodness of fit for the models in #6, #7, #9, or #12.
 16. Which model provides the best fit to the data? How do you know?
 
