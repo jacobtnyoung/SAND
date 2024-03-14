@@ -274,9 +274,6 @@ First things first, we need to install the `ergm` package and load the library o
 
 ```{r, eval=FALSE}
 
-# clear the workspace
-rm( list = ls() )
-
 # install the ergm package
 install.packages( "ergm" )
 

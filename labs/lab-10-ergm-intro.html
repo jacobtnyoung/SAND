@@ -3160,17 +3160,14 @@ of the network?</em></p>
 <code>ergm()</code> Function</strong></h1>
 <p>First things first, we need to install the <code>ergm</code> package
 and load the library of functions.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># clear the workspace</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="fu">rm</span>( <span class="at">list =</span> <span class="fu">ls</span>() )</span>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># install the ergm package</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="fu">install.packages</span>( <span class="st">&quot;ergm&quot;</span> )</span>
 <span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co"># install the ergm package</span></span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="fu">install.packages</span>( <span class="st">&quot;ergm&quot;</span> )</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co"># load the ergm package</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="fu">library</span>( ergm )</span>
 <span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a></span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co"># load the ergm package</span></span>
-<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="fu">library</span>( ergm )</span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a></span>
-<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co"># take a look at the functionality</span></span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="fu">help</span>( <span class="at">package =</span> <span class="st">&quot;ergm&quot;</span> )</span></code></pre></div>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co"># take a look at the functionality</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="fu">help</span>( <span class="at">package =</span> <span class="st">&quot;ergm&quot;</span> )</span></code></pre></div>
 <p><br></p>
 <p>If you look at the <code>ergm()</code> function using
 <code>?ergm</code>, then you will see an extensive help file on the
