@@ -1,5 +1,5 @@
 ---
-title: "Lab 11-Introduction to Stochastic Actor-Based Models (SABMs)"
+title: "Lab 12-Introduction to Stochastic Actor-Based Models (SABMs) in R"
 date: "CRJ 605 Statistical Analysis of Networks"
 output: 
   html_document:
@@ -12,117 +12,176 @@ output:
     self_contained: true
 ---
 
-```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
+<style>
+body {
+text-align: left}
+</style>
 
-library( devtools )
-library( network )
-library( sna )
-library( RSiena )
+
+```{r, echo=FALSE}
+
+# set the defaults for the codechunks
+knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
 
 ```
 
-*This lab examines longitudinal network structures using the `RSiena` package. Information about the Siena program can be found at:* http://www.stats.ox.ac.uk/~snijders/siena/
+```{r,echo=FALSE}
 
-***
-
-## **Getting Started**  
-
-As discussed in the Introduction to Stochastic Actor-Based Models lecture, we are trying to build a model that accurately represents the preferences among actors that generated the observed network between discrete time points. 
-
-Let's start by working with the advice network among 75 MBA students measured at three waves. At each wave, the students were asked to whom they ask for advice. Keep in mind, as we look through the advice network over three time periods, that we are trying to model the decisions actors make about the ties they send.
-
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-
-# clear the workspace and load the libraries
-
+# clear the workspace
 rm( list = ls() )
 
-library( sna )
+# libraries needed
 
-library( network )
+library( sna )     # for sna functions
+library( network ) # for working with network objects
+library( RSiena )  # for working with SABMs
 
-
-#HERE: Need to get different data for this!!!
-
-
-# Load the data and assign each network to an object
-advice1 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/mba-advice1.csv",as.is=T,header=T,row.names=1))
-advice2 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/mba-advice2.csv",as.is=T,header=T,row.names=1))
-advice3 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/mba-advice3.csv",as.is=T,header=T,row.names=1))
-
-# Now, coerce them to be a network object.
-advice1.net <- as.network(advice1)
-advice2.net <- as.network(advice2)
-advice3.net <- as.network(advice3)
-
-# take a look at the properties of each network.
-summary(advice1.net, print.adj = FALSE)
-summary(advice2.net, print.adj = FALSE)
-summary(advice3.net, print.adj = FALSE)
 ```
 
-*What do the summaries tell us about each network?*  
+----
 
-***  
+<br>
+
+In the [Introduction to Stochastic Actor-Based Models (SABMs) lecture](../lectures/lecture-09-sabm-intro.pdf) you were introduced to the basic logic of the Stochastic Actor-Based model. This lab draws on that content, showing you how to estimate SABMs using the `RSiena` package.
+
+<br>
+
+# **SABM for the PINS *Get Along With* Networks**  
+
+Recall from the [Introduction to Stochastic Actor-Based Models (SABMs) lecture](../lectures/lecture-09-sabm-intro.pdf) that we are trying to build a model that accurately represents the preferences among actors that generated the observed network between discrete time points. Let's take two waves of data from the PINS study to examine how *get along with* nominations change over two waves. There are two network objects available on the SNA Textbook website:  
+
+```{r}
+
+# define the path location for the file
+loc1 <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-pins-ga-panel-w1-net.rds"
+gaNetT1 <- readRDS( url( loc1 ) )
+
+loc2 <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-pins-ga-panel-w2-net.rds"
+gaNetT2 <- readRDS( url( loc2 ) )
+
+# look at the network for wave 1
+gaNetT1
+
+# look at the network for wave 2
+gaNetT2
+
+```
+
+<br>
 
 Let's take a look at the plots of each network to see what patterns we can discern over time.
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE, figure.align = "center", figure.height = 5, figure.width = 5}
-op <- par(mfrow=c(2,2), mai = c(0,0,0.7,0))
-set.seed(605)
-gplot(advice1.net, edge.col = "grey60", vertex.col="coral",label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
-title("Advice Network (t1)")
-set.seed(605)
-gplot(advice2.net, edge.col = "grey60", vertex.col="lightblue",label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
-title("Advice Network (t2)")
-gplot(advice3.net, edge.col = "grey60", vertex.col="lavender",label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
-title("Advice Network (t3)")
-plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
-text(x = 0.5, y = 0.5, paste("Plots of\n Advice Network\n among 75 MBAs"),cex = 3, col = "black")
-par(op)
+```{r, figure.align = "center"}
+
+# set the margins
+par( mfrow=c( 1,2 ), 
+     mar=c( 0.1, 0.5, 2, 0.5 ) )
+
+# set the seed
+set.seed( 605 )
+
+# plot the first wave
+
+gplot(
+  gaNetT1, 
+  edge.col = "grey60", 
+  vertex.col="coral",
+  label = seq( 1, dim( as.matrix( gaNetT1 ) )[1] ),  # set the labels to be 1 to the number of nodes
+  vertex.cex=1.5, 
+  label.pos = 5, 
+  label.cex=0.5
+  )
+title( "Get Along With Network (t1)" )
+
+gplot(
+  gaNetT2, 
+  edge.col = "grey60", 
+  vertex.col="lavender",
+  label = seq( 1, dim( as.matrix( gaNetT2 ) )[1] ),  # set the labels to be 1 to the number of nodes
+  vertex.cex=1.5, 
+  label.pos = 5, 
+  label.cex=0.5
+  )
+title( "Get Along With Network (t2)" )
+
 ```
 
-*What do the plots show us about the evolution of the network over time?*  
+*What do the plots show us about the evolution of the network over time?*
+
+<br>
+
+This is a bit hard to see. One way we can get at this is to force the individuals to "stay" in the same position in the plot and see how individual actors' indegree and outdegree change over time.
 
 
-Let's force the individuals to "stay" in the same position in the plot and see how individual actors' indegree and outdegree change over time.
+```{r, fig.show="hide"}
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE, figure.align = "center", figure.height = 5, figure.width = 5}
-op <- par(mfrow=c(2,2), mai = c(0,0,0.7,0))
-set.seed(605)
-coords <- gplot(advice1.net, edge.col = "grey60", vertex.col="coral",label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
-title("Advice Network (t1)")
-set.seed(605)
-gplot(advice2.net, edge.col = "grey60", vertex.col="lightblue", coord = coords,label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
-title("Advice Network (t2)")
-gplot(advice3.net, edge.col = "grey60", vertex.col="lavender", coord = coords,label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
-title("Advice Network (t3)")
-plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
-text(x = 0.5, y = 0.5, paste("Plots of\n Advice Network\n among 75 MBAs"),cex = 3, col = "black")
-par(op)
+# Set the coordinates
+coords <- gplot( gaNetT1 )
+
+```
+
+Now, we can plot individuals based on their position in the first wave:
+
+```{r}
+
+# set the margins
+par( mfrow=c( 1,2 ), 
+     mar=c( 0.1, 0.5, 2, 0.5 ) )
+
+# set the seed
+set.seed( 605 )
+
+# plot the first wave
+
+gplot(
+  gaNetT1, 
+  edge.col = "grey60", 
+  vertex.col="coral",
+  label = seq( 1, dim( as.matrix( gaNetT1 ) )[1] ),  # set the labels to be 1 to the number of nodes
+  vertex.cex=1.5, 
+  label.pos = 5, 
+  label.cex=0.5,
+  coord = coords
+  )
+title( "Get Along With Network (t1)" )
+
+gplot(
+  gaNetT2, 
+  edge.col = "grey60", 
+  vertex.col="lavender",
+  label = seq( 1, dim( as.matrix( gaNetT2 ) )[1] ),  # set the labels to be 1 to the number of nodes
+  vertex.cex=1.5, 
+  label.pos = 5, 
+  label.cex=0.5,
+  coord = coords
+  )
+title( "Get Along With Network (t2)" )
+
+
 ```
 
 *Take a look at a few specific nodes. What do the plots show us about the evolution of the network over time?*  
 
-***  
+<br>
 
 Now, we want to think about modeling the evolution of this network over time. To do that, we need to look through the `RSiena` package.
 
-##**The `RSiena` package**  
+# **The `RSiena` package**  
 
 The `RSiena` package performs simulation-based estimation of stochastic actor-based models for longitudinal network data collected as panel data. Dependent variables can be single or multivariate networks, which can be directed, non-directed, or two-mode. There are also functions for testing parameters and checking goodness of fit.  
 
-If you have not already done so, install the package using `install.packages("RSiena")`. If you have not installed the `RSiena` package recently, make sure you update using the `update.packages("RSiena")` command.  
+If you have not already done so, install the package using `install.packages( "RSiena" )`. If you have not installed the `RSiena` package recently, make sure you update using the `update.packages( "RSiena" )` command.  
 
 *Note* that if you are using the MacOS, that `RSiena` will require the XQuartz software. Please download the XQuartz software at: https://www.xquartz.org/ before running `RSiena`.
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+```{r, eval=FALSE}
+
 # Load the RSiena package.
-library(RSiena)
+library( RSiena )
 
 # Take a look at the help.
-help(package="RSiena")
+help( package="RSiena" )
+
 ```
 
 For an RSiena analysis, we have to build several objects. The objects will serve as variables:    
@@ -135,30 +194,41 @@ For an RSiena analysis, we have to build several objects. The objects will serve
 
 * Then, we estimate the model using `siena07()`.  
 
-###**Step 1: Building the object to analyze using the `sienaDependent()` and `sienaDataCreate()` functions**  
+## **Step 1: Building the object to analyze using the `sienaDependent()` and `sienaDataCreate()` functions**  
 
 First, we want to create an object that is an array of the networks that will be the **dependent** variable. To do this, we use the `sienaDependent()` function. To see how this function works, look at the help with `?sienaDependent`.  
 
-In our example, we will create an object called `advice` which is the three networks constructed as an `array`. The `array` will have dimensions *75 x 75 x 3*. That is, the number of individuals in each network represented over three time points. If, for example, we had a network with fifty individuals and four waves of data, then our array would be *50 x 50 x 4*. Think of the object we have created as a cube that has 75 rows and 75 columns and each slice of the cube is a cross-section of the network. 
+In our example, we will create an object called `getalong` which is the two networks constructed as an `array`. The `array` will have dimensions *73 x 73 x 2*. That is, the number of individuals in each network represented over two time points ( i.e. *n x n x t*). If, for example, we had a network with fifty individuals and four waves of data, then our array would be *50 x 50 x 4*. Think of the object we have created as a cube that has 73 rows and 73 columns and each slice of the cube is a cross-section of the network. 
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
+<br>
+
+```{r}
+
 # Take a look at the help.
 ?sienaDependent
 
 # Build the network object to examine.
-advice <- sienaDependent(
+getalong <- sienaDependent(
   array(                        # define that it is an array.
-    c(advice1,advice2,advice3), # define the three networks.
-    dim=c(75,75,3)              # 75 x 75 x 3 are the dimensions.
+    c( as.matrix( gaNetT1 ), as.matrix( gaNetT2 ) ),       # define the two networks.
+    dim=c( 73, 73, 2 )              # n x n x t are the dimensions.
     )
   )
 
-# we see that advice is a one mode network, with 3 observations, and 75 actors.
-advice
+# we see that getalong is a one mode network, with 2 observations, and 73 actors.
+getalong
 
-# advice is an object of class "sienaDependent"
-class(advice)
+# getalong is an object of class "sienaDependent"
+class( getalong )
+
 ```
+
+
+
+
+!!!HERE WITH GOING THROUGH THIS LAB
+
+
 
 Now that we have created our dependent variable (i.e. `advice` which is an object of class `sienaDependent`), we can create an object for RSiena to examine. We do this using the `sienaDataCreate` function. To see how this function works, look at the help with `?sienaDataCreate`. This may seem excessive *now*, but when we examine more networks simultaneously, the program architecture will make more sense.  
 
@@ -419,3 +489,21 @@ Now let's interpret the effects:
 ```{r,echo=FALSE,eval=FALSE}
 #END OF LAB
 ```
+
+----
+
+<br>
+
+# **Wrapping up...**
+
+In this lab, we continued working with ERGMs in R using the `ergm` package. Specifically, we ask the question: *how do we evaluate whether our model is a good fit to the data?* This is the notion of "goodness of fit" and we worked through how to assess model fit using the `gof()` function in the `ergm` package.
+
+<br>
+
+### ***Questions?***
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+
