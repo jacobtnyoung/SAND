@@ -21,7 +21,7 @@ text-align: left}
 ```{r, echo=FALSE}
 
 # set the defaults for the codechunks
-knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE )
+knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, fig.align = "center" )
 
 ```
 
@@ -42,7 +42,7 @@ library( RSiena )  # for working with SABMs
 
 <br>
 
-In the [Introduction to Stochastic Actor-Based Models (SABMs) lecture](../lectures/lecture-09-sabm-intro.pdf) you were introduced to the basic logic of the Stochastic Actor-Based model. This lab draws on that content, showing you how to estimate SABMs using the `RSiena` package.
+In the [Introduction to Stochastic Actor-Based Models (SABMs) lecture](../lectures/lecture-09-sabm-intro.pdf) you were introduced to the basic logic of the Stochastic Actor-Based model. This lab draws on that content, showing you how to estimate SABMs using the `RSiena` package. For WAY MORE details about `RSiena`, please review the [RSiena manual](http://www.stats.ox.ac.uk/~snijders/siena/RSiena_Manual.pdf).  
 
 <br>
 
@@ -71,7 +71,7 @@ gaNetT2
 
 Let's take a look at the plots of each network to see what patterns we can discern over time.
 
-```{r, figure.align = "center"}
+```{r, fig.width= 10, fig.height=5}
 
 # set the margins
 par( mfrow=c( 1,2 ), 
@@ -157,7 +157,6 @@ gplot(
   )
 title( "Get Along With Network (t2)" )
 
-
 ```
 
 *Take a look at a few specific nodes. What do the plots show us about the evolution of the network over time?*  
@@ -194,141 +193,181 @@ For an RSiena analysis, we have to build several objects. The objects will serve
 
 * Then, we estimate the model using `siena07()`.  
 
+<br>
+
 ## **Step 1: Building the object to analyze using the `sienaDependent()` and `sienaDataCreate()` functions**  
 
 First, we want to create an object that is an array of the networks that will be the **dependent** variable. To do this, we use the `sienaDependent()` function. To see how this function works, look at the help with `?sienaDependent`.  
 
 In our example, we will create an object called `getalong` which is the two networks constructed as an `array`. The `array` will have dimensions *73 x 73 x 2*. That is, the number of individuals in each network represented over two time points ( i.e. *n x n x t*). If, for example, we had a network with fifty individuals and four waves of data, then our array would be *50 x 50 x 4*. Think of the object we have created as a cube that has 73 rows and 73 columns and each slice of the cube is a cross-section of the network. 
 
+Also, our `gaNetT1` and `gaNetT2` objects are of class `network`. For the `sienaDependent()` function, we need to coerce them to matrices using the `as.matrix()` function.
+
 <br>
 
 ```{r}
 
-# Take a look at the help.
+# take a look at the help
 ?sienaDependent
 
-# Build the network object to examine.
+
+# create the objects of class matrix
+gaMatT1 <- as.matrix( gaNetT1 )
+gaMatT2 <- as.matrix( gaNetT2 )
+
+
+# build the network object to examine
 getalong <- sienaDependent(
-  array(                        # define that it is an array.
-    c( as.matrix( gaNetT1 ), as.matrix( gaNetT2 ) ),       # define the two networks.
-    dim=c( 73, 73, 2 )              # n x n x t are the dimensions.
+  array(                        # define that it is an array
+    c( gaMatT1, gaMatT2 ),      # define the two networks (matrices)
+    dim=c( 73, 73, 2 )          # n x n x t are the dimensions
     )
   )
 
-# we see that getalong is a one mode network, with 2 observations, and 73 actors.
+
+# we see that getalong is a one mode network, with 2 observations, and 73 actors
 getalong
+
 
 # getalong is an object of class "sienaDependent"
 class( getalong )
 
 ```
 
+<br>
 
+Now that we have created our dependent variable (i.e. `getalong` which is an object of class `sienaDependent`), we can create an object for RSiena to examine. We do this using the `sienaDataCreate` function. To see how this function works, look at the help with `?sienaDataCreate`. This may seem excessive *now*, but when we examine more networks simultaneously, the program architecture will make more sense.  
 
+<br>
 
-!!!HERE WITH GOING THROUGH THIS LAB
+```{r}
 
-
-
-Now that we have created our dependent variable (i.e. `advice` which is an object of class `sienaDependent`), we can create an object for RSiena to examine. We do this using the `sienaDataCreate` function. To see how this function works, look at the help with `?sienaDataCreate`. This may seem excessive *now*, but when we examine more networks simultaneously, the program architecture will make more sense.  
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Take a look at the help.
+# take a look at the help
 ?sienaDataCreate
 
-# Now, build the object to analyze.
-advice.data <- sienaDataCreate(advice)
 
-advice.data
+# build the object to analyze
+getalong.data <- sienaDataCreate( getalong )
+getalong.data
 
-# advice.data is of class "siena".
-class(advice.data)
+
+# getalong is of class "siena"
+class( getalong.data ) 
+
 ``` 
 
-###**Step 2: Defining the set of effects to estimate using the `getEffects()` function**  
+<br>
+
+## **Step 2: Defining the set of effects to estimate using the `getEffects()` function**  
 
 Now, we create an effects object for model specification using the `getEffects()` function. Basically, we are going to create an object with some effects, then as we continue to build our model, we can add or remove effects from that object. To see how this function works, look at the help with `?getEffects`.
 
-By default, the `getEffects` function will estimate the rate of change in each period (i.e. the **rate** function). In this example, we will see two rates estimated, the rate of change from t1:t2 (rate 1) and t2:t3 (rate 2). Also, the model automatically adds the *outdegree* and *reciprocity* terms as these are necessary for estimation.
+By default, the `getEffects` function will estimate the rate of change in each period (i.e. the **rate** function). In this example, we will see one rate estimated, the rate of change from t1:t2 (rate 1). If we had more waves (i.e. time points), then we would more rates. Also, the model automatically adds the *outdegree* and *reciprocity* terms as these are necessary for estimation.
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Take a look at the help.
+<br>
+
+```{r}
+
+# take a look at the help
 ?getEffects
 
-# Now, create the effects object.
-advice.effects <- getEffects(advice.data)
+# now, create the effects object
+getalong.effects <- getEffects( getalong.data )
+
 ```
 
-###**Step 3: Create the model using the `sienaAlgorithmCreate` and `sienaModelCreate()` functions**  
+<br>
 
-Now that our **dependent** variable is defined (i.e. `advice.data`) and the effects we want to estimate on that object are defined (i.e. `advice.effects`), we can create a model object using the `sienaAlgorithmCreate()` or `sienaModelCreate()` functions. To see how these functions work, look at the help with `?sienaAlgorithmCreate` and `?sienaModelCreate`. These functions allow us to specify various properties of the estimation algorithm and the model.  
+## **Step 3: Create the model using the `sienaAlgorithmCreate` and `sienaModelCreate()` functions**  
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Take a look at the help.
+Now that our **dependent** variable is defined (i.e. `getalong.data`) and the effects we want to estimate on that object are defined (i.e. `getalong.effects`), we can create a model object using the `sienaAlgorithmCreate()` or `sienaModelCreate()` functions. To see how these functions work, look at the help with `?sienaAlgorithmCreate` and `?sienaModelCreate`. These functions allow us to specify various properties of the estimation algorithm and the model.  
+
+<br>
+
+```{r}
+
+# take a look at the help
 ?sienaAlgorithmCreate
 ?sienaModelCreate
 
-# Create a model that has particulars about estimation, then we estimate the model.
-advice.model <- sienaModelCreate(projname = "Advice", useStdInits=TRUE, seed=605)
-advice.model
+
+# create a model that has particulars about estimation, then we estimate the model
+getalong.model <- sienaModelCreate( projname = "GetAlong", useStdInits=TRUE, seed=605 )
+
 ```
 
 ###**Taking Stock of the Steps (so far) and Checking Network Stability**  
 
 We have gone through three steps in detail. But, note that we really only have to run several lines of command to get us to where we are right now. That is, ready to estimate a model. Here are all the lines we needed to get to the estimating stage:
 
-```{r,echo=TRUE,eval=FALSE,message=FALSE,include=TRUE}
-advice         <- sienaDependent(array(c(advice1,advice2,advice3),dim=c(75,75,3)))
-advice.data    <- sienaDataCreate(advice)
-advice.effects <- getEffects(advice.data)
-advice.model   <- sienaModelCreate(projname = "Advice", useStdInits=TRUE, seed=605)
+```{r,echo=TRUE,eval=FALSE}
+
+getalong         <- sienaDependent(  array( c( gaMatT1, gaMatT2 ), dim=c( 73, 73, 2 ) ) )
+getalong.data    <- sienaDataCreate( getalong )
+getalong.effects <- getEffects( getalong.data )
+getalong.model   <- sienaModelCreate( projname = "GetAlong", useStdInits=TRUE, seed=605 )
+
 ```
 
-In addition, we need to check whether there is sufficient stability in our network prior to estimating a model. If there is a lot of instability (i.e. there are dramatic changes between cross-sections), then it may provide difficult to model the evolution of the network. We can get a sense of how much change there is by examining the *Jaccard index*, for more information see the [RSiena manual](http://www.stats.ox.ac.uk/~snijders/siena/RSiena_Manual.pdf). A general rule of thumb is that the values should be above 0.3. The `print01Report()` function will return this information as a text file. Let's take a look:
+<br>
 
-```{r,echo=TRUE,eval=FALSE,message=FALSE,include=TRUE}
+In addition, we need to check whether there is sufficient stability in our network prior to estimating a model. If there is a lot of instability (i.e. there are dramatic changes between cross-sections), then it may provide difficult to model the evolution of the network. We can get a sense of how much change there is by examining the *Jaccard index*, which is a description of network change. A general rule of thumb is that the values should be above 0.3. The `print01Report()` function will return this information as a text file. Let's take a look:
+
+```{r, eval=FALSE}
+
+# take a look at the help
 ?print01Report
 
 # the report will have the file extension .out.
-print01Report(advice.data, modelname = "Advice Example")
+print01Report( getalong.data, modelname = "Get Along Example")
+
 ```
 
+<br>
 
-###**Step 4: Estimate the model using the `siena07` function**  
+## **Step 4: Estimate the model using the `siena07` function**  
 
 Now we are ready to estimate the model! To do this, we pass to the `siena07()` function the model information, the data, and the effects. To see how this function works, look at the help with `?siena07`. Now, let's estimate our model.
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Take a look at the help.
+```{r}
+
+# take a look at the help
 ?siena07
 
-# Estimate the model.
-advice.results <- siena07(
-	advice.model,           # the model estimation information.
-	data=advice.data,       # the data object we created above.
-	effects=advice.effects  # the effects object we created above.
+# estimate the model
+getalong.results <- siena07(
+	getalong.model,           # the model estimation information
+	data=getalong.data,       # the data object we created above
+	effects=getalong.effects  # the effects object we created above
 )
+
 ```
 
 ###**Interpreting the Output**  
 
 Let's take a look through the results by using the `summary()` function. 
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-summary(advice.results)
+```{r}
+
+summary( getalong.results )
+
 ```  
 
 The output shows the estimates for the **rate** function and the estimates for the **objective** function. For each coefficient, we see an estimate and a standard error.  
 
-For the **objective** function coefficients, we also see the *Convergence t-ratio* reported. **NOTE**: these do not represent conventional *t-ratios* in the sence of a *t*-statistic assessing the size of the parameter estimate. Rather, they represent tests of the lack of convergence for each estimate, so small values indicate good convergence. Absolute values less than 0.10 indicate excellent convergence and absolute values less than 0.15 indicate reasonable convergence. More information about these values can be found in the [RSiena manual](http://www.stats.ox.ac.uk/~snijders/siena/RSiena_Manual.pdf).  
+For the **objective** function coefficients, we also see the *Convergence t-ratio* reported. **NOTE**: these do not represent conventional *t-ratios* in the sence of a *t*-statistic assessing the size of the parameter estimate. Rather, they represent tests of the lack of convergence for each estimate, so small values indicate good convergence. Absolute values less than 0.10 indicate excellent convergence and absolute values less than 0.15 indicate reasonable convergence.
 
-The **rate** estimates correspond to the estimated number of opportunities for change per actor for each period. Recall that the model is simulating *micro-steps*, and in each micro-step an individual is provided the opportunity to make a decision. The **rate** parameter estimate gives a sense of how many opportunities are provided to each individual. For example, the estimate for period 1 is `6.4262`, meaning that each actor had just over 6 opportunities to change a tie or maintain their current tie configuration.  
+The **rate** estimates correspond to the estimated number of opportunities for change per actor for each period. Recall that the model is simulating *micro-steps*, and in each micro-step an individual is provided the opportunity to make a decision. The **rate** parameter estimate gives a sense of how many opportunities are provided to each individual. For example, the estimate is `6.3817`, meaning that each actor had just over 6 opportunities to change a tie or maintain their current tie configuration between t0 and t1 (i.e. wave 1 and wave 2). Put differently, to get from the first network to the second network, there are about 6 x 73 = `r 6*73` "decisions" made over the actors.
 
 The "Other parameters" section shows the **objective** estimates, or the **eval** estimates, which correspond to the relative attractiveness of a particular network state for each actor. Recall that individuals are given a choice about what to do. These estimates represent the extent to which individuals preferred a particular state. For example, the `eval outdegree` term is negative, suggesting that individuals prefer *not* to send ties. The `eval reciprocity` term is positive, indicating that individuals prefer to reciprocate ties. Note that this preference is for *maintaining* an existing reciprocated relationship, for *creating* a reciprocated relationship from an asymmetric relationship where alter has nominated ego (i.e. ego wants to reciprocate), and for *dissolving* an asymmetric relationship where alter did not nominated ego after ego nominated alter (i.e. alter didn't reciprocate). The significance of the effects can be evaluated in a manner similar to a regression coefficient by looking at the ratio of the estimate to the standard error (where a ratio of 1.96 indicates a *p*-value of *0.05*).  
 
-***  
+<br>
 
-###**Step 5: Adding Terms to the Model**  
+
+!!!HERE WITH GOING THROUGH
+
+
+## **Step 5: Adding Terms to the Model**  
 
 When the effects object has been created, we can add to it using the `includeEffects()` function. This function allows us to take the existing effects object and add a specific term that we would like to estimate. To see how this function works, look at the help with `?includeEffects`.  To see the effects, use the `effectsDocumentation()` function to generate an html file that shows all of the effects. Or, these terms can be found in the [RSiena manual](http://www.stats.ox.ac.uk/~snijders/siena/RSiena_Manual.pdf).    
 
