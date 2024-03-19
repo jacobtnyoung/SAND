@@ -28,23 +28,19 @@ knitr::opts_chunk$set( echo = TRUE )
 
 <br>
 
-These lectures examine the logic of simulation based models for network dynamics. Specifically, the stochastic actor-based model (SABM) is an approach to modeling change in network panel data. The first lecture discusses the basic logic of the model. The first lab (Introduction to SABMs) provides an overview the RSiena package by examining the evolution of an advice network among 75 MBA students (see http://www.stats.ox.ac.uk/~snijders/siena/ for details). The second lecture discusses co-evolution of networks and behavior. The second lab (Co-Evolution of Networks and Behavior) examines co-evolution using the RSiena package. A comprehensive archive of materials, discussion, syntax, papers, etc. for the RSiena package is available at the Siena website.
+These lectures examine the logic of simulation based models for network dynamics. Specifically, the stochastic actor-based model (SABM) is an approach to modeling change in network panel data. The first lecture introduces the basic logic of the model and the first lab (Introduction to SABMs) provides an overview of this content in R using the `RSiena`. The second lecture discusses co-evolution of networks and behavior and the second lab (Co-Evolution of Networks and Behavior) examines co-evolution using the `RSiena` package.
 
 <br>
 
-#### Lecture Materials  
+#### Lecture & Lab Materials  
 
-  + [Introduction to SABMs lecture](../lectures/lecture-10-sabm-intro.pdf)
+  + [Introduction to Stochastic Actor-Based Models (SABMs) lecture](../lectures/lecture-09-sabm-intro.pdf)  
+  + [Coevolution of Networks and Behavior using Stochastic Actor-Based Models (SABMs) lecture](../lectures/lecture-11-sabm-coev.pdf)
   
-  + Lab 11-Introduction to Stochastic Actor-Based Models (SABMs) ([html](../labs/lab-11-sabm-intro.html)) ([Rmd](../labs/lab-11-sabm-intro.Rmd))
-    
-    + Advice networks (W1 .csv) (W2 .csv) (W3 .csv) for lab
-    
-    + Attribute data (rating .csv) for lab
-    
-  + [Co-Evolution of Networks and Behavior lecture](../lectures/lecture-11-sabm-coevolution.pdf)
-  
-  + Lab 12-Coevolution of Networks and Behavior with Stochastic Actor-Based Models (SABMs) ([html](../labs/lab-12-sabm-coevolution.html)) ([Rmd](../labs/lab-12-sabm-coevolution.Rmd))
+  <br>
+
+  + [Introduction to Stochastic Actor-Based Models (SABMs) in R lab](../labs/lab-12-sabm-intro.html)
+  + [Coevolution of Networks and Behavior using Stochastic Actor-Based Models (SABMs) in R lab](../labs/lab-13-sabm-coev.html)
 
 <br>
 
@@ -52,10 +48,15 @@ ____
 
 <br>
 
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
+
+<br>
+
+<br>
+
 #### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 <br>
-
-
-###### ***Last updated `r format(Sys.time(), '%d %B, %Y')`***
