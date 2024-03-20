@@ -207,11 +207,9 @@ Also, our `gaNetT1` and `gaNetT2` objects are of class `network`. For the `siena
 # take a look at the help
 ?sienaDependent
 
-
 # create the objects of class matrix
 gaMatT1 <- as.matrix( gaNetT1 )
 gaMatT2 <- as.matrix( gaNetT2 )
-
 
 # build the network object to examine
 getalong <- sienaDependent(
@@ -221,10 +219,8 @@ getalong <- sienaDependent(
     )
   )
 
-
 # we see that getalong is a one mode network, with 2 observations, and 73 actors
 getalong
-
 
 # getalong is an object of class "sienaDependent"
 class( getalong )
@@ -240,11 +236,9 @@ Now that we have created our dependent variable (i.e. `getalong` which is an obj
 # take a look at the help
 ?sienaDataCreate
 
-
 # build the object to analyze
 getalong.data <- sienaDataCreate( getalong )
 getalong.data
-
 
 # getalong is of class "siena"
 class( getalong.data ) 
@@ -557,6 +551,57 @@ Now let's interpret the effects:
   + For `eval socDistCovar similarity` we see a positive coefficient, indicating that ego prefers sending ties to alters who are more similar to ego on the social distance scale.   
 
 For all these effects, however, they are not significantly different from zero.
+
+<br>
+
+## **Step 6: Assessing Goodness of Fit**  
+
+As we did in the [Simulation and Goodness of Fit with Exponential Random Graph Models (ERGMs) lab](../labs/lab-11-ergm-gof.html), we discussed how to simulate networks from our model and use these simulations to assess how well our model is fitting the data. We can do the same thing with SABMs!
+
+To do this, we simply use the `sienaGOF()` function. First, we have to use the `returnDeps=TRUE` argument in the `siena07()` function. This tells the function to keep the simulated networks. 
+
+```{r}
+
+# estimate the model
+GA.SD.results <- siena07( 
+  GA.SD.model, 
+  data=GA.SD.data, 
+  effects= GA.SD.effects, 
+  returnDeps = TRUE       # here is the additional option we have specified
+  )
+
+```
+
+Now, we can use the `sienaGOF()` function. Let's simulate the indegree and outdegree distributions, and then the triad census.
+
+```{r}
+
+# indegree
+indegGOF <- sienaGOF( 
+  GA.SD.results,        # the model we want GOF stats for
+  IndegreeDistribution, # the distribution we want info on
+  varName="Network"     # which variable we are using for GOF (the model can handle multiple DVs)
+  )
+
+# outdegree
+outdegGOF <- sienaGOF(  GA.SD.results, OutdegreeDistribution, varName="Network" )
+
+# triad census
+TriadGOF <- sienaGOF(  GA.SD.results, TriadCensus, varName="Network" )
+
+```
+
+Now, let's take these GOF objects and plot them.
+
+```{r}
+
+plot( indegGOF ) 
+plot( outdegGOF ) 
+plot( TriadGOF ) 
+
+```
+
+*How well is our model fitting the data?*
 
 <br>
 
