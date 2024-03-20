@@ -81,7 +81,6 @@ par( mfrow=c( 1,2 ),
 set.seed( 605 )
 
 # plot the first wave
-
 gplot(
   gaNetT1, 
   edge.col = "grey60", 
@@ -93,6 +92,7 @@ gplot(
   )
 title( "Get Along With Network (t1)" )
 
+# plot the second wave
 gplot(
   gaNetT2, 
   edge.col = "grey60", 
@@ -128,11 +128,7 @@ Now, we can plot individuals based on their position in the first wave:
 par( mfrow=c( 1,2 ), 
      mar=c( 0.1, 0.5, 2, 0.5 ) )
 
-# set the seed
-set.seed( 605 )
-
 # plot the first wave
-
 gplot(
   gaNetT1, 
   edge.col = "grey60", 
@@ -145,6 +141,7 @@ gplot(
   )
 title( "Get Along With Network (t1)" )
 
+# plot the second wave
 gplot(
   gaNetT2, 
   edge.col = "grey60", 
@@ -164,6 +161,8 @@ title( "Get Along With Network (t2)" )
 <br>
 
 Now, we want to think about modeling the evolution of this network over time. To do that, we need to look through the `RSiena` package.
+
+<br>
 
 # **The `RSiena` package**  
 
@@ -203,8 +202,6 @@ In our example, we will create an object called `getalong` which is the two netw
 
 Also, our `gaNetT1` and `gaNetT2` objects are of class `network`. For the `sienaDependent()` function, we need to coerce them to matrices using the `as.matrix()` function.
 
-<br>
-
 ```{r}
 
 # take a look at the help
@@ -238,8 +235,6 @@ class( getalong )
 
 Now that we have created our dependent variable (i.e. `getalong` which is an object of class `sienaDependent`), we can create an object for RSiena to examine. We do this using the `sienaDataCreate` function. To see how this function works, look at the help with `?sienaDataCreate`. This may seem excessive *now*, but when we examine more networks simultaneously, the program architecture will make more sense.  
 
-<br>
-
 ```{r}
 
 # take a look at the help
@@ -264,12 +259,7 @@ Now, we create an effects object for model specification using the `getEffects()
 
 By default, the `getEffects` function will estimate the rate of change in each period (i.e. the **rate** function). In this example, we will see one rate estimated, the rate of change from t1:t2 (rate 1). If we had more waves (i.e. time points), then we would more rates. Also, the model automatically adds the *outdegree* and *reciprocity* terms as these are necessary for estimation.
 
-<br>
-
 ```{r}
-
-# take a look at the help
-?getEffects
 
 # now, create the effects object
 getalong.effects <- getEffects( getalong.data )
@@ -278,11 +268,13 @@ getalong.effects <- getEffects( getalong.data )
 
 <br>
 
+The `effectsDocumentation()` function will bring up a list of terms we can include in the model. For example, `effectsDocumentation( getalong.effects )` will call an .html file that lists different terms we can use. We will come back to this in a bit.
+
+<br>
+
 ## **Step 3: Create the model using the `sienaAlgorithmCreate` and `sienaModelCreate()` functions**  
 
 Now that our **dependent** variable is defined (i.e. `getalong.data`) and the effects we want to estimate on that object are defined (i.e. `getalong.effects`), we can create a model object using the `sienaAlgorithmCreate()` or `sienaModelCreate()` functions. To see how these functions work, look at the help with `?sienaAlgorithmCreate` and `?sienaModelCreate`. These functions allow us to specify various properties of the estimation algorithm and the model.  
-
-<br>
 
 ```{r}
 
@@ -290,22 +282,26 @@ Now that our **dependent** variable is defined (i.e. `getalong.data`) and the ef
 ?sienaAlgorithmCreate
 ?sienaModelCreate
 
-
 # create a model that has particulars about estimation, then we estimate the model
-getalong.model <- sienaModelCreate( projname = "GetAlong", useStdInits=TRUE, seed=605 )
+getalong.model <- sienaModelCreate( 
+  projname = "GetAlong",            # the output on model fit and convergence will be stored in a "GetAlong.txt" file
+  seed=605                          # set the seed to reproduce model results
+  )
 
 ```
 
-###**Taking Stock of the Steps (so far) and Checking Network Stability**  
+<br>
+
+### **Taking Stock of the Steps (so far) and Checking Network Stability**  
 
 We have gone through three steps in detail. But, note that we really only have to run several lines of command to get us to where we are right now. That is, ready to estimate a model. Here are all the lines we needed to get to the estimating stage:
 
-```{r,echo=TRUE,eval=FALSE}
+```{r, eval=FALSE}
 
 getalong         <- sienaDependent(  array( c( gaMatT1, gaMatT2 ), dim=c( 73, 73, 2 ) ) )
 getalong.data    <- sienaDataCreate( getalong )
 getalong.effects <- getEffects( getalong.data )
-getalong.model   <- sienaModelCreate( projname = "GetAlong", useStdInits=TRUE, seed=605 )
+getalong.model   <- sienaModelCreate( projname = "GetAlong", seed=605 )
 
 ```
 
@@ -319,7 +315,7 @@ In addition, we need to check whether there is sufficient stability in our netwo
 ?print01Report
 
 # the report will have the file extension .out.
-print01Report( getalong.data, modelname = "Get Along Example")
+print01Report( getalong.data, modelname = "Get Along Example" )
 
 ```
 
@@ -341,17 +337,14 @@ getalong.results <- siena07(
 	effects=getalong.effects  # the effects object we created above
 )
 
+# print the results
+getalong.results
+
 ```
 
-###**Interpreting the Output**  
+<br>
 
-Let's take a look through the results by using the `summary()` function. 
-
-```{r}
-
-summary( getalong.results )
-
-```  
+### **Interpreting the Output**  
 
 The output shows the estimates for the **rate** function and the estimates for the **objective** function. For each coefficient, we see an estimate and a standard error.  
 
@@ -359,175 +352,213 @@ For the **objective** function coefficients, we also see the *Convergence t-rati
 
 The **rate** estimates correspond to the estimated number of opportunities for change per actor for each period. Recall that the model is simulating *micro-steps*, and in each micro-step an individual is provided the opportunity to make a decision. The **rate** parameter estimate gives a sense of how many opportunities are provided to each individual. For example, the estimate is `6.3817`, meaning that each actor had just over 6 opportunities to change a tie or maintain their current tie configuration between t0 and t1 (i.e. wave 1 and wave 2). Put differently, to get from the first network to the second network, there are about 6 x 73 = `r 6*73` "decisions" made over the actors.
 
-The "Other parameters" section shows the **objective** estimates, or the **eval** estimates, which correspond to the relative attractiveness of a particular network state for each actor. Recall that individuals are given a choice about what to do. These estimates represent the extent to which individuals preferred a particular state. For example, the `eval outdegree` term is negative, suggesting that individuals prefer *not* to send ties. The `eval reciprocity` term is positive, indicating that individuals prefer to reciprocate ties. Note that this preference is for *maintaining* an existing reciprocated relationship, for *creating* a reciprocated relationship from an asymmetric relationship where alter has nominated ego (i.e. ego wants to reciprocate), and for *dissolving* an asymmetric relationship where alter did not nominated ego after ego nominated alter (i.e. alter didn't reciprocate). The significance of the effects can be evaluated in a manner similar to a regression coefficient by looking at the ratio of the estimate to the standard error (where a ratio of 1.96 indicates a *p*-value of *0.05*).  
+The "Other parameters" section shows the **objective** estimates, or the **eval** estimates, which correspond to the relative attractiveness of a particular network state for each actor. Recall that individuals are given a choice about what to do. These estimates represent the extent to which individuals preferred a particular state.  
+
+  + The `eval outdegree` term is negative, suggesting that individuals prefer *not* to send ties. Put differently, the agent, when given the opportunity in a micro-step, says "huh, what can I do? I can send a tie or not. I prefer not to".  
+  
+  + The `eval reciprocity` term is positive, indicating that individuals prefer to reciprocate ties. Note that this preference is for *maintaining* an existing reciprocated relationship, for *creating* a reciprocated relationship from an asymmetric relationship where alter has nominated ego (i.e. ego wants to reciprocate), and for *dissolving* an asymmetric relationship where alter did not nominated ego after ego nominated alter (i.e. alter didn't reciprocate).
+  
+The significance of the effects can be evaluated in a manner similar to a regression coefficient by looking at the ratio of the estimate to the standard error (where a ratio of 1.96 indicates a *p*-value of *0.05*).  
 
 <br>
 
-
-!!!HERE WITH GOING THROUGH
-
-
 ## **Step 5: Adding Terms to the Model**  
 
-When the effects object has been created, we can add to it using the `includeEffects()` function. This function allows us to take the existing effects object and add a specific term that we would like to estimate. To see how this function works, look at the help with `?includeEffects`.  To see the effects, use the `effectsDocumentation()` function to generate an html file that shows all of the effects. Or, these terms can be found in the [RSiena manual](http://www.stats.ox.ac.uk/~snijders/siena/RSiena_Manual.pdf).    
+Now that our model is created, we may want to add some additional terms. When the effects object has been created, we can add to it using the `includeEffects()` function. This function allows us to take the existing effects object and add a specific term that we would like to estimate. To see how this function works, look at the help with `?includeEffects`.  To see the effects, use the `effectsDocumentation()` function to generate an .html file that shows all of the effects.     
+
+<br>
+
+### **Triadic Structures**
 
 Let's add the following effects to our model:  
 
-* an effect for a preference for transitivity (*i->j* is preferred if *i->k* and *k->j* exists). This effect is called `transTrip`.  
+  + An effect for a preference for **transitivity** (*i->j* is preferred if *i->k* and *k->j* exists). This effect is called `transTrip`.  
+  
+  + An effect for a preference for **3-cycle triads** (*i->j* is preferred if *k->i* and *j->k* exists). This effect is called `cycle3`.  
 
-* an effect for a preference for 3-cycle triads (*i->j* is preferred if *k->i* and *j->k* exists). This effect is called `cycle3`.  
+```{r}
 
+# use the includeEffects() function to add these terms
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# use the includeEffects() function to add these terms.
-advice.effects <- includeEffects(advice.effects,transTrip) # the model term is "transTrip".
-advice.effects <- includeEffects(advice.effects,cycle3) # the model term is "cycle3"
+getalong.effects <- includeEffects(
+  getalong.effects,                 # the object to add term to
+  transTrip                         # the name of the term
+  ) 
+
+getalong.effects <- includeEffects( getalong.effects, cycle3 )
+
 ``` 
 
 Now that we have added new terms, we re-estimate the model.
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-advice.results2 <- siena07(advice.model,data=advice.data,effects=advice.effects)
-summary(advice.results2)
+```{r}
+
+# estimate the model
+getalong.results2 <- siena07( getalong.model, data = getalong.data, effects = getalong.effects )
+
+# print the results
+getalong.results2
+
 ```  
 
-*What is the interpretation of the `transTrip` and `cycle3` estimates?*
+*What is the interpretation of the `transTrip` and `cycle3` estimates?* Well, recall that individuals are given a choice about what to do. These estimates represent the extent to which individuals preferred a particular state.  
 
-***  
+  + The `eval transTrip` term is positive indicating that *i* is more likely to form an outgoing friendship with *j* if *i* and *j* both perceive *k* to get along with each other. Note the use of the term **perceive** here. This is an important assumption of the model. Actors are looking over the network and making decisions based on their beliefs about ties in the network. These does not have to be accurate, but the do reflect the idea that actors have beliefs about all ties among actors in the network.  
+  
+  + + The `eval cycle3` term is negative indicating that *i* is less likely to form an outgoing friendship with *j* if *j* is perceived to get along with *k* is perceived to get along with *i*. 
+
+<br>
+
+### **Degree Effects**
 
 Let's add some additional effects to the model:  
 
-* An effect for seeking relationships with popular others (*i->j* is preferred if *k->j* exists. This effect is `inPop`.  
+  + An effect for seeking relationships with popular others (*i->j* is preferred if *k->j* exists. This effect is `inPop`.  
+  
+  + An effect for seeking relationships with active others (*i->j* is preferred if *j->k* exists). This effect is `outPop`.  
 
-* An effect for seeking relationships with active others (*i->j* is preferred if *j->k* exists). This effect is `outPop`.  
+```{r}
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# use the includeEffects() function to add these terms.
-advice.effects <- includeEffects(advice.effects,inPop) # the model term is inPop (see also inPopSqrt)
-advice.effects <- includeEffects(advice.effects,outPop) # the model term is outPop (see also outPopSqrt)
-``` 
+# use the includeEffects() function to add these terms
+getalong.effects <- includeEffects( getalong.effects, inPop )
+getalong.effects <- includeEffects( getalong.effects, outPop )
 
-Now that we have added new terms, we re-estimate the model.
+# estimate the model
+getalong.results3 <- siena07( getalong.model, data = getalong.data, effects = getalong.effects )
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-advice.results3 <- siena07(advice.model,data=advice.data,effects=advice.effects)
-summary(advice.results3)
+# print the results
+getalong.results3
+
 ```  
 
 *What is the interpretation of the `inPop` and `outPop` estimates?*
 
+  + The `eval inPop` term indicates whether increases in received get along with nominations (i.e. indegree, and called `inPop` because it represents "popularity") make individuals more likely to send a get along with nomination. It is positive, but very small and not significantly different from zero.  
+  
+  + + The `eval outPop` term indicates whether increases in sent get along with nominations (i.e. outdegree, the term `outPop` is used for consistency with the terms) make individuals more likely to send a get along with nomination. It is negative, but very small and not significantly different from zero.
 
-***  
+<br>
 
-####**Working with Covariates**  
+## **Working with Covariates**  
 
-So far, we have specified terms that are primarily *structural* in the sense that they are concerned with endogenous network processes. However, we can also include covariates in the model to capture differential tie behavior based on the attributes of the actors.  
+So far, we have specified terms that are primarily *structural* in the sense that they are concerned with endogenous network processes. However, we can also include covariates in the model to capture differential tie behavior based on the attributes of the actors. In the ERGMs, we used the `nodefactor` and `nodecov` terms to capture differential tie behavior based on covariates. We want to use the same logic here: how does a covariate influence whether actors send a tie?  
 
 In `RSiena`, covariates can be either:  
 
-* *Time-varying* in that the variable can vary across waves (e.g. smoking).  
+  + *Time-varying* in that the variable can vary across waves (e.g. smoking behavior).  
+  
+  + *Constant* in that the variable does not change over time because it is immutable (e.g. sex) or because we only have two waves of data.  
 
-* *Constant* in that the variable does not change over time (e.g. sex).  
+<br>
 
 Time-varying covariates are incorporated into the `sienaDataCreate()` function by defining them with the `varCovar()` function and constant covariates are incorporated using the `coCovar()` function.
 
-Let's take a look at how we incorporate actor covariate terms by using the **performance ratings** of each student conducted at each wave. Since the performance ratings were different at each wave, it is a "time-varying covariate". So, we need to use the `varCovar()` function. Also, since we are only observing changes from *t1* to *t2* (i.e. period 1) and *t2* to *t3*  (i.e. period 2), we only want the measurements taken at wave 1 and wave 2.  
+Let's take a look at how we incorporate actor covariate terms by using the **social distance** scale from the PINS survey. The variable is calculated by taking the average of four items asking participants to state their level of agreement with statements about people of another race: 1) “I would share a table with them”; 2) “I would cooperate with them if needed”; 3) “I would accept the as personal friends”; and 4) “I would avoid them if I could” (reverse-coded). Responses to each statement were on a 5-point Likert scale ranging from "strongly agree" to "strongly disagree". Therefore, higher values indicate greater feelings of social distance from people of another race. 
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# call the data.
-performance.data <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/mba-performance.csv",as.is=TRUE,header=TRUE,row.names=1)) 
+Since we only have two wave of data, **social distance** scale is treated as a "constant covariate". *Why?* Since we are only observing changes from *t0* to *t1* (i.e. period 1), we are looking at how your *t0* covariate influences your *t1* tie behavior. So, we need to use the `coCovar()` function. 
 
-# See the description of the varCovar() function.
-?varCovar
+*IF* we had more waves, we could use the `varCovar` function.  
 
-# We have only take the wave 1 and 2 data, not wave 3 (because we don't observe changes during wave 3).
-performance <- varCovar(performance.data[,1:2]) 
+<br>
+
+### **Identifying the covariate**
+
+First, we need to pull off the social distance variable for the `gaNetT1` object. This is a vertex attribute called `socdist.w1`. Note that if we had three waves of data, we would want the measure of the covariate from the first and second wave. And so on for more waves of data.
+
+```{r}
+
+# see the description of the coCovar() function
+?coCovar
+
+# pull off the social distance scale
+socDist <- gaNetT1 %v% "socdist.w1"
+
+# now, use the coCovar() function to define the object
+socDistCovar <- coCovar( socDist )
+
 ```
 
-Now that we have the performance data, let's rebuild the objects we want. Since the `performance` object is data used in our analysis, we need to redefine the object created by the `sienaDataCreate()` function. Also, since we will be creating a new data object for analysis, we need to redefine the effects we want to estimate using the `getEffects()` function.  
+<br>
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# add the performance data and create a new object.
-a.p.data <- sienaDataCreate(advice, performance)
-a.p.data
+### **Rebuilding the objects**
 
-# We also need a new effects object.
-a.p.effects <- getEffects(a.p.data)
+Now that we have the social distance covariate, let's rebuild the objects we want. Since the `getalong` object is data used in our analysis, we need to redefine the object created by the `sienaDataCreate()` function. Also, since we will be creating a new data object for analysis, we need to redefine the effects we want to estimate using the `getEffects()` function.  
 
-# Let's use the terms we already had in the prior model.
-# Note: we can just include all the effects in one statement, not four lines.
-a.p.effects <- includeEffects(a.p.effects,transTrip,cycle3,inPop,outPop)
+```{r}
+
+# add the social distance data and create a new object
+GA.SD.data <- sienaDataCreate( Network = getalong, socDistCovar )
+GA.SD.data
+
+# we also need a new effects object 
+GA.SD.effects <- getEffects( GA.SD.data )
+
+# let's use the terms we already had in the prior model
+# mote: we can just include all the effects in one statement, not four lines
+GA.SD.effects <- includeEffects( GA.SD.effects, transTrip, cycle3, inPop, outPop )
+
 ```
 
-Note that the `includeEffects()` function includes the argument `include=` which can be used to remove terms. For example, say we estimate a model and want to remove the `cycle3` effect. We would use the following command: `includeEffects(a.p.effects,cycle3, include=FALSE)`. If we did that and wanted to add it back in, we could use: `includeEffects(a.p.effects,cycle3, include=TRUE)` (note that the `include=TRUE` argument is not necessary as the default is `TRUE` for this argument).  
+Note that the `includeEffects()` function includes the argument `include=` which can be used to remove terms. For example, say we estimate a model and want to remove the `cycle3` effect. We would use the following command: `includeEffects( GA.SD.effects, cycle3, include=FALSE )`. If we did that and wanted to add it back in, we could use: `includeEffects( GA.SD.effects, cycle3, include=TRUE )` (note that the `include=TRUE` argument is not necessary as the default is `TRUE` for this argument).  
 
-***  
+<br>
 
-Now we want to include the effects of `performance` on tie behavior. For actor covariates, we call these *interaction terms* because the outdegree depends on a covariate.  
+### **Identifying terms for covariates**
+
+Now we want to include the effects of `social distance` on tie behavior. For actor covariates, we call these *interaction terms* because the outdegree **depends** on a covariate.  
 
 The typical effects we might be interested in are:  
 
-* Individuals with a particular attribute are more likely to *send* ties, a *sender* effect. This effect is called `egoX`.  
+  + Individuals with a particular attribute are more likely to *send* ties, a *sender* effect. This effect is called `egoX`.  
 
-* Individuals with a particular attribute are more likely to *receive* ties, a *receiver* effect. This effect is called `alterX`.  
+  + Individuals with a particular attribute are more likely to *receive* ties, a *receiver* effect. This effect is called `alterX`.  
 
-* Individuals with a particular attribute are more likely to nominate others with the same or similar attribute, a *homophily* effect. This effect is called `sameX` or `simX`.  
+  + Individuals with a particular attribute are more likely to nominate others with the same or similar attribute, a *homophily* effect. This effect is called `sameX` or `simX`.  
+
+<br>
 
 Let's take a look at how this looks in the syntax and what the effects mean.  
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Hypothesis: low performers need advice. 
-  # So, people who have higher performance are less likely to send ties.
-  # Should see a negative coefficient.
-a.p.effects <- includeEffects(a.p.effects,
-                              egoX, # sender effect.
-                              interaction1="performance" # outdegree depends on performance.
-                              )
+```{r}
 
-# Hypothesis: high performers are asked for advice. 
-  # So, people who have higher performance are more likely to receive ties.
-  # Should see a positive coefficient.
-a.p.effects <- includeEffects(a.p.effects,
-                              altX, # receiver effect.
-                              interaction1="performance" # indegree depends on performance.
-                              )
+GA.SD.effects <- includeEffects( 
+  GA.SD.effects, 
+  egoX,                         # sender effect: more social distance, more ties sent
+  altX,                         # receiver effect: more social distance, more tie received
+  simX,                         # homophily: similar social distance, more likely to send them a tie
+  interaction1 = "socDistCovar" # outdegree depends on performance.
+  )
 
-# Hypotheses: people at the same performance level do not seek advice from each other. 
-  # This is a homophily effect.
-  # Since the variable is continuous, we should anticipate a positive effect to indicate homophily.
-	# NOTE: because the performance measure is not categorical, we use "simX", not "sameX".
-    # If our variable was categorical, we would use "sameX" and expect a positive coefficient.
-a.p.effects <- includeEffects(a.p.effects,simX,interaction1="performance")
 ```
+
+<br>
 
 Now that we have our effects object described, let's estimate the model. 
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Set up the estimation.
-a.p.model <- sienaModelCreate(projname = "Advice & Performance", useStdInits=TRUE, seed=605)
+```{r}
 
-# Estimate the model.
-advice.results <- siena07(a.p.model,data=a.p.data,effects= a.p.effects)
+# set up the estimation
+GA.SD.model   <- sienaModelCreate( projname = "SocDist", seed=605 )
 
-# Take a look at the output.
-summary(advice.results)
+# estimate the model
+GA.SD.results <- siena07( GA.SD.model, data=GA.SD.data, effects= GA.SD.effects )
+
+# take a look at the output
+GA.SD.results
+
 ```
 
 Now let's interpret the effects:  
 
-* For `eval performance ego` we see a negative coefficient, indicating that individuals with higher values on their performance rating were **less** likely to *send* ties.  
+  + For `eval socDistCovar alter` we see a positive coefficient, indicating that individuals with higher values on the social distance scale were **more** likely to *receive* ties.  
+  
+  + For `eval socDistCovar ego` we see a positive coefficient, indicating that individuals with higher values on their the social distance scale were **more** likely to *send* ties.  
+  
+  + For `eval socDistCovar similarity` we see a positive coefficient, indicating that ego prefers sending ties to alters who are more similar to ego on the social distance scale.   
 
-* For `eval performance alter` we see a positive coefficient, indicating that individuals with higher values on their performance rating were **more** likely to *receive* ties.  
+For all these effects, however, they are not significantly different from zero.
 
-* For `eval performance similarity` we see a positive coefficient, indicating that ego prefers sending ties to alters who are more similar to ego on the rating variable.  
-
-***
-
-####***Questions?***####
-
-```{r,echo=FALSE,eval=FALSE}
-#END OF LAB
-```
+<br>
 
 ----
 
@@ -535,7 +566,7 @@ Now let's interpret the effects:
 
 # **Wrapping up...**
 
-In this lab, we continued working with ERGMs in R using the `ergm` package. Specifically, we ask the question: *how do we evaluate whether our model is a good fit to the data?* This is the notion of "goodness of fit" and we worked through how to assess model fit using the `gof()` function in the `ergm` package.
+In this lab, we worked with SABMs in R using the `RSiena` package. For WAY MORE details about `RSiena`, please review the [RSiena manual](http://www.stats.ox.ac.uk/~snijders/siena/RSiena_Manual.pdf).
 
 <br>
 
@@ -544,5 +575,3 @@ In this lab, we continued working with ERGMs in R using the `ergm` package. Spec
 <br>
 
 ##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
-
-
