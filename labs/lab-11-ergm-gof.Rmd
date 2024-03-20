@@ -283,7 +283,7 @@ summary(
 
 ```  
 
-The output shows that the Bali network has:  
+The output shows that the network has:  
 
 * `r summary( gaNetU ~ edges + degree( 0:5 ) + triangle )[1]` edges  
 
