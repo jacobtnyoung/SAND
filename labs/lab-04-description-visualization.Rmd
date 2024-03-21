@@ -752,4 +752,7 @@ There is nothing like an beautiful network visualization that conveys lots of in
 ##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
-<br>
+
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>

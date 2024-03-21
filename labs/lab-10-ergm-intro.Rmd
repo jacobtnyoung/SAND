@@ -613,8 +613,6 @@ summary( DH.gaNetU )
 
 ```
 
-**Yikes**! Look at those estimates. *What is the problem?*
-
 <br>
 
 ## **Dyad Dependence: Modeling Endogenous Network Structures**  
@@ -1063,3 +1061,9 @@ In this lab, you were introduced to exponential family of random graphs in R usi
 <br>
 
 ##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>

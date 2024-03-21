@@ -534,11 +534,18 @@ title( "Unipartite Projection of\n Incidents (Group) Matrix", line = 1 )
 
 In this lab, we reviewed how a unipartite or one-mode network can be created through projection. We also reviewed how to work with weighted graphs.
 
+<br>
+
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
 
 <br>
 
-### ***Questions?***
+#### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
 
 <br>
 
-##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
