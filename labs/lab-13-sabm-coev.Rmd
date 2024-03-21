@@ -1,5 +1,5 @@
 ---
-title: "Lab 12-Coevolution of Networks and Behavior with Stochastic Actor-Based Models (SABMs)"
+title: "Lab 13 - Coevolution of Networks and Behavior with Stochastic Actor-Based Models (SABMs) in R"
 date: "CRJ 605 Statistical Analysis of Networks"
 output: 
   html_document:
@@ -12,107 +12,165 @@ output:
     self_contained: true
 ---
 
-```{r,echo=FALSE,eval=TRUE,message=FALSE,warning=FALSE}
-library(devtools)
-library(network)
-library(sna)
-library(RSiena)
+<style>
+body {
+text-align: left}
+</style>
+
+
+```{r, echo=FALSE}
+
+# set the defaults for the codechunks
+knitr::opts_chunk$set( eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE, fig.align = "center" )
+
 ```
 
-###
-*This lab examines the coevolution of longitudinal networks and behavior using the `RSiena` package. Information about the Siena program can be found at:* http://www.stats.ox.ac.uk/~snijders/siena/
+```{r,echo=FALSE}
 
-***
+# clear the workspace
+rm( list = ls() )
 
-##**Getting Started**  
+# libraries needed
 
-As discussed in the [Coevolution of Networks and Behavior](https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_11_sabm_slides.pdf), we are trying to build a model that accurately represents the preferences among actors that generated the observed network between discrete time points. In addition, we would like to incorporate the changes that occur in behavior as a consequence of network position. As a result, we need to examine a *coevolution* model of the network and behavior. In other words, we want to examine the simultaneity of **network dynamics** and **behavior dynamics**.   
+library( sna )     # for sna functions
+library( network ) # for working with network objects
+library( RSiena )  # for working with SABMs
 
-Let's start by working with our advice network again. Recall that the network is 75 MBA students measured at three waves. At each wave, the students were asked to whom they ask for advice. In the previous lab, [Introduction to SABMs lab](https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_11_sabm_a_lab.html), we looked at how we could incorporate actor covariate terms by using the **performance ratings** of each student conducted at each wave. Since the performance ratings were different at each wave, we treated this is a "time-varying covariate". So, we used the `varCovar()` function (instead of the `coCovar()` function).  
-
-But, what if performance is influenced by whom one asks for advice? That is, what if performance is a *dependent* variable? In this case, we would want to model the coevolution of performance and the advice network.  
-
-Let's go ahead and load the data and prepare the objects for analysis.
-
-###**Advice Network**  
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# clear the workspace and load the libraries.
-rm(list = ls())
-library(sna)
-library(network)
-
-# Load the advice networks.
-advice1 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/mba-advice1.csv",as.is=T,header=T,row.names=1))
-advice2 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/mba-advice2.csv",as.is=T,header=T,row.names=1))
-advice3 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/mba-advice3.csv",as.is=T,header=T,row.names=1))
 ```
 
-Take a look at a few plots.
+----
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# We canlook at a compressed version of the networks over all three waves.
-# This can be accomplished by adding the sociomatrices, and then recoding the counts to be binary.
-compressed <- advice1 + advice2 + advice3 #add the matrices.
-compressed[compressed > 1 ] <- 1 #recode values to be binary.
-set.seed(605)
-gplot(compressed, edge.col = "grey60", vertex.col="darkred", vertex.cex=1.5, main="Advice Compressed")
+<br>
 
-# Now, build a plot of the networks.
-op <- par(mfrow=c(2,2), mai = c(0,0,0.7,0))
-set.seed(605)
-coords <- gplot(advice1, edge.col = "grey60", vertex.col="coral",label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
-title("Advice Network (t1)")
-gplot(advice2, edge.col = "grey60", vertex.col="lightblue", coord = coords,label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
-title("Advice Network (t2)")
-gplot(advice3, edge.col = "grey60", vertex.col="lavender", coord = coords,label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
-title("Advice Network (t3)")
-gplot(compressed, edge.col = "grey60", vertex.col="darkred", coord = coords,label = seq(1,75), vertex.cex=1.5, label.pos = 5, label.cex=0.5)
-title("Advice Compressed")
-par(op)
+In the [Coevolution of Networks and Behavior using Stochastic Actor-Based Models (SABMs) lecture](../lectures/lecture-10-sabm-coev.pdf)) you were introduced to the basic logic of coevolution of networks and behavior. This lab draws on that content, showing you how to estimate coevolution SABMs using the `RSiena` package. For WAY MORE details about `RSiena`, please review the [RSiena manual](http://www.stats.ox.ac.uk/~snijders/siena/RSiena_Manual.pdf).  
+
+<br>
+
+# **Coevolution for the PINS *Get Along With* Networks**  
+
+Recall that with SABMs, we are trying to build a model that accurately represents the preferences among actors that generated the observed network between discrete time points. In addition, we would like to incorporate the changes that occur in behavior as a consequence of network position. As a result, we need to examine a *coevolution* model of the network and behavior. In other words, we want to examine the simultaneity of **network dynamics** and **behavior dynamics**.   
+
+<br>
+
+## **The Networks**
+
+Let's again use two waves of data from the PINS study to examine how *get along with* nominations change over two waves. There are two network objects available on the SNA Textbook website:  
+```{r}
+
+# define the path location for the file
+loc1 <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-pins-ga-panel-w1-net.rds"
+gaNetT1 <- readRDS( url( loc1 ) )
+
+loc2 <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-pins-ga-panel-w2-net.rds"
+gaNetT2 <- readRDS( url( loc2 ) )
+
+# look at the network for wave 1
+gaNetT1
+
+# look at the network for wave 2
+gaNetT2
+
 ```
 
-*What does the comparison with the compressed network tell us?*  
+## **The Attributes**
 
-###**Performance**  
+Now, let's pull in the attributes. We will use the **social distance** scale from the PINS survey. The variable is calculated by taking the average of four items asking participants to state their level of agreement with statements about people of another race: 1) “I would share a table with them”; 2) “I would cooperate with them if needed”; 3) “I would accept the as personal friends”; and 4) “I would avoid them if I could” (reverse-coded). Responses to each statement were on a 5-point Likert scale ranging from "strongly agree" to "strongly disagree". Therefore, higher values indicate greater feelings of social distance from people of another race. 
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# load the performance.
-performance.data <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/mba-performance.csv",as.is=TRUE,header=TRUE,row.names=1)) 
+In the prior lab, we only used one wave of the data, treating this as a "constant covariate". Here, we are going to use both waves since it is a **dependent** variable. 
 
-# look at the summary statistics.
-summary(performance.data)
+```{r}
 
-# Look at histograms of the performance data.
-op <- par(mfrow=c(2,2))
-hist(performance.data[,"perf1"]          , col="coral"    , main="Performance at time 1", ylim=c(0,30), xlim=c(20,30),xlab="")
-abline(v=mean(performance.data[,"perf1"]), col="black")
-hist(performance.data[,"perf2"]          , col="lightblue", main="Performance at time 2", ylim=c(0,30), xlim=c(20,30),xlab="")
-abline(v=mean(performance.data[,"perf2"]), col="black")
-hist(performance.data[,"perf3"]          , col="lavender" , main="Performance at time 3", ylim=c(0,30), xlim=c(20,30),xlab="")
-abline(v=mean(performance.data[,"perf2"]), col="black")
-plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
-text(x = 0.5, y = 0.5, paste("Plots of\n Performance\n among 75 MBAs"),cex = 1.5, col = "black")
-par(op)
+# pull off the social distance scale for each wave
+socDist1 <- gaNetT1 %v% "socdist.w1"
+socDist2 <- gaNetT2 %v% "socdist.w2"
+
+
+# build a plot of these
+par( mfrow = c( 2,2 ) )
+
+# plot the first wave with a line for the mean
+hist( socDist1, 
+      col = "#fc7544",     
+      main = "Social Distance at time 1", 
+      ylim = c( 0, 50 ),                           # set the limits for the y-axis
+      xlim = c( min( socDist1 ), max( socDist1 ) ), # set the limits for the x-axis
+      xlab = ""                                    # supress the label for the x-axis
+      )
+abline( v = mean( socDist1 ),
+        lwd = 5,
+        col = "black" 
+        )
+
+# plot the first wave with a line for the mean
+hist( socDist2, 
+      col = "#7285f2",     
+      main = "Social Distance at time 2", 
+      ylim = c( 0, 50 ),                           # set the limits for the y-axis
+      xlim = c( min( socDist2 ), max( socDist2 ) ), # set the limits for the x-axis
+      xlab = ""                                    # supress the label for the x-axis
+      )
+abline( v = mean( socDist2 ),
+        lwd = 5,
+        col = "black" 
+        )
+
+# plot a scatterplot
+plot( socDist1, socDist2,                     # plot the two waves of data
+      col = "#28734a",     
+      pch = 19,                               # make the character solid circles
+      main = "Scatterplot of Social Distance"
+      )
+abline( lm( socDist2 ~ socDist1 ),            # the line is the OLS
+        col = "grey40",
+        lwd = 3
+        )
+
 ```
 
-*What do the plots tell us about changes in performance use over time?*  
+*What do the plots tell us about changes in social distance over time?* 
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# This might be a bit easier to see by looking at within person change over time.
-op <- par(mfrow=c(2,2))
-hist(performance.data[,"perf2"] -performance.data[,"perf1"], col="red"    , main="Change from t1 to t2", ylim=c(0,25), xlim=c(-5,5),xlab="")
-abline(v=mean(performance.data[,"perf2"] -performance.data[,"perf1"]))
-plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
-text(x = 0.5, y = 0.5, paste("Plots of\n Change to\n Performance\n among 75 MBAs"),cex = 1.5, col = "black")
-hist(performance.data[,"perf3"] -performance.data[,"perf2"], col="blue"    , main="Change from t2 to t3", ylim=c(0,25), xlim=c(-5,5),xlab="")
-abline(v=mean(performance.data[,"perf3"] -performance.data[,"perf2"]))
-par(op)
+This is a bit tough to see. Note that the the wave 1 measures explains `r round( ( cor( socDist1, socDist2 ) * 100 ), 2 )` percent of the variance in the wave 2 measure (so, `r 100 - round( ( cor( socDist1, socDist2 ) * 100 ), 2 )` of the variance is not explained, meaning it changes across the waves). We can see this visually by creating within person changes and plotting those.
+
+```{r}
+
+# reset the window partition
+par( mfrow = c( 1, 1 ) )
+
+# create the deviations
+socDistD <- socDist2 - socDist1
+
+# plot the within person deviations
+hist( socDistD, 
+      col = "#28734a",     
+      main = "Within Person Change in Social Distance", 
+      ylim = c( 0, 40 ),                           # set the limits for the y-axis
+      xlim = c( min( socDistD ), max( socDistD ) ), # set the limits for the x-axis
+      xlab = ""                                    # supress the label for the x-axis
+      )
+abline( v = mean( socDistD ),
+        lwd = 5,
+        col = "black" 
+        )
+
 ```
 
-*What do these the plots tell us about changes in performance use over time?*  
+*What's the take-away?*
 
-***
+Mainly, that some people go up, some go down, and a lot stay the same. So, let's think about: *why some go up? down?*
+
+
+
+
+HERE
+
+
+
+
+
+
+
+
+
 
 ##**Coevolution of Advice and Performance**  
 
