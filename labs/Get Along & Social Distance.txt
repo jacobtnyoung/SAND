@@ -1,0 +1,780 @@
+
+
+-----------------------------------
+New Analysis started.
+Date and time: 22/03/2024 10:18:11
+New results follow.
+-----------------------------------
+
+RSiena version 1.4.7 (20 Feb 24)
+
+
+@1
+Estimation by stochastic approximation algorithm.
+=================================================
+
+Current random number seed is 605.
+Effects object used: CoEvolutionEffects 
+Model Type:
+ Standard actor-oriented model 
+Behavioral Model Type:
+ Standard behavior actor-oriented model ('restrict')
+Estimation method: unconditional moment estimation
+.
+
+Time duration for simulations is 1.0.
+Standard errors are estimated with the likelihood ratio method.
+Dolby method (regression on scores) is used.
+Initial value of gain parameter is  0.2000000.
+Reduction factor for gain parameter is  0.5000000.
+Number of subphases in Phase 2 is 4.
+
+Initial parameter values are 
+  1. rate:  basic rate parameter getalong                   6.3071
+  2. eval:  outdegree (density)                            -1.6975
+  3. eval:  reciprocity                                     0.0000
+  4. rate:  rate socDist period 1                           0.5137
+  5. eval:  socDist linear shape                            0.0267
+  6. eval:  socDist quadratic shape                         0.0000
+
+
+Values of target statistics are
+  1. Amount of network change                                           227.0000
+  2. Number of ties                                                     186.0000
+  3. Number of reciprocated ties                                         68.0000
+  4. Amount of behavioral change                                         35.0000
+  5. socDist centered sum                                                 0.5000
+  6. socDist sum of cent. squares                                        38.5240
+These were calculated from the data.
+
+ 6 parameters, 6 statistics
+
+Estimation of derivatives by the LR method (type 1).
+
+
+@2
+End of stochastic approximation algorithm, phase 3.
+---------------------------------------------------
+
+Total of 2669 iterations.
+Parameter estimates based on 1669 iterations,
+convergence diagnostics, covariance and derivative matrices based on 1000 iterations.
+
+Information for convergence diagnosis.
+Averages, standard deviations, and t-ratios for deviations from targets:
+  1.   0.4250  11.9906   0.0354 
+  2.  -0.5510  13.0174  -0.0423 
+  3.  -0.2360   9.7476  -0.0242 
+  4.   0.0560   4.8245   0.0116 
+  5.   0.3560   5.1896   0.0686 
+  6.   0.2419   5.8308   0.0415 
+
+Good convergence is indicated by the t-ratios being close to zero.
+
+Overall maximum convergence ratio =  0.095 .
+
+
+
+@2
+Estimation Results.
+-------------------
+
+Regular end of estimation algorithm.
+Total of 2669 iteration steps.
+
+
+@3
+Estimates and standard errors
+                             
+Network Dynamics
+ 1. rate:  basic rate parameter getalong                           6.4098  (   0.6023)
+ 2. eval:  outdegree (density)                                    -2.1271  (   0.0817)
+ 3. eval:  reciprocity                                             1.6905  (   0.1800)
+
+Behavior Dynamics
+ 4. rate:  rate socDist period 1                                   1.3912  (   0.3580)
+ 5. eval:  socDist linear shape                                   -0.2200  (   0.2499)
+ 6. eval:  socDist quadratic shape                                -0.5121  (   0.3893)
+
+
+@3
+Covariance matrices
+                   
+Covariance matrix of estimates (correlations below diagonal):
+     0.363      0.000      0.003     -0.026      0.002      0.019
+     0.008      0.007     -0.007     -0.002      0.000      0.000
+     0.026     -0.507      0.032      0.003      0.001     -0.004
+    -0.121     -0.075      0.047      0.128     -0.012      0.024
+     0.011      0.023      0.023     -0.139      0.062     -0.045
+     0.079     -0.011     -0.063      0.169     -0.462      0.152
+
+Derivative matrix of expected statistics X by parameters and
+covariance/correlation matrix of X can be found using
+summary(ans) within R, or by using the 'verbose' option in Siena07.
+ 
+Total computation time 19.5 seconds.
+
+
+-----------------------------------
+New Analysis started.
+Date and time: 22/03/2024 10:33:05
+New results follow.
+-----------------------------------
+
+RSiena version 1.4.7 (20 Feb 24)
+
+
+@1
+Estimation by stochastic approximation algorithm.
+=================================================
+
+Current random number seed is 605.
+Effects object used: CoEvolutionEffects 
+Model Type:
+ Standard actor-oriented model 
+Behavioral Model Type:
+ Standard behavior actor-oriented model ('restrict')
+Estimation method: unconditional moment estimation
+.
+
+Time duration for simulations is 1.0.
+Standard errors are estimated with the likelihood ratio method.
+Dolby method (regression on scores) is used.
+Initial value of gain parameter is  0.2000000.
+Reduction factor for gain parameter is  0.5000000.
+Number of subphases in Phase 2 is 4.
+
+Initial parameter values are 
+  1. rate:  basic rate parameter getalong                   6.3071
+  2. eval:  outdegree (density)                            -1.6975
+  3. eval:  reciprocity                                     0.0000
+  4. eval:  socDist alter                                   0.0000
+  5. eval:  socDist ego                                     0.0000
+  6. eval:  socDist similarity                              0.0000
+  7. rate:  rate socDist period 1                           0.5137
+  8. eval:  socDist linear shape                            0.0267
+  9. eval:  socDist quadratic shape                         0.0000
+ 10. eval:  socDist average similarity                      0.0000
+ 11. eval:  socDist indegree                                0.0000
+ 12. eval:  socDist outdegree                               0.0000
+
+
+Values of target statistics are
+  1. Amount of network change                                           227.0000
+  2. Number of ties                                                     186.0000
+  3. Number of reciprocated ties                                         68.0000
+  4. Sum indegrees x socDist                                            -20.7671
+  5. Sum outdegrees x socDist                                           -31.7671
+  6. Similarity on socDist                                                4.0316
+  7. Amount of behavioral change                                         35.0000
+  8. socDist centered sum                                                 0.5000
+  9. socDist sum of cent. squares                                        38.5240
+ 10. socDist average similarity                                           1.2216
+ 11. socDist indegrees                                                    1.8151
+ 12. socDist outdegrees                                                 -17.1849
+These were calculated from the data.
+
+ 12 parameters, 12 statistics
+
+Estimation of derivatives by the LR method (type 1).
+
+
+@2
+End of stochastic approximation algorithm, phase 3.
+---------------------------------------------------
+
+Total of 3060 iterations.
+Parameter estimates based on 2060 iterations,
+convergence diagnostics, covariance and derivative matrices based on 1000 iterations.
+
+Information for convergence diagnosis.
+Averages, standard deviations, and t-ratios for deviations from targets:
+  1.   0.8020  12.1390   0.0661 
+  2.  -0.3300  13.5789  -0.0243 
+  3.  -0.3260   9.6394  -0.0338 
+  4.  -0.5157   9.9038  -0.0521 
+  5.  -0.3827   9.1698  -0.0417 
+  6.   0.2293   3.5526   0.0646 
+  7.   0.4400   4.8726   0.0903 
+  8.   0.1080   5.3461   0.0202 
+  9.  -0.2373   5.5509  -0.0428 
+ 10.   0.1072   1.6955   0.0632 
+ 11.   0.5570  20.9996   0.0265 
+ 12.   0.5990  20.1179   0.0298 
+
+Good convergence is indicated by the t-ratios being close to zero.
+
+Overall maximum convergence ratio =  0.1682 .
+
+
+
+@2
+Estimation Results.
+-------------------
+
+Regular end of estimation algorithm.
+Total of 3060 iteration steps.
+
+
+@3
+Estimates and standard errors
+                             
+Network Dynamics
+ 1. rate:  basic rate parameter getalong                           6.4389  (   0.6772)
+ 2. eval:  outdegree (density)                                    -2.1483  (   0.0834)
+ 3. eval:  reciprocity                                             1.6986  (   0.1905)
+ 4. eval:  socDist alter                                           0.0154  (   0.1603)
+ 5. eval:  socDist ego                                            -0.1503  (   0.1822)
+ 6. eval:  socDist similarity                                      0.4819  (   0.6187)
+
+Behavior Dynamics
+ 7. rate:  rate socDist period 1                                   1.3967  (   0.3572)
+ 8. eval:  socDist linear shape                                   -0.2572  (   0.4994)
+ 9. eval:  socDist quadratic shape                                -0.5720  (   0.6472)
+10. eval:  socDist average similarity                              0.2405  (   4.2183)
+11. eval:  socDist indegree                                        0.1605  (   0.2207)
+12. eval:  socDist outdegree                                      -0.1454  (   0.2121)
+
+
+@3
+Covariance matrices
+                   
+Covariance matrix of estimates (correlations below diagonal):
+     0.459      0.004      0.002      0.006      0.003     -0.001      0.012      0.041      0.056      0.751      0.009     -0.018
+     0.073      0.007     -0.008     -0.002      0.003     -0.015      0.005      0.002      0.011      0.072     -0.001      0.000
+     0.015     -0.492      0.036      0.005     -0.002      0.009     -0.001      0.003     -0.004     -0.033      0.000      0.000
+     0.059     -0.179      0.148      0.026      0.000      0.051     -0.005     -0.001      0.001      0.078     -0.004      0.005
+     0.023      0.205     -0.070     -0.009      0.033      0.035     -0.003      0.003      0.005      0.035      0.005     -0.004
+    -0.003     -0.286      0.079      0.516      0.312      0.383     -0.023     -0.012     -0.060     -0.108      0.016     -0.006
+     0.048      0.155     -0.018     -0.088     -0.040     -0.102      0.128      0.043      0.043      0.223     -0.024      0.007
+     0.123      0.056      0.027     -0.015      0.032     -0.040      0.240      0.249      0.040      0.538     -0.035     -0.031
+     0.128      0.196     -0.029      0.010      0.040     -0.150      0.186      0.123      0.419      2.042     -0.033      0.032
+     0.263      0.205     -0.041      0.115      0.045     -0.041      0.148      0.255      0.748     17.794      0.025     -0.013
+     0.058     -0.035     -0.007     -0.100      0.124      0.114     -0.308     -0.321     -0.229      0.027      0.049     -0.034
+    -0.122      0.015     -0.001      0.159     -0.094     -0.047      0.097     -0.289      0.230     -0.014     -0.730      0.045
+
+Derivative matrix of expected statistics X by parameters and
+covariance/correlation matrix of X can be found using
+summary(ans) within R, or by using the 'verbose' option in Siena07.
+ 
+Total computation time 29.12 seconds.
+
+
+-----------------------------------
+New Analysis started.
+Date and time: 22/03/2024 11:26:54
+New results follow.
+-----------------------------------
+
+RSiena version 1.4.7 (20 Feb 24)
+
+
+@1
+Estimation by stochastic approximation algorithm.
+=================================================
+
+Current random number seed is 605.
+Effects object used: CoEvolutionEffects 
+Model Type:
+ Standard actor-oriented model 
+Behavioral Model Type:
+ Standard behavior actor-oriented model ('restrict')
+Estimation method: unconditional moment estimation
+.
+
+Time duration for simulations is 1.0.
+Standard errors are estimated with the likelihood ratio method.
+Dolby method (regression on scores) is used.
+Initial value of gain parameter is  0.2000000.
+Reduction factor for gain parameter is  0.5000000.
+Number of subphases in Phase 2 is 4.
+
+Initial parameter values are 
+  1. rate:  basic rate parameter getalong                   6.3071
+  2. eval:  outdegree (density)                            -1.6975
+  3. eval:  reciprocity                                     0.0000
+  4. rate:  rate socDist period 1                           0.5137
+  5. eval:  socDist linear shape                            0.0267
+  6. eval:  socDist quadratic shape                         0.0000
+
+
+Values of target statistics are
+  1. Amount of network change                                           227.0000
+  2. Number of ties                                                     186.0000
+  3. Number of reciprocated ties                                         68.0000
+  4. Amount of behavioral change                                         35.0000
+  5. socDist centered sum                                                 0.5000
+  6. socDist sum of cent. squares                                        38.5240
+These were calculated from the data.
+
+ 6 parameters, 6 statistics
+
+Estimation of derivatives by the LR method (type 1).
+
+
+@2
+End of stochastic approximation algorithm, phase 3.
+---------------------------------------------------
+
+Total of 2669 iterations.
+Parameter estimates based on 1669 iterations,
+convergence diagnostics, covariance and derivative matrices based on 1000 iterations.
+
+Information for convergence diagnosis.
+Averages, standard deviations, and t-ratios for deviations from targets:
+  1.   0.4250  11.9906   0.0354 
+  2.  -0.5510  13.0174  -0.0423 
+  3.  -0.2360   9.7476  -0.0242 
+  4.   0.0560   4.8245   0.0116 
+  5.   0.3560   5.1896   0.0686 
+  6.   0.2419   5.8308   0.0415 
+
+Good convergence is indicated by the t-ratios being close to zero.
+
+Overall maximum convergence ratio =  0.095 .
+
+
+
+@2
+Estimation Results.
+-------------------
+
+Regular end of estimation algorithm.
+Total of 2669 iteration steps.
+
+
+@3
+Estimates and standard errors
+                             
+Network Dynamics
+ 1. rate:  basic rate parameter getalong                           6.4098  (   0.6023)
+ 2. eval:  outdegree (density)                                    -2.1271  (   0.0817)
+ 3. eval:  reciprocity                                             1.6905  (   0.1800)
+
+Behavior Dynamics
+ 4. rate:  rate socDist period 1                                   1.3912  (   0.3580)
+ 5. eval:  socDist linear shape                                   -0.2200  (   0.2499)
+ 6. eval:  socDist quadratic shape                                -0.5121  (   0.3893)
+
+
+@3
+Covariance matrices
+                   
+Covariance matrix of estimates (correlations below diagonal):
+     0.363      0.000      0.003     -0.026      0.002      0.019
+     0.008      0.007     -0.007     -0.002      0.000      0.000
+     0.026     -0.507      0.032      0.003      0.001     -0.004
+    -0.121     -0.075      0.047      0.128     -0.012      0.024
+     0.011      0.023      0.023     -0.139      0.062     -0.045
+     0.079     -0.011     -0.063      0.169     -0.462      0.152
+
+Derivative matrix of expected statistics X by parameters and
+covariance/correlation matrix of X can be found using
+summary(ans) within R, or by using the 'verbose' option in Siena07.
+ 
+Total computation time 13.26 seconds.
+
+
+-----------------------------------
+New Analysis started.
+Date and time: 22/03/2024 11:27:07
+New results follow.
+-----------------------------------
+
+RSiena version 1.4.7 (20 Feb 24)
+
+
+@1
+Estimation by stochastic approximation algorithm.
+=================================================
+
+Current random number seed is 605.
+Effects object used: CoEvolutionEffects 
+Model Type:
+ Standard actor-oriented model 
+Behavioral Model Type:
+ Standard behavior actor-oriented model ('restrict')
+Estimation method: unconditional moment estimation
+.
+
+Time duration for simulations is 1.0.
+Standard errors are estimated with the likelihood ratio method.
+Dolby method (regression on scores) is used.
+Initial value of gain parameter is  0.2000000.
+Reduction factor for gain parameter is  0.5000000.
+Number of subphases in Phase 2 is 4.
+
+Initial parameter values are 
+  1. rate:  basic rate parameter getalong                   6.3071
+  2. eval:  outdegree (density)                            -1.6975
+  3. eval:  reciprocity                                     0.0000
+  4. eval:  socDist alter                                   0.0000
+  5. eval:  socDist ego                                     0.0000
+  6. eval:  socDist similarity                              0.0000
+  7. rate:  rate socDist period 1                           0.5137
+  8. eval:  socDist linear shape                            0.0267
+  9. eval:  socDist quadratic shape                         0.0000
+ 10. eval:  socDist average similarity                      0.0000
+ 11. eval:  socDist indegree                                0.0000
+ 12. eval:  socDist outdegree                               0.0000
+
+
+Values of target statistics are
+  1. Amount of network change                                           227.0000
+  2. Number of ties                                                     186.0000
+  3. Number of reciprocated ties                                         68.0000
+  4. Sum indegrees x socDist                                            -20.7671
+  5. Sum outdegrees x socDist                                           -31.7671
+  6. Similarity on socDist                                                4.0316
+  7. Amount of behavioral change                                         35.0000
+  8. socDist centered sum                                                 0.5000
+  9. socDist sum of cent. squares                                        38.5240
+ 10. socDist average similarity                                           1.2216
+ 11. socDist indegrees                                                    1.8151
+ 12. socDist outdegrees                                                 -17.1849
+These were calculated from the data.
+
+ 12 parameters, 12 statistics
+
+Estimation of derivatives by the LR method (type 1).
+
+
+@2
+End of stochastic approximation algorithm, phase 3.
+---------------------------------------------------
+
+Total of 3060 iterations.
+Parameter estimates based on 2060 iterations,
+convergence diagnostics, covariance and derivative matrices based on 1000 iterations.
+
+Information for convergence diagnosis.
+Averages, standard deviations, and t-ratios for deviations from targets:
+  1.   0.8020  12.1390   0.0661 
+  2.  -0.3300  13.5789  -0.0243 
+  3.  -0.3260   9.6394  -0.0338 
+  4.  -0.5157   9.9038  -0.0521 
+  5.  -0.3827   9.1698  -0.0417 
+  6.   0.2293   3.5526   0.0646 
+  7.   0.4400   4.8726   0.0903 
+  8.   0.1080   5.3461   0.0202 
+  9.  -0.2373   5.5509  -0.0428 
+ 10.   0.1072   1.6955   0.0632 
+ 11.   0.5570  20.9996   0.0265 
+ 12.   0.5990  20.1179   0.0298 
+
+Good convergence is indicated by the t-ratios being close to zero.
+
+Overall maximum convergence ratio =  0.1682 .
+
+
+
+@2
+Estimation Results.
+-------------------
+
+Regular end of estimation algorithm.
+Total of 3060 iteration steps.
+
+
+@3
+Estimates and standard errors
+                             
+Network Dynamics
+ 1. rate:  basic rate parameter getalong                           6.4389  (   0.6772)
+ 2. eval:  outdegree (density)                                    -2.1483  (   0.0834)
+ 3. eval:  reciprocity                                             1.6986  (   0.1905)
+ 4. eval:  socDist alter                                           0.0154  (   0.1603)
+ 5. eval:  socDist ego                                            -0.1503  (   0.1822)
+ 6. eval:  socDist similarity                                      0.4819  (   0.6187)
+
+Behavior Dynamics
+ 7. rate:  rate socDist period 1                                   1.3967  (   0.3572)
+ 8. eval:  socDist linear shape                                   -0.2572  (   0.4994)
+ 9. eval:  socDist quadratic shape                                -0.5720  (   0.6472)
+10. eval:  socDist average similarity                              0.2405  (   4.2183)
+11. eval:  socDist indegree                                        0.1605  (   0.2207)
+12. eval:  socDist outdegree                                      -0.1454  (   0.2121)
+
+
+@3
+Covariance matrices
+                   
+Covariance matrix of estimates (correlations below diagonal):
+     0.459      0.004      0.002      0.006      0.003     -0.001      0.012      0.041      0.056      0.751      0.009     -0.018
+     0.073      0.007     -0.008     -0.002      0.003     -0.015      0.005      0.002      0.011      0.072     -0.001      0.000
+     0.015     -0.492      0.036      0.005     -0.002      0.009     -0.001      0.003     -0.004     -0.033      0.000      0.000
+     0.059     -0.179      0.148      0.026      0.000      0.051     -0.005     -0.001      0.001      0.078     -0.004      0.005
+     0.023      0.205     -0.070     -0.009      0.033      0.035     -0.003      0.003      0.005      0.035      0.005     -0.004
+    -0.003     -0.286      0.079      0.516      0.312      0.383     -0.023     -0.012     -0.060     -0.108      0.016     -0.006
+     0.048      0.155     -0.018     -0.088     -0.040     -0.102      0.128      0.043      0.043      0.223     -0.024      0.007
+     0.123      0.056      0.027     -0.015      0.032     -0.040      0.240      0.249      0.040      0.538     -0.035     -0.031
+     0.128      0.196     -0.029      0.010      0.040     -0.150      0.186      0.123      0.419      2.042     -0.033      0.032
+     0.263      0.205     -0.041      0.115      0.045     -0.041      0.148      0.255      0.748     17.794      0.025     -0.013
+     0.058     -0.035     -0.007     -0.100      0.124      0.114     -0.308     -0.321     -0.229      0.027      0.049     -0.034
+    -0.122      0.015     -0.001      0.159     -0.094     -0.047      0.097     -0.289      0.230     -0.014     -0.730      0.045
+
+Derivative matrix of expected statistics X by parameters and
+covariance/correlation matrix of X can be found using
+summary(ans) within R, or by using the 'verbose' option in Siena07.
+ 
+Total computation time 29.02 seconds.
+
+
+-----------------------------------
+New Analysis started.
+Date and time: 22/03/2024 11:31:15
+New results follow.
+-----------------------------------
+
+RSiena version 1.4.7 (20 Feb 24)
+
+
+@1
+Estimation by stochastic approximation algorithm.
+=================================================
+
+Current random number seed is 605.
+Effects object used: CoEvolutionEffects 
+Model Type:
+ Standard actor-oriented model 
+Behavioral Model Type:
+ Standard behavior actor-oriented model ('restrict')
+Estimation method: unconditional moment estimation
+.
+
+Time duration for simulations is 1.0.
+Standard errors are estimated with the likelihood ratio method.
+Dolby method (regression on scores) is used.
+Initial value of gain parameter is  0.2000000.
+Reduction factor for gain parameter is  0.5000000.
+Number of subphases in Phase 2 is 4.
+
+Initial parameter values are 
+  1. rate:  basic rate parameter getalong                   6.3071
+  2. eval:  outdegree (density)                            -1.6975
+  3. eval:  reciprocity                                     0.0000
+  4. rate:  rate socDist period 1                           0.5137
+  5. eval:  socDist linear shape                            0.0267
+  6. eval:  socDist quadratic shape                         0.0000
+
+
+Values of target statistics are
+  1. Amount of network change                                           227.0000
+  2. Number of ties                                                     186.0000
+  3. Number of reciprocated ties                                         68.0000
+  4. Amount of behavioral change                                         35.0000
+  5. socDist centered sum                                                 0.5000
+  6. socDist sum of cent. squares                                        38.5240
+These were calculated from the data.
+
+ 6 parameters, 6 statistics
+
+Estimation of derivatives by the LR method (type 1).
+
+
+@2
+End of stochastic approximation algorithm, phase 3.
+---------------------------------------------------
+
+Total of 2669 iterations.
+Parameter estimates based on 1669 iterations,
+convergence diagnostics, covariance and derivative matrices based on 1000 iterations.
+
+Information for convergence diagnosis.
+Averages, standard deviations, and t-ratios for deviations from targets:
+  1.   0.4250  11.9906   0.0354 
+  2.  -0.5510  13.0174  -0.0423 
+  3.  -0.2360   9.7476  -0.0242 
+  4.   0.0560   4.8245   0.0116 
+  5.   0.3560   5.1896   0.0686 
+  6.   0.2419   5.8308   0.0415 
+
+Good convergence is indicated by the t-ratios being close to zero.
+
+Overall maximum convergence ratio =  0.095 .
+
+
+
+@2
+Estimation Results.
+-------------------
+
+Regular end of estimation algorithm.
+Total of 2669 iteration steps.
+
+
+@3
+Estimates and standard errors
+                             
+Network Dynamics
+ 1. rate:  basic rate parameter getalong                           6.4098  (   0.6023)
+ 2. eval:  outdegree (density)                                    -2.1271  (   0.0817)
+ 3. eval:  reciprocity                                             1.6905  (   0.1800)
+
+Behavior Dynamics
+ 4. rate:  rate socDist period 1                                   1.3912  (   0.3580)
+ 5. eval:  socDist linear shape                                   -0.2200  (   0.2499)
+ 6. eval:  socDist quadratic shape                                -0.5121  (   0.3893)
+
+
+@3
+Covariance matrices
+                   
+Covariance matrix of estimates (correlations below diagonal):
+     0.363      0.000      0.003     -0.026      0.002      0.019
+     0.008      0.007     -0.007     -0.002      0.000      0.000
+     0.026     -0.507      0.032      0.003      0.001     -0.004
+    -0.121     -0.075      0.047      0.128     -0.012      0.024
+     0.011      0.023      0.023     -0.139      0.062     -0.045
+     0.079     -0.011     -0.063      0.169     -0.462      0.152
+
+Derivative matrix of expected statistics X by parameters and
+covariance/correlation matrix of X can be found using
+summary(ans) within R, or by using the 'verbose' option in Siena07.
+ 
+Total computation time 13.49 seconds.
+
+
+-----------------------------------
+New Analysis started.
+Date and time: 22/03/2024 11:31:28
+New results follow.
+-----------------------------------
+
+RSiena version 1.4.7 (20 Feb 24)
+
+
+@1
+Estimation by stochastic approximation algorithm.
+=================================================
+
+Current random number seed is 605.
+Effects object used: CoEvolutionEffects 
+Model Type:
+ Standard actor-oriented model 
+Behavioral Model Type:
+ Standard behavior actor-oriented model ('restrict')
+Estimation method: unconditional moment estimation
+.
+
+Time duration for simulations is 1.0.
+Standard errors are estimated with the likelihood ratio method.
+Dolby method (regression on scores) is used.
+Initial value of gain parameter is  0.2000000.
+Reduction factor for gain parameter is  0.5000000.
+Number of subphases in Phase 2 is 4.
+
+Initial parameter values are 
+  1. rate:  basic rate parameter getalong                   6.3071
+  2. eval:  outdegree (density)                            -1.6975
+  3. eval:  reciprocity                                     0.0000
+  4. eval:  socDist alter                                   0.0000
+  5. eval:  socDist ego                                     0.0000
+  6. eval:  socDist similarity                              0.0000
+  7. rate:  rate socDist period 1                           0.5137
+  8. eval:  socDist linear shape                            0.0267
+  9. eval:  socDist quadratic shape                         0.0000
+ 10. eval:  socDist average similarity                      0.0000
+ 11. eval:  socDist indegree                                0.0000
+ 12. eval:  socDist outdegree                               0.0000
+
+
+Values of target statistics are
+  1. Amount of network change                                           227.0000
+  2. Number of ties                                                     186.0000
+  3. Number of reciprocated ties                                         68.0000
+  4. Sum indegrees x socDist                                            -20.7671
+  5. Sum outdegrees x socDist                                           -31.7671
+  6. Similarity on socDist                                                4.0316
+  7. Amount of behavioral change                                         35.0000
+  8. socDist centered sum                                                 0.5000
+  9. socDist sum of cent. squares                                        38.5240
+ 10. socDist average similarity                                           1.2216
+ 11. socDist indegrees                                                    1.8151
+ 12. socDist outdegrees                                                 -17.1849
+These were calculated from the data.
+
+ 12 parameters, 12 statistics
+
+Estimation of derivatives by the LR method (type 1).
+
+
+@2
+End of stochastic approximation algorithm, phase 3.
+---------------------------------------------------
+
+Total of 3060 iterations.
+Parameter estimates based on 2060 iterations,
+convergence diagnostics, covariance and derivative matrices based on 1000 iterations.
+
+Information for convergence diagnosis.
+Averages, standard deviations, and t-ratios for deviations from targets:
+  1.   0.8020  12.1390   0.0661 
+  2.  -0.3300  13.5789  -0.0243 
+  3.  -0.3260   9.6394  -0.0338 
+  4.  -0.5157   9.9038  -0.0521 
+  5.  -0.3827   9.1698  -0.0417 
+  6.   0.2293   3.5526   0.0646 
+  7.   0.4400   4.8726   0.0903 
+  8.   0.1080   5.3461   0.0202 
+  9.  -0.2373   5.5509  -0.0428 
+ 10.   0.1072   1.6955   0.0632 
+ 11.   0.5570  20.9996   0.0265 
+ 12.   0.5990  20.1179   0.0298 
+
+Good convergence is indicated by the t-ratios being close to zero.
+
+Overall maximum convergence ratio =  0.1682 .
+
+
+
+@2
+Estimation Results.
+-------------------
+
+Regular end of estimation algorithm.
+Total of 3060 iteration steps.
+
+
+@3
+Estimates and standard errors
+                             
+Network Dynamics
+ 1. rate:  basic rate parameter getalong                           6.4389  (   0.6772)
+ 2. eval:  outdegree (density)                                    -2.1483  (   0.0834)
+ 3. eval:  reciprocity                                             1.6986  (   0.1905)
+ 4. eval:  socDist alter                                           0.0154  (   0.1603)
+ 5. eval:  socDist ego                                            -0.1503  (   0.1822)
+ 6. eval:  socDist similarity                                      0.4819  (   0.6187)
+
+Behavior Dynamics
+ 7. rate:  rate socDist period 1                                   1.3967  (   0.3572)
+ 8. eval:  socDist linear shape                                   -0.2572  (   0.4994)
+ 9. eval:  socDist quadratic shape                                -0.5720  (   0.6472)
+10. eval:  socDist average similarity                              0.2405  (   4.2183)
+11. eval:  socDist indegree                                        0.1605  (   0.2207)
+12. eval:  socDist outdegree                                      -0.1454  (   0.2121)
+
+
+@3
+Covariance matrices
+                   
+Covariance matrix of estimates (correlations below diagonal):
+     0.459      0.004      0.002      0.006      0.003     -0.001      0.012      0.041      0.056      0.751      0.009     -0.018
+     0.073      0.007     -0.008     -0.002      0.003     -0.015      0.005      0.002      0.011      0.072     -0.001      0.000
+     0.015     -0.492      0.036      0.005     -0.002      0.009     -0.001      0.003     -0.004     -0.033      0.000      0.000
+     0.059     -0.179      0.148      0.026      0.000      0.051     -0.005     -0.001      0.001      0.078     -0.004      0.005
+     0.023      0.205     -0.070     -0.009      0.033      0.035     -0.003      0.003      0.005      0.035      0.005     -0.004
+    -0.003     -0.286      0.079      0.516      0.312      0.383     -0.023     -0.012     -0.060     -0.108      0.016     -0.006
+     0.048      0.155     -0.018     -0.088     -0.040     -0.102      0.128      0.043      0.043      0.223     -0.024      0.007
+     0.123      0.056      0.027     -0.015      0.032     -0.040      0.240      0.249      0.040      0.538     -0.035     -0.031
+     0.128      0.196     -0.029      0.010      0.040     -0.150      0.186      0.123      0.419      2.042     -0.033      0.032
+     0.263      0.205     -0.041      0.115      0.045     -0.041      0.148      0.255      0.748     17.794      0.025     -0.013
+     0.058     -0.035     -0.007     -0.100      0.124      0.114     -0.308     -0.321     -0.229      0.027      0.049     -0.034
+    -0.122      0.015     -0.001      0.159     -0.094     -0.047      0.097     -0.289      0.230     -0.014     -0.730      0.045
+
+Derivative matrix of expected statistics X by parameters and
+covariance/correlation matrix of X can be found using
+summary(ans) within R, or by using the 'verbose' option in Siena07.
+ 
+Total computation time 29.01 seconds.

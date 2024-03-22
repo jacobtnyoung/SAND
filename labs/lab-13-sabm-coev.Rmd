@@ -57,6 +57,16 @@ Recall that with SABMs, we are trying to build a model that accurately represent
 Let's again use two waves of data from the PINS study to examine how *get along with* nominations change over two waves. There are two network objects available on the SNA Textbook website:  
 ```{r}
 
+# clear the workspace
+rm( list = ls() )
+
+
+# libraries needed
+library( sna )     # for sna functions
+library( network ) # for working with network objects
+library( RSiena )  # for working with SABMs
+
+
 # define the path location for the file
 loc1 <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-pins-ga-panel-w1-net.rds"
 gaNetT1 <- readRDS( url( loc1 ) )
@@ -141,7 +151,7 @@ socDistD <- socDist2 - socDist1
 
 # plot the within person deviations
 hist( socDistD, 
-      col = "#28734a",     
+      col = "#d7fa28",     
       main = "Within Person Change in Social Distance", 
       ylim = c( 0, 40 ),                           # set the limits for the y-axis
       xlim = c( min( socDistD ), max( socDistD ) ), # set the limits for the x-axis
@@ -158,352 +168,405 @@ abline( v = mean( socDistD ),
 
 Mainly, that some people go up, some go down, and a lot stay the same. So, let's think about: *why some go up? down?*
 
+<br>
 
+# **Coevolution of the *Get Along With* Network and the *Social Distance* Scale**  
 
+As we have seen, for an RSiena analysis, we have to build several objects. The objects will serve as variables:  
 
-HERE
+  + A data object to examine (using `sienaDependent()` and `sienaDataCreate()`).  
+  + A set of effects to estimate (using `getEffects` and `includeEffects()`).  
+  + A model object that will have the terms we want to estimate (using `sienaAlgorithmCreate` or `sienaModelCreate()`).  
+  + Then, we estimate the model using `siena07()`.  
 
+<br>
 
-
-
-
-
-
-
-
-
-##**Coevolution of Advice and Performance**  
-
-As we have seen, for an RSiena analysis, we have to build several objects. The objects will serve as variables:    
-
-* A data object to examine (using `sienaDependent()` and `sienaDataCreate()`).  
-
-* A set of effects to estimate (using `getEffects` and `includeEffects()`).  
-
-* A model object that will have the terms we want to estimate (using `sienaAlgorithmCreate` or `sienaModelCreate()`).  
-
-* Then, we estimate the model using `siena07()`.  
-
-
-###**Step 1: Building the object to analyze using the `sienaDependent()` and `sienaDataCreate()` functions**  
+## **Step 1: Building the object to analyze using the `sienaDependent()` and `sienaDataCreate()` functions**  
 
 Since we are examining coevolution, we will have two dependent variables:  
 
-* The advice network  
+  + The *get along with* network  
+  + The *social distance* scale
 
-* The performance measure  
+<br>
 
-So, we will need to create two dependent variables using the `sienaDependent()` function. *Note* that this is a different approach from defining *performance* using the `varCovar()` function.  
+We will need to create two dependent variables using the `sienaDependent()` function. *Note* that this is a different approach from defining *performance* using the `coCovar()` function.  
 
-Let's go ahead and create our dependent variables. We will create our advice dependent variable the same way. But, for the performance dependent variable, we need to use the `type=` argument in the `sienaDependent()` function. Specifically, we need to state `type="behavior"` as the default is `type="oneMode"`.  
+Let's go ahead and create our dependent variables. We will create our get along with dependent variable the same way. But, for the social distance dependent variable, we need to use the `type=` argument in the `sienaDependent()` function. Specifically, we need to state `type="behavior"` as the default is `type="oneMode"`.  
 
 After we have defined each of these dependent variables, we will bind them together using the `sienaDataCreate()` function.  
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Load the RSiena package.
-library(RSiena)
+```{r}
 
-# Look at the type= argument.
+# look at the type= argument
 ?sienaDependent
 
-# Build the advice array.
-advice <- sienaDependent(
-  array(                        # define that it is an array.
-    c(advice1,advice2,advice3), # define the three networks.
-    dim=c(75,75,3)              # 75 x 75 x 3 are the dimensions.
+# build the network object to examine
+getalong <- sienaDependent(
+  array(                        # define that it is an array
+    c( as.matrix( gaNetT1 ), 
+       as.matrix( gaNetT2 ) ),  # define the two networks (matrices)
+    dim=c( 73, 73, 2 )          # n x n x t are the dimensions
     )
   )
-advice
 
-# Build the performance variable.
-  # NOTE: Since "sienaDependent" requires a matrix, all we have to do is put each wave together using cbind().
-performance <- sienaDependent(
-  cbind(
-    performance.data[,"perf1"],   # perfomance wave 1.
-    performance.data[,"perf2"],   # perfomance wave 2.
-    performance.data[,"perf3"]),  # perfomance wave 3.
-      type="behavior" # Define it as a behavior.
+# build the social distance variable
+socDist <- sienaDependent(
+  cbind( socDist1, socDist2 ), # sienaDependent requires a matrix, so we use cbind
+  type = "behavior"
+)
+
+# bind data together for Siena analysis
+CoEvolutionData <- sienaDataCreate( getalong, socDist )
+
+```
+
+<br>
+
+## **Step 2: Defining the set of effects to estimate using the `getEffects()` function**  
+
+Now, we create an effects object for model specification using the `getEffects()` function. Basically, we are going to create an object with some effects, then as we continue to build our model, we can add or remove effects from that object. To see how this function works, look at the help with `?getEffects`.
+
+By default, the `getEffects` function will estimate the rate of change in each period (i.e. the **rate** function). In this example, we will see one rate estimated, the rate of change from t1:t2 (rate 1). If we had more waves (i.e. time points), then we would more rates. Also, the model automatically adds the *outdegree* and *reciprocity* terms as these are necessary for estimation. 
+
+```{r}
+
+# create the effects object
+CoEvolutionEffects <- getEffects( CoEvolutionData )
+
+```
+
+<br>
+
+## **Step 3: Create the model using the `sienaAlgorithmCreate` and `sienaModelCreate()` functions**  
+
+Now that our **dependent** variable is defined (i.e. `getalong.data`) and the effects we want to estimate on that object are defined (i.e. `getalong.effects`), we can create a model object using the `sienaAlgorithmCreate()` or `sienaModelCreate()` functions. To see how these functions work, look at the help with `?sienaAlgorithmCreate` and `?sienaModelCreate`. These functions allow us to specify various properties of the estimation algorithm and the model.  
+
+```{r}
+
+# create a model that has particulars about estimation, then we estimate the model
+CoEvolutionModel <- sienaModelCreate( 
+  projname = "Get Along & Social Distance",  # the output on model fit and convergence will be stored in a text file with this name
+  seed=605                          # set the seed to reproduce model results
   )
-performance
 
-# Bind data together for Siena analysis:
-CoEvolutionData <- sienaDataCreate(advice,performance)
-CoEvolutionData
 ```
 
-###**Step 2: Defining the set of effects to estimate using the `getEffects()` function**  
+<br>
 
-Now, we create an effects object for model specification using the `getEffects()` function. Recall that, by default, the `getEffects` function will estimate the rate of change in each period (i.e. the **rate** function). In this example, we will see two rates estimated, the rate of change from t1:t2 (rate 1) and t2:t3 (rate 2). Also, the model automatically adds the *outdegree* and *reciprocity* terms as these are necessary for estimation.  
-
-In addition, since we have included a behavioral dependent variable, the `getEffects()` function includes the rate of chance for performance and terms for the linear and quadratic change in performance over time. As with the rate effects for the network, the rate and shape terms for behavior give a sense of how performance is changing over the periods.  
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Now, create the effects object.
-CoEvolutionEffects <- getEffects(CoEvolutionData)
-```
-
-###**Step 3: Create the model using the `sienaAlgorithmCreate` and `sienaModelCreate()` functions**  
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Create a model that has particulars about estimation, then we estimate the model.
-CoEvolutionModel <- sienaModelCreate(projname = "Advice & Performance", useStdInits=TRUE, seed=605)
-CoEvolutionModel
-
-# Print the report to look at the Jaccard index.
-print01Report(CoEvolutionData, modelname = "Advice & Performance Example")
-```
-
-
-###**Step 4: Estimate the model using the `siena07` function**  
+## **Step 4: Estimate the model using the `siena07` function**  
 
 Now we are ready to estimate the model! To do this, we pass to the `siena07()` function the model information, the data, and the effects. Recall that we have included the basic effects using the `getEffects()` function. Let's take a look at this very simple model to see how the network and the behavior are changing over the periods.  
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Estimate the model.
+```{r}
+
+# estimate the model
 CoEvolutionResults <- siena07(
-	CoEvolutionModel,           # the model estimation information.
-	data=CoEvolutionData,       # the data object we created above.
-	effects=CoEvolutionEffects  # the effects object we created above.
+	CoEvolutionModel,           # the model estimation information
+	data=CoEvolutionData,       # the data object we created above
+	effects=CoEvolutionEffects  # the effects object we created above
 )
 
-# Look at the results.
+# look at the results
 CoEvolutionResults
+
 ```
 
 
-###**Interpreting the Output**  
+### **Interpreting the Output**  
 
 We estimate a **coevolution model**, we get two sets of estimates:  
 
-* Network Dynamics  
+  + Network Dynamics  
+  + Behavior Dynamics  
 
-* Behavior Dynamics  
+<br>
 
+#### **Network Dynamics**  
 
-####**Network Dynamics**  
+The **rate** estimates correspond to the estimated number of opportunities for change per actor for each period. The estimate is `6.4098`, meaning that each actor had just over 6 opportunities to change a tie or maintain their current tie configuration between t0 and t1 (i.e. wave 1 and wave 2). Put differently, to get from the first network to the second network, there are about 6 x 73 = `r 6*73` "decisions" made over the actors.
 
-The output shows the estimates for the **rate** function and the estimates for the **objective** function. For each coefficient, we see an estimate and a standard error. The **rate** estimates correspond to the estimated number of opportunities for change per actor for each period. The "Other parameters" section shows the **objective** estimates, or the **eval** estimates, which correspond to the relative attractiveness of a particular network state for each actor.   
+The `eval outdegree` term is negative, suggesting that individuals prefer *not* to send ties. Put differently, the agent, when given the opportunity in a micro-step, says "huh, what can I do? I can send a tie or not. I prefer not to". 
 
-####**Behavior Dynamics**  
+The `eval reciprocity` term is positive, indicating that individuals prefer to reciprocate ties. Note that this preference is for *maintaining* an existing reciprocated relationship, for *creating* a reciprocated relationship from an asymmetric relationship where alter has nominated ego (i.e. ego wants to reciprocate), and for *dissolving* an asymmetric relationship where alter did not nominated ego after ego nominated alter (i.e. alter didn't reciprocate).
+
+<br>
+
+#### **Behavior Dynamics**  
 
 The output shows the estimates for the **rate** function and the estimates for the **objective** function. For each coefficient, we see an estimate, a standard error, and a convergence *t*-ratio.    
 
-The **rate** estimates correspond to the estimated number of opportunities for each actor to change their *behavior* for each period. Keep in mind that these are not units of change (e.g. standard deviation change), but opportunities in the simulation to make a change. Recall that the model is simulating *micro-steps*, and in each micro-step an individual is provided the opportunity to make a decision. The **rate** parameter estimate gives a sense of how many opportunities are provided to each individual. For example, the estimate for period 1 is `3.7827`, meaning that each actor had nearly 4 opportunities to change his/her behavior or maintain their current behavior. In slight contrast, the estimate for period 2 is `2.4910`, meaning that each actor had just over 2 opportunities to change his/her behavior or maintain their current behavior. The *shape* parameters show that over the three waves, performance declined (negative linear coefficient) at an increasing rate (negative quadratic shape). As before, the significance of the effects can be evaluated in a manner similar to a regression coefficient by looking at the ratio of the estimate to the standard error (where a ratio of 1.96 indicates a *p*-value of *0.05*).  
+The **rate** estimates correspond to the estimated number of opportunities for each actor to change their *behavior* for each period. Keep in mind that these are not units of change (e.g. standard deviation change), but opportunities in the simulation to make a change. Recall that the model is simulating *micro-steps*, and in each micro-step an individual is provided the opportunity to make a decision. The **rate** parameter estimate gives a sense of how many opportunities are provided to each individual. For example, the estimate for period 1 is `1.3912`, meaning that each actor had nearly slight more than 1 opportunity to change his/her social distance score or maintain their current social distance score. The *shape* parameters show that between waves, social distance did not decline (the terms are not significantly different from zero.
 
-*Are these estimates for changes in performance consistent with what we observed in our plots of change in performance above?*  
+As before, the significance of the effects can be evaluated in a manner similar to a regression coefficient by looking at the ratio of the estimate to the standard error (where a ratio of 1.96 indicates a *p*-value of *0.05*).  
 
-***  
+*Are these estimates of no average change in the social distance variable consistent with what we observed in our plots above?*  
 
-###**Specifying Coevolution Terms**  
+<br>
 
-So far, our model has not specified any dependence terms between the advice network and the performance ratings. In other words, we are allowing these variables to evolve **independently**. Let's take a look at including terms where:  
+## **Step 5: Adding Terms to the Model**
 
-* The behavior influences the network (e.g. `egoX`, `alterX`, and `sameX` or `simX`)    
+### **Specifying Coevolution Terms**  
 
-* The network influences the behavior (e.g. `indeg`, `outdeg`, and `avSim`)  
+So far, our model has not specified any dependence terms between the *get along with* network and the *social distance* variable. In other words, we are allowing these variables to evolve **independently**. Let's take a look at including terms where:  
 
+  + The behavior influences the network (e.g. `egoX`, `alterX`, and `sameX` or `simX`)  
+  
+  + The network influences the behavior (e.g. `indeg`, `outdeg`, and `avSim`)    
 
-####**Behavior Effects on the Network**  
+<br>
 
-Now we want to include the effects of `performance` on tie behavior. Recall that for actor covariates, we call these *interaction terms* because the outdegree depends on a covariate. We use the same syntax as we did in the prior lab for specifying these terms.  
+#### **Behavior Effects on the Network**  
+
+Now we want to include the effects of `socDist` on tie behavior. Recall that for actor covariates, we call these *interaction terms* because the outdegree depends on a covariate. We use the same syntax as we did in the prior lab for specifying these terms.  
 
 Let's use the terms we used from the prior lab:  
 
-* Individuals with a particular attribute are more likely to *send* ties, a *sender* effect. This effect is called `egoX`.  
+  + Individuals with a particular attribute are more likely to *send* ties, a *sender* effect (this effect is called `egoX`).
+  + Individuals with a particular attribute are more likely to *receive* ties, a *receiver* effect (this effect is called `altX`).
+  + Individuals with a particular attribute are more likely to nominate others with the same or similar attribute, a *homophily* effect (this effect is called `sameX` or `simX`).  
 
-* Individuals with a particular attribute are more likely to *receive* ties, a *receiver* effect. This effect is called `alterX`.  
+```{r}
 
-* Individuals with a particular attribute are more likely to nominate others with the same or similar attribute, a *homophily* effect. This effect is called `sameX` or `simX`.  
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Recall that we can specify all three on 1 line.
 CoEvolutionEffects <- includeEffects(
   CoEvolutionEffects, # the existing effects object.
     # now the terms:
-    egoX, # performance influences tie sending.
-    altX, # performance influences tie receiving.
-    simX, # homophily in performance.
-  interaction1="performance" # define the variable of interest.
+    egoX, # social distance influences tie sending
+    altX, # social distance influences tie receiving
+    simX, # homophily for social distance
+  interaction1 = "socDist" # define the variable of interest
 )
+
 ```
 
-####**Network Effects on Behavior**  
+<br>
+#### **Network Effects on Behavior**  
 
-Now we want to include the effects of the advice network on performance ratings. Recall that for actor covariates, we call these *interaction terms* because the outdegree depends on a covariate. The notion of *interaction* is the same here, but we want to see how behavior depends on a tie (rather than *visa versa*). 
+Now we want to include the effects of the *get along with* network on the measure of *social distance*. The notion of *interaction* is the same here, but we want to see how behavior depends on a tie (rather than *visa versa*). 
 
 Here are some common terms:  
 
-* Tie *sending* influences behavior. This effect is called `outdeg`.  
+  + Tie *sending* influences behavior (this effect is called `outdeg`).
+  + Tie *receiving* influences behavior (this effect is called `indeg`).
+  + The behavior of those whom you are tied to influences your behavior (this effect is called `avSim`).  
 
-* Tie *receiving* influences behavior. This effect is called `indeg`.  
+Let's add these terms to our existing effects object. The difference is that we have to use the `name=` argument to tell it what the dependent variable is (i.e. that it is not the network). 
+```{r}
 
-* The behavior of those whom you are tied to influences your behavior. This effect is called `avSim`.  
-
-Let's add these terms to our existing effects object. The difference is that we have to use the `name=` argument to tell it what the dependent variable is (i.e. that it is not the network).   
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
 CoEvolutionEffects <- includeEffects(
-  CoEvolutionEffects, # the existing effects object.
-    name = "performance", # define the behavior as what is being influenced.
+  CoEvolutionEffects,      # the existing effects object
+    name = "socDist",      # define the behavior as what is being influenced
     # now the terms:
-    indeg, # tie sending influences behavior.
-    outdeg, # tie receiving influences behavior.
-    avSim, # influence from those in network.
-  interaction1="advice" # define the network as what is driving behavior.
+    indeg,                 # tie sending influences behavior
+    outdeg,                # tie receiving influences behavior
+    avSim,                # influence from those in network
+  interaction1="getalong" # define the network as what is driving behavior
 )
+
 ```
+
+<br>
 
 Now we are ready to estimate the model (again)!     
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Estimate the model.
+```{r}
+
 CoEvolutionResults <- siena07(
-	CoEvolutionModel,           # the model estimation information.
-	data=CoEvolutionData,       # the data object we created above.
-	effects=CoEvolutionEffects  # the effects object we created above.
+	CoEvolutionModel,             # the model estimation information
+	data = CoEvolutionData,       # the data object we created above
+	effects = CoEvolutionEffects  # the effects object we created above
 )
 
-# Look at the results.
 CoEvolutionResults
+
 ```
 
-####**Interpreting the Output (again)**  
+<br>
 
-For the **Network Dynamics**, we added effects for performance influencing tie receiving (`eval performance alter`), tie sending (`eval performance ego`), and homophily (`eval performance similarity`). The results indicate that individuals:
+#### **Interpreting the Output (again)**  
 
-* higher performance ratings are more likely to receive ties (a positive `eval performance alter` coefficient).  
+For the **Network Dynamics**, we added effects for *social distance* influencing tie receiving (`eval socDist alter`), tie sending (`eval socDist ego`), and homophily (`eval socDist similarity`). The results indicate that:
 
-* lower performance ratings are more likely to send ties (a negative `eval performance ego` coefficient).  
+  + For `eval socDistCovar alter` we see a positive coefficient, indicating that individuals with higher values on the social distance scale were **more** likely to *receive* ties.  
+  
+  + For `eval socDistCovar ego` we see a negative coefficient, indicating that individuals with higher values on their the social distance scale were **less** likely to *send* ties.  
+  
+  + For `eval socDistCovar similarity` we see a positive coefficient, indicating that ego prefers sending ties to alters who are more similar to ego on the social distance scale.   
 
-* similar performance levels are more likely to seek advice (a positive `eval performance similarity` coefficient).  
+For all these effects, however, they are not significantly different from zero.
 
-*What is the overall interpretation for the effects of performance on advice seeking?*  
+<br>
+
+What about the **Behavior Dynamics**? Recall that we added effects for *social distance* to be influenced by the *get along with* ties in ego's network (`eval socDist average similarity`), ego's indegree (`eval socDist indegree`), and ego's outdegree (`eval socDist outdegree`). The results indicate that:  
+
+  + For `eval socDist average similarity`, the coefficient is positive, indicating that individuals change their *social distance* score to align with the average of their *get along with* network. (*What would a negative coefficient mean?*).  
+  
+  + For `eval socDist indegree`, a positive coefficient indicates that those who receive more ties increase their *social distance* score.  
+  
+  + For `eval socDist outdegree`, a negative coefficient indicates that those who send more ties decrease their *social distance* score.
+  
+For all these effects, however, they are not significantly different from zero.  
+
+<br>
+
+## **More Attributes**
+
+Ok, that was not very exciting. Let's work through this again, but look at some different attributes. Specifically, let's add two:  
+
+  + *Depression* measures whether the respondent reports feeling depressed (a scale of several items)
+  + *Smoker* a binary variable indicating whether the respondent is a smoker
+
+Now, let's build these into our data object. But first, we should take a look at the change in the variables.
+
+```{r}
+
+# pull off the attributes for each wave
+dep1 <- gaNetT1 %v% "depression.w1"
+dep2 <- gaNetT2 %v% "depression.w2"
+smk1 <- gaNetT1 %v% "smoker.w1"
+smk2 <- gaNetT2 %v% "smoker.w2"
 
 
-What about the **Behavior Dynamics**? Recall that we added effects for performance to be influenced by the average performance rating for ego's network (`eval performance average similarity`), ego's indegree (`eval performance indegree`), and ego's Outdegree (`eval performance outdegree`). The results indicate that individuals:  
-
-* change their performance rating to align with the average of their advice network (a positive `eval performance average similarity` coefficient). Note that this sounds odd. What it is picking up is that individual's performance rating is influenced by the average performance rating of their advice network.  
-
-* who receive more ties increase their performance rating (a positive `eval performance indegree` coefficient). But, it is fairly small and not significantly different from zero.  
-
-* who send more ties increase their performance rating (a positive `eval performance outdegree` coefficient). But, it is also fairly small and not significantly different from zero.  
-
-*What is the overall interpretation for the effects of advice seeking on performance ratings?*  
-
-*What would be the next step in building this model?*  
-
-***
-
-##**Coevolution of Networks**  
-
-As we saw before, we can model the coevolution of a network with behavior. We can also model the coevolution of the two networks together. Another way of thinking about this is that we are interested in multiplexity: or the overlapping of multiple networks.
+# create the deviations
+depD <- dep2 - dep1
+smkD <- smk2 - smk1
 
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# ############## #
-# Load the data. #
+# set the partition
+par( mfrow = c( 1, 2 ) )
 
-# talked about the class.
-talk1 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_talk_course_w1_adjancency.csv",as.is=TRUE,header=TRUE,row.names=1))
-talk2 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_talk_course_w2_adjancency.csv",as.is=TRUE,header=TRUE,row.names=1))
-talk <- sienaDependent(array(c(talk1,talk2),dim=c(dim(talk1)[1],dim(talk1)[1],2)))
+# plot the within person deviations
+hist( depD, 
+      col = "#e62090",     
+      main = "Within Person Change in Depression", 
+      ylim = c( 0, 40 ),                    
+      xlim = c( min( depD )-1, max( depD )+1 ), 
+      xlab = ""                             
+      )
+abline( v = mean( depD ),
+        lwd = 5,
+        col = "black" 
+        )
 
-# trust with damaging information.
-trust1 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_trust_w1_adjancency.csv",as.is=TRUE,header=TRUE,row.names=1))
-trust2 <- as.matrix(read.csv("https://www.jacobtnyoung.com/uploads/2/3/4/5/23459640/crj_605_networks_spring_2019_trust_w2_adjancency.csv",as.is=TRUE,header=TRUE,row.names=1))
-trust <- sienaDependent(array(c(trust1,trust2),dim=c(dim(trust1)[1],dim(trust1)[1],2)))
+# plot the within person deviations
+hist( smkD, 
+      col = "#26bcde",     
+      main = "Within Person Change in Smoking", 
+      ylim = c( 0, 70 ),                     
+      xlim = c( min( smkD ), max( smkD ) ), 
+      xlab = ""                             
+      )
+abline( v = mean( smkD ),
+        lwd = 5,
+        col = "black" 
+        )
 
-# ############## #
-# Create the objects for Siena.
+```
 
-# Dependent variables.
-TalkTrustCoevolveData <- sienaDataCreate(talk,trust)
-TalkTrustCoevolveData
+*What do the plots tell us about changes to depression and smoking?*
 
-# Now, create the effects object.
-TalkTrustCoevolveEffects <- getEffects(TalkTrustCoevolveData)
+<br>
 
-# Create a model that has particulars about estimation, then we estimate the model.
-TalkTrustCoevolveModel <- sienaModelCreate(projname = "Talk & Trust", useStdInits=TRUE, seed=605)
-TalkTrustCoevolveModel
+## **Steps 1-5**  
 
-# Print the report to look at the Jaccard index.
-print01Report(TalkTrustCoevolveData, modelname = "Talk & Trust Example")
+Ok, now that we have our attributes, let's build our model:
 
-# Estimate the model.
-TalkTrustCoevolveResults <- siena07(
-	TalkTrustCoevolveModel,           # the model estimation information.
-	data=TalkTrustCoevolveData,       # the data object we created above.
-	effects=TalkTrustCoevolveEffects  # the effects object we created above.
+```{r}
+
+# build the dependent variables
+depression <- sienaDependent( cbind( dep1, dep2 ), type = "behavior" )
+smoking    <- sienaDependent( cbind( smk1, smk2 ), type = "behavior" )
+
+# bind data together for Siena analysis
+CoEvolutionData2 <- sienaDataCreate( 
+  getalong,          # our network
+  depression,        # depression
+  smoking            # smoking
+  )
+
+# create the effects object
+CoEvolutionEffects2 <- getEffects( CoEvolutionData2 )
+
+# create a model that has particulars about estimation, then we estimate the model
+CoEvolutionModel2 <- sienaModelCreate( projname = "Get Along & Depression & Smoking", seed=605 )
+
+# estimate the model
+CoEvolutionResults2 <- siena07(
+  CoEvolutionModel2,         
+  data=CoEvolutionData2,     
+  effects=CoEvolutionEffects2
 )
 
-# Look at the results.
-TalkTrustCoevolveResults
+# look at the results
+CoEvolutionResults2
+
 ```
 
-*What is the interpretation for each effect in the model?*  
+*What are the interpretation of the rate and shape terms for depression and smoking?*
 
+<br>
 
-###**Coevolution Terms**  
+### **Adding Terms**
 
-Now we want to include terms for how each network influences the other. First, we need to include structural effects for each network (i.e. `transTrip` and `cycle3`) and then include a term for how trust influences talking and *visa versa* using the `crprod` term. The `crprod` term is the effect if an *i->j* tie in network A on an *i->j* tie in network B. In other words, is a trust tie more likely from *i* to *j* if *i* has talked with *j* about the course? This effect is sometimes called a "main effect" or **entrainment** in that the networks are "growing together". 
+#### **Behavior Effects on the Network**  
 
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-# Add the structural effects for each specific network.
-TalkTrustCoevolveEffects <- includeEffects(TalkTrustCoevolveEffects,transTrip,cycle3,name="trust")
-TalkTrustCoevolveEffects <- includeEffects(TalkTrustCoevolveEffects,transTrip,cycle3,name="talk")
+Now we want to include the effects of `depression` and `smoking` on tie behavior. We will use the same `egoX`, `altX`, and `sameX` or `simX` terms.
 
-# Include main effects of the dependent networks on each other's evolution:
-TalkTrustCoevolveEffects <- includeEffects(TalkTrustCoevolveEffects,crprod,name="talk",interaction1="trust")
-TalkTrustCoevolveEffects <- includeEffects(TalkTrustCoevolveEffects,crprod,name="trust",interaction1="talk")
+```{r}
 
-# Now, re-estimate the model.
-TalkTrustCoevolveResults <- siena07(TalkTrustCoevolveModel, data=TalkTrustCoevolveData, effects=TalkTrustCoevolveEffects)
-TalkTrustCoevolveResults
+CoEvolutionEffects2 <- includeEffects( CoEvolutionEffects2, egoX, altX, simX, interaction1 = "depression" )
+CoEvolutionEffects2 <- includeEffects( CoEvolutionEffects2, egoX, altX, sameX, interaction1 = "smoking" )
+
 ```
 
-*What is the interpretation for each effect in the model?*  
+*In the last line above, why did we use `sameX` and not `simX`?*
 
-There are additional effects for these models. For example:  
+<br>
 
-* `crprodRecip` is the tendency for an *j->i* tie in network A on an *i->j* tie in network B. This is reciprocity across the networks.  
+#### **Network Effects on Behavior**  
 
-* `crprodMutual` is the tendency for an *i->j* and an *j->i* tie in network A (or *j<->i*) on an *i->j* tie in network B. This is reciprocity in one network leads to ties in another network.  
+Now we want to include the effects of the *get along with* network on the measures of *depression* and *smoking*. We will again use `outdeg`, `indeg`, and `avSim`.
 
+```{r}
 
-###**Goodness-of-Fit in Siena**  
+CoEvolutionEffects2 <- includeEffects( CoEvolutionEffects2, name = "depression", indeg, outdeg, avSim, interaction1="getalong" )
+CoEvolutionEffects2 <- includeEffects( CoEvolutionEffects2, name = "smoking", indeg, outdeg, avSim, interaction1="getalong" )
 
-As with ergms, we saw how we can assess the goodness of fit for a model by simulating networks from a fitted model and then examining the structural properties of the simulated and observed networks. The `sienaGOF()` function can be used for this purpose. To use the function, we have to use the `returnDeps=` argument in the `siena07()` function. This argument, when set to `TRUE`, will keep the simulated data from the estimation to be used by the `sienaGOF()` function.  
-
-Let's take our previous example of the advice network and re-estimate the model, telling it to keep the simulations.
-
-```{r,echo=TRUE,eval=TRUE,message=FALSE,include=TRUE}
-GOF.CoEvolutionResults <- siena07(CoEvolutionModel, data=CoEvolutionData,	effects=CoEvolutionEffects, returnDeps=TRUE)
-GOF.CoEvolutionResults
-
-# Now, use the sienaGOF() function to simulate the networks.
-gof.indegree <- sienaGOF(GOF.CoEvolutionResults,IndegreeDistribution,verbose=TRUE,varName="advice")
-gof.outdegree <- sienaGOF(GOF.CoEvolutionResults,OutdegreeDistribution,verbose=TRUE,varName="advice")
-gof.triads <- sienaGOF(GOF.CoEvolutionResults,TriadCensus,verbose=TRUE,varName="advice")
-
-# Now plot them.
-triad.keys <- c("003","012","102","021D","021U","021C","111D","111U",
-		"030T","030C","201","120D","120U","120C","210","300")
-
-op <- par(mfrow=c(2,2), mai = c(0,0,0.7,0))
-plot(gof.indegree,key=0:8)
-plot(gof.outdegree,key=0:8)
-plot(gof.triads,key=triad.keys,center=TRUE,scale=TRUE)
-par(op)
 ```
 
-*What do the results for the goodness of fit tell us about our model?*  
+<br>
+  
+  Now we are ready to estimate the model (again)!     
+  
+```{r}
 
+CoEvolutionEffects2 <- siena07( CoEvolutionModel2, data = CoEvolutionData2, effects = CoEvolutionEffects2 )
+CoEvolutionEffects2
 
-***
-
-####***Questions?***####
-
-```{r,echo=FALSE,eval=FALSE}
-#END OF LAB
 ```
+
+*What are the interpretations of the coefficients?*
+
+<br>
+
+----
+
+<br>
+
+# **Wrapping up...**
+
+In this lab we worked through examining the coevolution of networks and behavior with SABMs using the `RSiena` package. For WAY MORE details about `RSiena`, please review the [RSiena manual](http://www.stats.ox.ac.uk/~snijders/siena/RSiena_Manual.pdf).  
+
+<br>
+
+### ***Questions?***
+
+<br>
+
+##### ***Please*** report any needed corrections to the [Issues](https://github.com/jacobtnyoung/SAND/issues/new) page. Thanks!
+
+<br>
+
+<p align="center">
+[Back to SAND main page](https://jacobtnyoung.github.io/SAND/)
+</p>
