@@ -20,9 +20,6 @@ render( here::here( "topics/page-06-subgroups.Rmd" ), "html_document" )
 render( here::here( "topics/page-07-bipartite.Rmd" ), "html_document" )
 render( here::here( "topics/page-08-ergm.Rmd" ), "html_document" )
 render( here::here( "topics/page-09-sabm.Rmd" ), "html_document" )
-render( here::here( "topics/page-10-dynamic-visualization.Rmd" ), "html_document" )
-render( here::here( "topics/page-11-stergms.Rmd" ), "html_document" )
-render( here::here( "topics/page-12-epidemics.Rmd" ), "html_document" )
 render( here::here( "topics/page-99-help.Rmd" ), "html_document" )
 
 # Close this script
