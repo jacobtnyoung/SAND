@@ -595,7 +595,7 @@ m1.piNetD <- ergm( piNetD ~ edges )
 m2.piNetD <- ergm( piNetD ~ edges  + nodeicov( "Age" ) + nodeocov( "Age" ) ) 
   
 # add the homophily effect for Age  
-m3.piNetD <- ergm( piNetD ~ edges  + nodeicov( "Age" ) + nodeocov( "Age" ) ) 
+m3.piNetD <- ergm( piNetD ~ edges  + nodeicov( "Age" ) + nodeocov( "Age" ) + absdiff( "Age" ) ) 
 
 # add the effect for reciprocity  
 m4.piNetD <- ergm( piNetD ~ edges + nodeicov( "Age" ) + nodeocov( "Age" ) + absdiff( "Age" ) + mutual,
@@ -841,7 +841,7 @@ rescale <- function( nchar, low, high ){
 
 # create the objects to use for the plots
 PiNetDobsSize <- rescale( piNetD %v% "Age", 0.2, 3 )
-PiNetDsimSize <- rescale( piNetD %v% "Age", 0.2, 3 )
+PiNetDsimSize <- rescale( no.homophily.sim %v% "Age", 0.2, 3 )
 
 ```
 
@@ -918,6 +918,15 @@ sympiMatCols <- sympiMat
 sympiMatCols[sympiMat == 0] <- "grey80"
 sympiMatCols[sympiMat == 1] <- "#3746a3" # set a color for mutual ties
 
+
+# create the symmetric matrix
+sympiMat2 <- symmetrize( anti.recip.sim, rule = "strong" )
+
+# create a matrix of colors
+sympiMatCols2 <- sympiMat2
+sympiMatCols2[sympiMat2 == 0] <- "grey80"
+sympiMatCols2[sympiMat2 == 1] <- "#3796a4" # set a color for mutual ties
+
 ```
 
 Now, we pass this information to the plot.
@@ -945,7 +954,7 @@ gplot(
 gplot( 
   no.homophily.sim, 
   gmode = "digraph",
-  edge.col = "grey80", 
+  edge.col = sympiMatCols2, 
   vertex.col="#03fc7b",
   displayisolates = FALSE,
   main = "Network Simulated from\n Aversion to\n Reciprocity Model"
