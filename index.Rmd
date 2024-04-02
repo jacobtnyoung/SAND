@@ -48,12 +48,6 @@ ____
 
 [Stochastic Actor-Based Models (SABMs)](topics/page-09-sabm.html)
 
-[Dynamic Network Visualization]()
-
-[Sequential Temporal Exponential Random Graph Models (STERGMs)]()
-
-[Epidemic Modeling]()
-
 <br>
 
 ### *Help*
