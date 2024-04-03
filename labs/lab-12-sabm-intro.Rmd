@@ -52,6 +52,9 @@ Recall from the [Introduction to Stochastic Actor-Based Models (SABMs) lecture](
 
 ```{r}
 
+# load the network package so it recognizes the objects as networks
+library( network )
+
 # define the path location for the file
 loc1 <- "https://github.com/jacobtnyoung/sna-textbook/raw/main/data/data-pins-ga-panel-w1-net.rds"
 gaNetT1 <- readRDS( url( loc1 ) )
