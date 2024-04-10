@@ -340,6 +340,7 @@ CoEvolutionEffects <- includeEffects(
 ```
 
 <br>
+
 #### **Network Effects on Behavior**  
 
 Now we want to include the effects of the *get along with* network on the measure of *social distance*. The notion of *interaction* is the same here, but we want to see how behavior depends on a tie (rather than *visa versa*). 
@@ -438,7 +439,7 @@ par( mfrow = c( 1, 2 ) )
 # plot the within person deviations
 hist( depD, 
       col = "#e62090",     
-      main = "Within Person Change in Depression", 
+      main = "Within Person Change\n in Depression", 
       ylim = c( 0, 40 ),                    
       xlim = c( min( depD )-1, max( depD )+1 ), 
       xlab = ""                             
@@ -451,7 +452,7 @@ abline( v = mean( depD ),
 # plot the within person deviations
 hist( smkD, 
       col = "#26bcde",     
-      main = "Within Person Change in Smoking", 
+      main = "Within Person Change\n in Smoking", 
       ylim = c( 0, 70 ),                     
       xlim = c( min( smkD ), max( smkD ) ), 
       xlab = ""                             
