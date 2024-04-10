@@ -432,7 +432,7 @@ getalong.results3
 
   + The `eval inPop` term indicates whether increases in received get along with nominations (i.e. indegree, and called `inPop` because it represents "popularity") make individuals more likely to send a get along with nomination. It is positive, but very small and not significantly different from zero.  
   
-  + + The `eval outPop` term indicates whether increases in sent get along with nominations (i.e. outdegree, the term `outPop` is used for consistency with the terms) make individuals more likely to send a get along with nomination. It is negative, but very small and not significantly different from zero.
+  + The `eval outPop` term indicates whether increases in sent get along with nominations (i.e. outdegree, the term `outPop` is used for consistency with the terms) make individuals more likely to send a get along with nomination. It is negative, but very small and not significantly different from zero.
 
 <br>
 
