@@ -84,7 +84,7 @@ gaNetT2
 
 ## **The Attributes**
 
-Now, let's pull in the attributes. We will use the **social distance** scale from the PINS survey. The variable is calculated by taking the average of four items asking participants to state their level of agreement with statements about people of another race: 1) “I would share a table with them”; 2) “I would cooperate with them if needed”; 3) “I would accept the as personal friends”; and 4) “I would avoid them if I could” (reverse-coded). Responses to each statement were on a 5-point Likert scale ranging from "strongly agree" to "strongly disagree". Therefore, higher values indicate greater feelings of social distance from people of another race. 
+Now, let's pull in the attributes. We will use the **social distance** scale from the PINS survey. The variable is calculated by taking the average of four items asking participants to state their level of agreement with statements about people of another race: 1) “I would share a table with them”; 2) “I would cooperate with them if needed”; 3) “I would accept them as personal friends”; and 4) “I would avoid them if I could” (reverse-coded). Responses to each statement were on a 5-point Likert scale ranging from "strongly agree" to "strongly disagree". Therefore, higher values indicate greater feelings of social distance from people of another race. 
 
 In the prior lab, we only used one wave of the data, treating this as a "constant covariate". Here, we are going to use both waves since it is a **dependent** variable. 
 
